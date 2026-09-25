@@ -38,7 +38,8 @@
     cuponPct: 10,
 
     /* Desde cuánto el envío es gratis. Dato que ya publica index.html. */
-    envioGratisDesde: 150000
+    /* El envío es gratis a toda Colombia, sin mínimo de compra: es lo que
+       cobra el checkout. No hay umbral que mostrar. */
   };
 
   /* ============================================================
@@ -48,18 +49,18 @@
      Una línea vacía NO se dibuja: la caja se calla antes que
      publicar un dato falso o el de otra marca.
 
-     PENDIENTE: el correo y la dirección de Marlú. Hoy el pie del
-     sitio dice soportevortexgadgets@gmail.com, que es el correo de
-     VÓRTEX; por eso NO se pone aquí hasta que me digas el de Marlú.
+     La dirección y el WhatsApp ya están puestos. El correo queda
+     vacío porque Marlú todavía no tiene uno propio: mientras tanto,
+     el contacto del sitio es el WhatsApp.
      ============================================================ */
   var TIENDA = {
     nombre: 'Marlú Colombia',
     descripcion: 'Negocio colombiano de belleza y bienestar.',
-    direccion: '',          // ej: 'Calle 10 # 20-30 · Cali'.  Vacío = no se muestra.
+    direccion: 'Cl. 35 Nte. #6ABis-100, Santa Mónica · Cali, Valle del Cauca',
     whatsapp: '573181738642',
     whatsappVisible: '+57 318 173 8642',
     horario: 'Lunes a sábado, 8:00 a.m. a 8:00 p.m.',
-    correo: '',             // PENDIENTE: el correo de Marlú
+    correo: '',             // Marlú todavía no tiene correo propio; el contacto es el WhatsApp.
     titular: 'C.C. 1126705132'
   };
 
@@ -251,7 +252,7 @@
     var partes = ['Vendido por Marlú'];
     if (FICHA.diasDespacho) partes.push('Despacho ' + FICHA.diasDespacho + ' días hábiles');
     partes.push('Envío a toda Colombia');
-    partes.push('Gratis desde ' + cop(FICHA.envioGratisDesde));
+    partes.push('Gratis a toda Colombia');
     $('pdpVendedor').textContent = partes.join(' · ');
   }
 
@@ -329,7 +330,7 @@
         '<li>Sin tarjeta ni anticipos</li>' +
         '<li>Revisas el producto antes de pagar</li>' +
         '</ul>' +
-        '<span class="pdp-caja-pie">✓ Envío gratis en compras desde ' + escHtml(cop(FICHA.envioGratisDesde)) + '</span>';
+        '<span class="pdp-caja-pie">✓ Envío gratis a toda Colombia</span>';
     } else {
       caja.className = 'pdp-caja';
       caja.innerHTML =
@@ -338,7 +339,7 @@
         '<li>No guardamos los datos de tu tarjeta</li>' +
         '<li>Recibes el número de guía para seguir tu pedido</li>' +
         '</ul>' +
-        '<span class="pdp-caja-pie">✓ Envío gratis en compras desde ' + escHtml(cop(FICHA.envioGratisDesde)) + '</span>';
+        '<span class="pdp-caja-pie">✓ Envío gratis a toda Colombia</span>';
     }
     caja.hidden = false;
   }
@@ -348,8 +349,8 @@
 
   /* ---------- Resumen de confianza ---------- */
   var confianza = [
-    'Envío a toda Colombia · gratis en compras superiores a ' + cop(FICHA.envioGratisDesde),
-    'Pago 100 % seguro (PSE, tarjetas)',
+    'Envío gratis a toda Colombia',
+    'Pago seguro: PSE, tarjeta o contra entrega',
     'Derecho de retracto: 5 días hábiles (Ley 1480 de 2011)'
   ];
   if ($('pdpConfianza')) {
@@ -370,16 +371,16 @@
 
   if ($('pdpEspecCierre')) {
     $('pdpEspecCierre').innerHTML =
-      '<strong>Envío gratis</strong> en compras superiores a ' + escHtml(cop(FICHA.envioGratisDesde)) +
-      ' · Envío internacional de 6 a 12 días · ' +
-      'Pago 100 % seguro (PSE, tarjetas) · Garantía y derecho de retracto (Ley 1480 de 2011).';
+      '<strong>Envío gratis</strong> a toda Colombia · Envío internacional de 6 a 12 días · ' +
+      'Pago con PSE, tarjeta o contra entrega · ' +
+      'Garantía y derecho de retracto (Ley 1480 de 2011).';
   }
 
   /* ---------- Sección "Envío y tiempos" ---------- */
   var envios = [
     'Enviamos a todo el país',
     'Envío internacional: 6 a 12 días',
-    'Envío gratis en compras superiores a ' + cop(FICHA.envioGratisDesde),
+    'Envío gratis a toda Colombia',
     'Te damos el número de guía para seguir tu pedido'
   ];
   if ($('pdpEnvios')) {
@@ -580,15 +581,14 @@
   /* ============================================================
      LISTA DE CONFIANZA
 
-     Ojo: en VÓRTEX el primer punto dice "Envío GRATIS a toda
-     Colombia" porque allí sí lo es. En Marlú el envío es gratis
-     DESDE $150.000, así que aquí se dice con la condición. Copiar
-     la frase de VÓRTEX sería prometer algo que Marlú no da.
-     ============================================================ */
+     El envío es gratis a toda Colombia, sin mínimo: es lo que cobra
+     el checkout, que nunca suma envío. Por eso aquí sí se puede
+      decir "gratis a toda Colombia" sin ponerle condición.
+      ============================================================ */
   var trust = $('pdpTrust');
   if (trust) {
     var puntos = [
-      'Envío gratis en compras desde ' + cop(FICHA.envioGratisDesde),
+      'Envío gratis a toda Colombia',
       FICHA.contraEntrega
         ? 'Pago contra entrega: revisas antes de pagar'
         : 'Pago 100 % seguro: PSE y tarjetas',
