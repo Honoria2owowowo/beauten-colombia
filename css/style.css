@@ -2127,3 +2127,65 @@ h1, h2, h3, h4 {
   .carrusel-slide { padding: 38px 0 46px; }
   .carrusel-slide--video { padding: 30px 0 34px; }
 }
+
+/* ============================================================
+   BARRA DE CONFIANZA EN MOVIMIENTO
+   (25-sep-2026, a petición de la clienta)
+
+   Las 4 ventajas entran por la derecha y salen por la izquierda,
+   repitiendo la secuencia. Antes eran una rejilla fija de 2×2 en el móvil.
+
+   El bucle no da salto porque dentro van DOS copias iguales de las 4
+   ventajas y la pista se desplaza exactamente -50%, o sea el ancho de UNA
+   copia. Al llegar ahí, la segunda copia está justo donde empezó la
+   primera. Por eso cada ventaja lleva ancho fijo: si no, las dos copias
+   medirían distinto y el salto se vería.
+   ============================================================ */
+
+.barra-confianza {
+  /* Recorta lo que sale de la pantalla y quita el relleno viejo */
+  overflow: hidden;
+  padding: 0;
+}
+
+.barra-confianza-pista {
+  display: flex;
+  width: max-content;
+  animation: confianza-mueve 38s linear infinite;
+}
+
+.barra-confianza-grupo { display: flex; align-items: center; }
+
+/* El selector lleva dos clases a propósito: las reglas viejas de móvil usan
+   `:nth-child`, que pesa más que una sola clase, y si no se iguala la
+   especificidad seguirían poniendo rayas horizontales cada dos ventajas. */
+.barra-confianza-grupo .barra-confianza-item {
+  flex: none;
+  width: 270px;
+  padding: 18px 24px;
+  border-left: 1px solid var(--line);
+  border-top: 0;
+  border-bottom: 0;
+}
+.barra-confianza-grupo .barra-confianza-item:first-child { border-left: none; }
+
+@keyframes confianza-mueve {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Si el sistema pide menos movimiento, se queda quieta. No es un capricho:
+   hay gente a la que el texto en movimiento le marea, y es una preferencia
+   que se respeta. */
+@media (prefers-reduced-motion: reduce) {
+  .barra-confianza-pista { animation: none; }
+}
+
+@media (max-width: 900px) {
+  .barra-confianza-grupo .barra-confianza-item { width: 248px; padding: 16px 20px; }
+}
+@media (max-width: 560px) {
+  .barra-confianza-grupo .barra-confianza-item { width: 218px; padding: 15px 16px; gap: 11px; }
+  .barra-confianza-grupo .barra-confianza-item svg { width: 22px; height: 22px; }
+  .barra-confianza-pista { animation-duration: 34s; }
+}
