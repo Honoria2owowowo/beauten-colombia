@@ -124,6 +124,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .marquesina-track { animation: none; }
 }
@@ -1495,7 +1496,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #FFF2F6 0%, var(--bg) 46%, #FFF7FA 100%);
-  padding: 84px 0 104px;
+  padding: 0;
 }
 .carrusel-viewport { overflow: hidden; }
 .carrusel-track {
@@ -1503,7 +1504,14 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
   transition: transform .6s cubic-bezier(.55, .06, .28, 1);
   will-change: transform;
 }
-.carrusel-slide { min-width: 100%; flex: none; }
+.carrusel-slide {
+  min-width: 100%;
+  flex: none;
+  /* El relleno que antes tenía .hero-carrusel. Va aquí, y no al final
+     del archivo, para que las media queries de tableta y móvil lo
+     puedan sobreescribir. La lámina del video lo anula más abajo. */
+  padding: 84px 0 104px;
+}
 
 /* La etiqueta ovalada del ejemplo, con el rosa de la marca */
 .hero-badge {
@@ -1667,15 +1675,72 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
 .carrusel-puntos button[aria-current="true"] { width: 26px; background: var(--accent); }
 
 @media (max-width: 1024px) {
-  .hero-carrusel { padding: 62px 0 98px; }
+  .carrusel-slide { padding: 62px 0 98px; }
 }
 @media (max-width: 768px) {
-  .hero-carrusel { padding: 50px 0 92px; }
+  .carrusel-slide { padding: 50px 0 92px; }
   /* En el móvil se desliza con el dedo, así que las flechas sobran */
   .carrusel-flecha { display: none; }
   .hero-van { max-width: 330px; }
   .oferta-caja { font-size: 14px; padding: 10px 16px; }
 }
+/* ============================================================
+   Lámina 1 — el video cubre toda la sección
+
+   Antes el video era una tarjeta redondeada con márgenes, y se veían
+   franjas rosadas alrededor. Las láminas 2, 3 y 4 llevan su imagen de
+   borde a borde, así que esta también.
+
+   Cómo funciona el alto: las láminas van en un flex y todas se estiran
+   a la altura de la más alta (que son las 2, 3 y 4, con su relleno).
+   El video se ancla con position:absolute a los cuatro bordes de su
+   lámina, así que ocupa exactamente ese alto. Como el video es 16:9 y
+   la sección es más ancha que alta, se recorta a los lados con
+   object-fit: cover. No se deforma nunca.
+   ============================================================ */
+.carrusel-slide--video {
+  padding: 0;
+  position: relative;
+}
+.carrusel-slide--video .container {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+.carrusel-slide--video .slide-video {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.carrusel-slide--video .slide-video-el {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* En el móvil el texto del video baja y se coloca DEBAJO, así que la
+   lámina vuelve a ser una tarjeta: a sangre completa el texto no cabría
+   encima sin tapar la cara de la modelo. */
+@media (max-width: 768px) {
+  .carrusel-slide--video { padding: 50px 0 92px; }
+  .carrusel-slide--video .container {
+    width: min(var(--container), 100% - 48px);
+    margin-inline: auto;
+  }
+  .carrusel-slide--video .slide-video {
+    position: static;
+    border-radius: 18px;
+  }
+  .carrusel-slide--video .slide-video-el {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .carrusel-track { transition: none; }
 }
