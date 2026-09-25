@@ -318,6 +318,31 @@
     botones.push(b);
   }
 
+  /* ---- El alto de la ventana sigue a la lámina que se ve ----
+     En un carrusel flex todas las láminas se estiran al alto de la más
+     alta. En el móvil eso dejaba la lámina del video con ~570 px de hueco
+     blanco debajo. En pantallas pequeñas cada lámina conserva su alto y la
+     ventana se ajusta a la que está a la vista. En escritorio no se toca
+     nada: allí la lámina del video se estira a propósito, porque ocupa
+     toda la sección. */
+  var mqEstrecho = window.matchMedia('(max-width: 900px)');
+  var ventanaCarr = track.parentNode;
+
+  function ajustarAlto() {
+    if (!ventanaCarr) return;
+    if (!mqEstrecho.matches) {
+      ventanaCarr.style.height = '';
+      return;
+    }
+    var alto = Math.round(laminas[actual].getBoundingClientRect().height);
+    if (alto > 40) ventanaCarr.style.height = alto + 'px';
+  }
+
+  window.addEventListener('resize', ajustarAlto);
+  window.addEventListener('load', ajustarAlto);
+  if (mqEstrecho.addEventListener) mqEstrecho.addEventListener('change', ajustarAlto);
+  ajustarAlto();
+
   /* Decide cómo se pasa a la siguiente lámina */
   function programar() {
     if (reloj) { clearInterval(reloj); reloj = null; }
@@ -358,6 +383,7 @@
     videos.forEach(function (v) { if (v !== activo) v.pause(); });
     /* Al volver a su lámina, el video se reproduce otra vez desde el inicio */
     if (activo && activo.ended) { try { activo.currentTime = 0; } catch (e) {} }
+    ajustarAlto();
     programar();
   }
 

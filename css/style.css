@@ -846,6 +846,11 @@ h1, h2, h3, h4 {
   .brand { margin-inline: auto; order: 1; }
   .nav-toggle { order: 0; }
   .header-actions { order: 2; }
+  /* En el móvil conviven el menú, la insignia, el nombre y tres iconos.
+     Con el nombre a 31 px no cabía: se veía apretado y encimado. */
+  .brand { gap: 8px; }
+  .brand-marca { height: 36px; }
+  .brand-texto { font-size: 24px; letter-spacing: -0.4px; }
   .hero { padding: 56px 0 46px; }
   .hero-card { left: 8px; bottom: 10px; padding: 12px 16px; }
   .hero-card span { display: none; }
@@ -1525,10 +1530,15 @@ h1, h2, h3, h4 {
   will-change: transform;
 }
 .carrusel-slide {
+  /* width EXPLÍCITO, no solo min-width. Sin él, un elemento flex con
+     `flex: none` toma el ancho de su CONTENIDO, y el video mide 1280 px
+     naturales: en el móvil la lámina se estiraba a 1280 px, el hero
+     quedaba de 1065 px de alto y todo lo demás salía descuadrado. */
+  width: 100%;
   min-width: 100%;
   flex: none;
   /* El relleno que antes tenía .hero-carrusel. Va aquí, y no al final
-     del archivo, para que las media queries de tableta y móvil lo
+     del archivo, para que las media queries de tablet y móvil lo
      puedan sobreescribir. La lámina del video lo anula más abajo. */
   padding: 84px 0 104px;
 }
@@ -2082,4 +2092,38 @@ h1, h2, h3, h4 {
   .pdp-ficha-fila { flex-direction: column; gap: 3px; }
   .pdp-ficha-fila dt { max-width: none; }
   .pdp-ficha-fila dd { text-align: left; }
+}
+
+/* ============================================================
+   ARREGLOS DE MÓVIL Y TABLETA
+   (25-sep-2026)
+   ============================================================ */
+
+/* --- 1. El menú cerrado asomaba como una franja blanca ---
+   Tenía max-height: 0, pero conservaba el relleno de arriba y abajo. Con
+   box-sizing: border-box el relleno se sigue dibujando aunque el alto sea
+   0, así que quedaba una franja de 36 px con "Inicio" asomando debajo de la
+   cabecera. Ahora el relleno solo existe cuando el menú está abierto. */
+@media (max-width: 768px) {
+  .main-nav {
+    padding: 0 24px;
+    visibility: hidden;
+  }
+  .main-nav.open {
+    padding: 16px 24px 24px;
+    visibility: visible;
+  }
+}
+
+/* --- 2. El hueco blanco bajo la lámina corta ---
+   En un carrusel flex todas las láminas se estiran al alto de la más alta.
+   Con align-items: flex-start cada lámina conserva su alto natural y el
+   JavaScript ajusta el alto de la ventana a la lámina que se está viendo. */
+@media (max-width: 900px) {
+  .carrusel-track { align-items: flex-start; }
+  .carrusel-viewport { transition: height .4s ease; }
+
+  /* El hero del móvil no necesita tanto aire como el de escritorio */
+  .carrusel-slide { padding: 38px 0 46px; }
+  .carrusel-slide--video { padding: 30px 0 34px; }
 }
