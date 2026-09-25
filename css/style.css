@@ -2426,3 +2426,89 @@ h1, h2, h3, h4 {
   font-size: 13.5px;
 }
 .checkout-listo .btn-pill { margin-top: 16px; }
+
+
+/* ============================================================
+   PAGA CONTRA ENTREGA — bloque de prioridad
+
+   Va justo debajo del banner, antes de las categorías. Es el argumento que más
+   pesa para quien no quiere pagar por internet, y antes solo aparecía en la
+   sección "Información útil", al final de la página.
+   Fondo oscuro de la marca (#202020) para que corte la página en seco y sea lo
+   primero que salta a la vista después del banner.
+   ============================================================ */
+.paga-cod {
+  background: var(--dark, #202020);
+  color: #fff;
+  padding: 46px 0;
+}
+.paga-cod-eyebrow {
+  font-size: 11.5px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #F5739F;
+  margin: 0 0 10px;
+}
+.paga-cod-titulo {
+  /* Explícito a propósito: si no, la regla general `h1, h2, h3, h4 { color:
+     var(--ink) }` de arriba pinta este titular en negro sobre fondo negro. */
+  color: #fff;
+  font-family: var(--serif, Georgia, serif);
+  font-weight: 700;
+  font-size: clamp(27px, 5.2vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.8px;
+  margin: 0 0 12px;
+}
+.paga-cod-titulo em { color: #F5739F; font-style: italic; }
+.paga-cod-sub {
+  max-width: 620px;
+  margin: 0 0 28px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+}
+.paga-cod-lista {
+  list-style: none;
+  margin: 0 0 30px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+.paga-cod-lista li {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 14px;
+  padding: 17px 18px;
+}
+.paga-cod-lista strong {
+  color: #fff;
+  display: block;
+  font-size: 16.5px;
+  margin-bottom: 4px;
+}
+.paga-cod-lista span {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+}
+.paga-cod-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.paga-cod-alt {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.66);
+  max-width: 430px;
+}
+
+@media (max-width: 640px) {
+  .paga-cod { padding: 34px 0; }
+  .paga-cod-lista { margin-bottom: 24px; }
+  .paga-cod-alt { max-width: none; }
+}

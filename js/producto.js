@@ -37,9 +37,9 @@
     cupon: 'MARLU10',
     cuponPct: 10,
 
-    /* Desde cuánto el envío es gratis. Dato que ya publica index.html. */
-    /* El envío es gratis a toda Colombia, sin mínimo de compra: es lo que
-       cobra el checkout. No hay umbral que mostrar. */
+    /* Plazo de entrega al cliente, en días hábiles. Si cambia, hay que
+       cambiarlo AQUÍ, en index.html (busca «3 a 4 días») y en terminos.html. */
+    diasEntrega: '3 a 4',
   };
 
   /* ============================================================
@@ -371,7 +371,7 @@
 
   if ($('pdpEspecCierre')) {
     $('pdpEspecCierre').innerHTML =
-      '<strong>Envío gratis</strong> a toda Colombia · Envío internacional de 6 a 12 días · ' +
+      '<strong>Envío gratis</strong> a toda Colombia · Envío nacional en ' + FICHA.diasEntrega + ' días · ' +
       'Pago con PSE, tarjeta o contra entrega · ' +
       'Garantía y derecho de retracto (Ley 1480 de 2011).';
   }
@@ -379,7 +379,7 @@
   /* ---------- Sección "Envío y tiempos" ---------- */
   var envios = [
     'Enviamos a todo el país',
-    'Envío internacional: 6 a 12 días',
+    'Envío nacional: ' + FICHA.diasEntrega + ' días',
     'Envío gratis a toda Colombia',
     'Te damos el número de guía para seguir tu pedido'
   ];
