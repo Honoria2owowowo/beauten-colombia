@@ -2512,3 +2512,23 @@ h1, h2, h3, h4 {
   .paga-cod-lista { margin-bottom: 24px; }
   .paga-cod-alt { max-width: none; }
 }
+
+
+/* ============================================================
+   AVISO DE PAGO CONTRA ENTREGA EN LA FICHA DE PRODUCTO
+
+   Va justo debajo de los botones de compra. Es lo que decide a quien no quiere
+   pagar por internet, y antes la ficha no lo decía en ninguna parte.
+   ============================================================ */
+.pdp-cod-aviso {
+  margin: 14px 0 0;
+  padding: 12px 15px;
+  background: var(--pink-soft, #FFF0F3);
+  border: 1px solid var(--line, #E8E2DE);
+  border-left: 3px solid var(--accent, #EE2D7A);
+  border-radius: 0 12px 12px 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ink, #0C0C0C);
+}
+.pdp-cod-aviso strong { color: var(--accent-d, #d11f67); }

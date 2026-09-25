@@ -1,7 +1,7 @@
 /* Service Worker — Marlú Colombia PWA */
-const VERSION = 'beauten-v3.14.0';
-const CORE = 'beauten-core-v3.14';
-const RUNTIME = 'beauten-runtime-v3.14';
+const VERSION = 'beauten-v3.15.0';
+const CORE = 'beauten-core-v3.15';
+const RUNTIME = 'beauten-runtime-v3.15';
 
 const CORE_ASSETS = [
   './',

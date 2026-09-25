@@ -18,11 +18,11 @@
      sobre ellas: se calla en vez de prometer algo falso.
      ============================================================ */
   var FICHA = {
-    /* true  = también vendes contra entrega: aparece la caja verde
-               con las ventajas y el botón cambia a "Pedir contra entrega".
-       false = solo pago anticipado con PSE y tarjetas, que es lo que
-               el sitio anuncia hoy en la barra superior. */
-    contraEntrega: false,
+    /* true  = la ficha enseña el pago contra entrega: la caja con sus
+               ventajas, el botón "Pedir contra entrega" y el resumen.
+       Está en true porque la tienda YA cobra contra entrega en el checkout.
+       Si algún día se quita esa forma de pago, ponerlo en false. */
+    contraEntrega: true,
 
     /* Hora de corte del despacho en formato 24 h, por ejemplo '19:00'.
        Vacío ('') = el reloj no se muestra en ninguna parte. */
@@ -251,8 +251,8 @@
   if ($('pdpVendedor')) {
     var partes = ['Vendido por Marlú'];
     if (FICHA.diasDespacho) partes.push('Despacho ' + FICHA.diasDespacho + ' días hábiles');
-    partes.push('Envío a toda Colombia');
-    partes.push('Gratis a toda Colombia');
+    partes.push('Envío gratis en ' + FICHA.diasEntrega + ' días');
+    partes.push('Pagas contra entrega');
     $('pdpVendedor').textContent = partes.join(' · ');
   }
 
@@ -318,29 +318,23 @@
   }
 
   /* --- Caja de beneficios del pago ---
-     Cambia por completo según FICHA.contraEntrega. Los textos son
-     afirmaciones que la tienda ya sostiene en su propio sitio. */
+     Antes esta caja era un "o lo uno o lo otro" según FICHA.contraEntrega, y con
+     la bandera en false la ficha no decía NI UNA PALABRA del contra entrega: solo
+     salía PSE y tarjetas. Ahora se enseña siempre el contra entrega primero
+     —que es lo que decide a quien no quiere pagar por internet— y debajo se
+     aclara que también se puede pagar en línea. Nadie pierde información. */
   var caja = $('pdpCaja');
   if (caja) {
-    if (FICHA.contraEntrega) {
-      caja.className = 'pdp-caja pdp-caja--cod';
-      caja.innerHTML =
-        '<b>PAGA CONTRA ENTREGA</b><ul>' +
-        '<li>Pagas en efectivo cuando recibes tu pedido</li>' +
-        '<li>Sin tarjeta ni anticipos</li>' +
-        '<li>Revisas el producto antes de pagar</li>' +
-        '</ul>' +
-        '<span class="pdp-caja-pie">✓ Envío gratis a toda Colombia</span>';
-    } else {
-      caja.className = 'pdp-caja';
-      caja.innerHTML =
-        '<b>PAGO 100 % SEGURO</b><ul>' +
-        '<li>PSE y tarjetas a través de MercadoPago</li>' +
-        '<li>No guardamos los datos de tu tarjeta</li>' +
-        '<li>Recibes el número de guía para seguir tu pedido</li>' +
-        '</ul>' +
-        '<span class="pdp-caja-pie">✓ Envío gratis a toda Colombia</span>';
-    }
+    caja.className = 'pdp-caja pdp-caja--cod';
+    caja.innerHTML =
+      '<b>PAGA CONTRA ENTREGA</b><ul>' +
+      '<li>Pagas en efectivo cuando recibes tu pedido</li>' +
+      '<li>Sin tarjeta ni anticipos</li>' +
+      '<li>Revisas el producto antes de pagar</li>' +
+      '</ul>' +
+      '<span class="pdp-caja-pie">✓ Envío gratis a toda Colombia en ' +
+        escHtml(FICHA.diasEntrega) + ' días</span>' +
+      '<span class="pdp-caja-pie">✓ Si prefieres, pagas en línea con PSE o tarjeta</span>';
     caja.hidden = false;
   }
 
@@ -349,8 +343,8 @@
 
   /* ---------- Resumen de confianza ---------- */
   var confianza = [
-    'Envío gratis a toda Colombia',
-    'Pago seguro: PSE, tarjeta o contra entrega',
+    'Pago contra entrega: recibes y pagas al recibirlo',
+    'Envío gratis a toda Colombia en ' + FICHA.diasEntrega + ' días',
     'Derecho de retracto: 5 días hábiles (Ley 1480 de 2011)'
   ];
   if ($('pdpConfianza')) {
@@ -371,8 +365,8 @@
 
   if ($('pdpEspecCierre')) {
     $('pdpEspecCierre').innerHTML =
-      '<strong>Envío gratis</strong> a toda Colombia · Envío nacional en ' + FICHA.diasEntrega + ' días · ' +
-      'Pago con PSE, tarjeta o contra entrega · ' +
+      '<strong>Envío gratis</strong> a toda Colombia en ' + FICHA.diasEntrega + ' días · ' +
+      'Pagas contra entrega al recibir, o en línea con PSE o tarjeta · ' +
       'Garantía y derecho de retracto (Ley 1480 de 2011).';
   }
 
@@ -588,10 +582,10 @@
   var trust = $('pdpTrust');
   if (trust) {
     var puntos = [
-      'Envío gratis a toda Colombia',
       FICHA.contraEntrega
         ? 'Pago contra entrega: revisas antes de pagar'
         : 'Pago 100 % seguro: PSE y tarjetas',
+      'Envío gratis a toda Colombia en ' + FICHA.diasEntrega + ' días',
       'Garantía y derecho de retracto (Ley 1480 de 2011)',
       'Te damos el número de guía para seguir tu pedido'
     ];
