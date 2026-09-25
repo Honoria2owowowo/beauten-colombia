@@ -41,6 +41,28 @@
     envioGratisDesde: 150000
   };
 
+  /* ============================================================
+     DATOS DEL VENDEDOR — bloque "¿Quién te vende?"
+
+     Van en un solo sitio para que no se repitan por el proyecto.
+     Una línea vacía NO se dibuja: la caja se calla antes que
+     publicar un dato falso o el de otra marca.
+
+     PENDIENTE: el correo y la dirección de Marlú. Hoy el pie del
+     sitio dice soportevortexgadgets@gmail.com, que es el correo de
+     VÓRTEX; por eso NO se pone aquí hasta que me digas el de Marlú.
+     ============================================================ */
+  var TIENDA = {
+    nombre: 'Marlú Colombia',
+    descripcion: 'Negocio colombiano de belleza y bienestar.',
+    direccion: '',          // ej: 'Calle 10 # 20-30 · Cali'.  Vacío = no se muestra.
+    whatsapp: '573181738642',
+    whatsappVisible: '+57 318 173 8642',
+    horario: 'Lunes a sábado, 8:00 a.m. a 8:00 p.m.',
+    correo: '',             // PENDIENTE: el correo de Marlú
+    titular: 'C.C. 1126705132'
+  };
+
   var PRODUCTOS = window.BEAUTEN_PRODUCTOS || [];
   var WA = '573181738642';
 
@@ -520,6 +542,137 @@
     wa.href = 'https://wa.me/' + WA + '?text=' +
       encodeURIComponent('Hola Marlú 👋 quiero preguntar por *' + p.nombre + '*');
   }
+
+  /* ============================================================
+     ¿QUIÉN TE VENDE?
+
+     El comprador está a punto de dar su cédula y su dirección: aquí
+     es donde se pregunta "¿esta tienda existe?". Se dibujan los
+     datos reales que ya están publicados, sin inventar nada. Cada
+     línea solo aparece si tiene dato.
+     ============================================================ */
+  var quien = $('pdpQuien');
+  if (quien) {
+    var lineas = [
+      '<b>¿Quién te vende?</b>',
+      '<span>' + escHtml(TIENDA.nombre) + ' · ' + escHtml(TIENDA.descripcion) + '</span>'
+    ];
+    if (TIENDA.direccion) {
+      lineas.push('<span>Dirección: ' + escHtml(TIENDA.direccion) + '</span>');
+    }
+    if (TIENDA.whatsapp) {
+      lineas.push('<span>WhatsApp y llamadas' +
+        (TIENDA.horario ? ' (' + escHtml(TIENDA.horario) + ')' : '') +
+        ': <a href="https://wa.me/' + escHtml(TIENDA.whatsapp) + '" target="_blank" rel="noopener">' +
+        escHtml(TIENDA.whatsappVisible) + '</a></span>');
+    }
+    if (TIENDA.correo) {
+      lineas.push('<span>Correo: <a href="mailto:' + escHtml(TIENDA.correo) + '">' +
+        escHtml(TIENDA.correo) + '</a></span>');
+    }
+    if (TIENDA.titular) {
+      lineas.push('<span>Identificación del titular: ' + escHtml(TIENDA.titular) + '.</span>');
+    }
+    quien.innerHTML = lineas.join('');
+    quien.hidden = false;
+  }
+
+  /* ============================================================
+     LISTA DE CONFIANZA
+
+     Ojo: en VÓRTEX el primer punto dice "Envío GRATIS a toda
+     Colombia" porque allí sí lo es. En Marlú el envío es gratis
+     DESDE $150.000, así que aquí se dice con la condición. Copiar
+     la frase de VÓRTEX sería prometer algo que Marlú no da.
+     ============================================================ */
+  var trust = $('pdpTrust');
+  if (trust) {
+    var puntos = [
+      'Envío gratis en compras desde ' + cop(FICHA.envioGratisDesde),
+      FICHA.contraEntrega
+        ? 'Pago contra entrega: revisas antes de pagar'
+        : 'Pago 100 % seguro: PSE y tarjetas',
+      'Garantía y derecho de retracto (Ley 1480 de 2011)',
+      'Te damos el número de guía para seguir tu pedido'
+    ];
+    trust.innerHTML = puntos.map(function (x) {
+      return '<div class="pdp-trust-item"><span class="pdp-ck" aria-hidden="true">✓</span>' +
+        '<span>' + escHtml(x) + '</span></div>';
+    }).join('');
+    trust.hidden = false;
+  }
+
+  /* ============================================================
+     FICHA TÉCNICA
+
+     Igual que en VÓRTEX: un archivo aparte, editable por el dueño,
+     con los datos del producto y de dónde salió cada uno. Sirve
+     para dos cosas: dibujar la ficha y poder corregir el título o
+     la descripción que trae la plataforma del proveedor.
+
+     Si el archivo no está, o el producto no aparece en él, NO se
+     dibuja nada. La ficha nunca se rompe ni se rellena a ojo:
+     es mejor una ficha corta que una inventada.
+     ============================================================ */
+  function pintarFicha(f) {
+    var caja = $('pdpFicha');
+    if (!caja || !f || typeof f !== 'object') return;
+
+    var specs = (f.specs || []).filter(function (s) { return s && s.k && s.v; });
+    var incluye = (f.incluye || []).filter(Boolean);
+    var necesita = (f.necesita || []).filter(Boolean);
+    if (!specs.length && !incluye.length && !necesita.length) return;
+
+    var html = '<h2 class="pdp-ficha-titulo">Ficha técnica' +
+      (f.modelo ? ' <span>· ' + escHtml(f.modelo) + '</span>' : '') + '</h2>';
+
+    if (specs.length) {
+      html += '<dl class="pdp-ficha-lista">' + specs.map(function (s) {
+        return '<div class="pdp-ficha-fila"><dt>' + escHtml(s.k) + '</dt>' +
+          '<dd>' + escHtml(s.v) + '</dd></div>';
+      }).join('') + '</dl>';
+    }
+
+    if (incluye.length || necesita.length) {
+      html += '<div class="pdp-ficha-cols">';
+      if (incluye.length) {
+        html += '<div><h3>Qué trae la caja</h3><ul>' + incluye.map(function (x) {
+          return '<li>' + escHtml(x) + '</li>';
+        }).join('') + '</ul></div>';
+      }
+      if (necesita.length) {
+        html += '<div><h3>Qué necesitas para usarlo</h3><ul>' + necesita.map(function (x) {
+          return '<li>' + escHtml(x) + '</li>';
+        }).join('') + '</ul></div>';
+      }
+      html += '</div>';
+    }
+
+    if (f.nota_honesta) {
+      html += '<p class="pdp-ficha-nota">' + escHtml(f.nota_honesta) + '</p>';
+    }
+    if (f.fuente) {
+      html += '<p class="pdp-ficha-fuente">Fuente: ' + escHtml(f.fuente) + '.</p>';
+    }
+
+    caja.innerHTML = html;
+    caja.hidden = false;
+  }
+
+  // Se pide el archivo sin bloquear: si tarda o falla, la ficha sale igual.
+  fetch('ficha-tecnica.json?v=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) {
+      if (!j || !j.productos) return;
+      var f = j.productos[String(p.id)];
+      if (!f) return;
+      // Si hay descripción corregida, sustituye a la que trae la plataforma.
+      if (f.descripcion && $('pdpDescripcion')) {
+        $('pdpDescripcion').textContent = f.descripcion;
+      }
+      pintarFicha(f);
+    })
+    .catch(function () { /* sin ficha técnica: la página funciona igual */ });
 
   /* ---------- Pintar la página ---------- */
   if ($('pdpCargando')) $('pdpCargando').hidden = true;

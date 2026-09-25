@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "que_es": "Ficha tecnica de cada producto. La lee js/producto.js y la dibuja en la ficha de producto (producto.html). Mismo patron que la app de VORTEX.",
+    "por_que_existe": "El texto que trae la plataforma del proveedor es publicidad, no especificaciones: a veces promete mas de lo que el equipo hace. Aqui va el dato comprobado. Si un dato no se sabe, NO se pone: es mejor una ficha corta que una ficha inventada.",
+    "como_se_llena": "La llave de cada producto es su id, el mismo que aparece en js/productos.js. Plantilla de una entrada:",
+    "plantilla": {
+      "modelo": "Nombre del modelo, solo si el fabricante lo da",
+      "descripcion": "Descripcion corregida (opcional: si esta, sustituye a la de la tienda)",
+      "specs": [
+        { "k": "Etiqueta", "v": "Valor comprobado" }
+      ],
+      "incluye": ["Lo que trae la caja"],
+      "necesita": ["Lo que hace falta para usarlo"],
+      "nota_honesta": "Una limitacion explicada sin adornos",
+      "fuente": "De donde salio el dato: ficha del fabricante, manual, medicion propia"
+    },
+    "regla": "Si un producto no esta aqui, su ficha tecnica NO se dibuja. Nunca se rellena con suposiciones.",
+    "estado": "VACIO a 2026-09-25: faltan las especificaciones reales de los 20 productos.",
+    "de_donde_sacar_los_datos": "La pestana 'Detalles' de cada producto en app.dropi.co trae el texto del proveedor (en prosa). De ahi se extraen los datos, uno por uno, y se comprueba que sean coherentes con el nombre y las fotos del producto. Los 20 productos estan en Dropi con los mismos ids que usa la tienda."
+  },
+  "productos": {}
+}

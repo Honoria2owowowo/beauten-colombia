@@ -135,11 +135,25 @@
           </div>
         </div>
 
+        <!-- ============ ¿QUIÉN TE VENDE? ============
+             El comprador está a punto de dar su cédula y su dirección: aquí es
+             donde se pregunta "¿esta tienda existe?". Se dibuja desde el bloque
+             TIENDA de js/producto.js, y cada línea solo aparece si tiene dato. -->
+        <div class="pdp-quien" id="pdpQuien" hidden></div>
+
+        <!-- Lista de confianza. Solo afirmaciones que la tienda ya sostiene. -->
+        <div class="pdp-trust" id="pdpTrust" hidden></div>
+
+        <!-- ============ FICHA TÉCNICA ============
+             Se dibuja SOLO si el producto está en ficha-tecnica.json. Si no está,
+             no aparece nada: mejor sin ficha que con una inventada. -->
+        <section class="pdp-ficha" id="pdpFicha" hidden></section>
+
         <div class="pdp-acordeones">
 
           <section class="pdp-acordeon abierto">
             <button type="button" class="pdp-acordeon-cab" aria-expanded="true" aria-controls="pdpPanelEspec">
-              <span>Especificaciones y detalles</span>
+              <span>Descripción</span>
               <span class="pdp-mas" aria-hidden="true"></span>
             </button>
             <div class="pdp-acordeon-panel" id="pdpPanelEspec">

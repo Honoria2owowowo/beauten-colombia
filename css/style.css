@@ -1948,3 +1948,118 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
   .pdp-visor-next { right: 8px; }
   .pdp-visor-cerrar { top: 10px; right: 10px; width: 40px; height: 40px; font-size: 26px; }
 }
+
+/* ============================================================
+   ¿QUIÉN TE VENDE? · LISTA DE CONFIANZA · FICHA TÉCNICA
+   Traídas de la app de VÓRTEX, en la paleta clara de Marlú.
+   ============================================================ */
+
+/* ---------- ¿Quién te vende? ---------- */
+.pdp-quien {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: grid;
+  gap: 5px;
+}
+.pdp-quien b {
+  font-family: var(--sans); font-size: 15px; font-weight: 800;
+  color: var(--ink); margin-bottom: 4px;
+}
+.pdp-quien span {
+  font-size: 13.5px; line-height: 1.6; color: var(--gray-mid);
+}
+.pdp-quien a {
+  color: var(--accent-dark); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.pdp-quien a:hover { color: var(--accent); }
+
+/* ---------- Lista de confianza ---------- */
+.pdp-trust {
+  background: var(--pink-soft);
+  border: 1.5px solid #F7C6D8;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: grid;
+  gap: 9px;
+}
+.pdp-trust-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; line-height: 1.5; color: var(--gray-dark);
+}
+.pdp-ck {
+  flex: none; font-weight: 800; color: #2E9E5B; line-height: 1.5;
+}
+
+/* ---------- Ficha técnica ---------- */
+.pdp-ficha {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 22px 24px;
+}
+.pdp-ficha-titulo {
+  font-family: var(--serif); font-size: 20px; font-weight: 600;
+  color: var(--ink); margin-bottom: 14px;
+}
+.pdp-ficha-titulo span {
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  color: var(--gray-mid); letter-spacing: 0.5px;
+}
+.pdp-ficha-lista { display: grid; gap: 0; }
+.pdp-ficha-fila {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 18px;
+  padding: 11px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.pdp-ficha-fila:last-child { border-bottom: 0; }
+.pdp-ficha-fila dt {
+  flex: none; max-width: 46%;
+  font-family: var(--sans); font-size: 13.5px; color: var(--gray-mid);
+}
+.pdp-ficha-fila dd {
+  flex: 1; text-align: right;
+  font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--ink);
+  line-height: 1.5;
+}
+.pdp-ficha-cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+  margin-top: 20px; padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.pdp-ficha-cols h3 {
+  font-family: var(--sans); font-size: 12.5px; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--accent-dark); margin-bottom: 9px;
+}
+.pdp-ficha-cols ul { display: grid; gap: 6px; }
+.pdp-ficha-cols li {
+  position: relative; padding-left: 16px;
+  font-size: 13.5px; line-height: 1.5; color: var(--gray-dark);
+}
+.pdp-ficha-cols li::before {
+  content: "•"; position: absolute; left: 0; color: var(--accent);
+}
+.pdp-ficha-nota {
+  margin-top: 18px; padding: 13px 16px;
+  background: #FFF8E6; border-left: 3px solid #E8B93F; border-radius: 0 10px 10px 0;
+  font-size: 13.5px; line-height: 1.6; color: var(--gray-dark);
+}
+.pdp-ficha-fuente {
+  margin-top: 12px;
+  font-size: 12px; font-style: italic; color: var(--gray-mid);
+}
+
+/* ---------- Pantallas pequeñas ---------- */
+@media (max-width: 640px) {
+  .pdp-quien, .pdp-trust, .pdp-ficha { padding: 16px; border-radius: 14px; }
+  .pdp-ficha-cols { grid-template-columns: 1fr; gap: 18px; }
+  /* La etiqueta y el valor se apilan: en columna, un valor largo no cabe
+     a la derecha sin partirse raro. */
+  .pdp-ficha-fila { flex-direction: column; gap: 3px; }
+  .pdp-ficha-fila dt { max-width: none; }
+  .pdp-ficha-fila dd { text-align: left; }
+}
