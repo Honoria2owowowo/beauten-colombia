@@ -1,7 +1,7 @@
 /* Service Worker — Marlú Colombia PWA */
-const VERSION = 'beauten-v3.13.0';
-const CORE = 'beauten-core-v3.13';
-const RUNTIME = 'beauten-runtime-v3.13';
+const VERSION = 'beauten-v3.14.0';
+const CORE = 'beauten-core-v3.14';
+const RUNTIME = 'beauten-runtime-v3.14';
 
 const CORE_ASSETS = [
   './',
@@ -10,12 +10,13 @@ const CORE_ASSETS = [
   './checkout.html',
   './resultado.html',
   './manifest.webmanifest',
-  './css/style.css',
-  './js/productos.js',
-  './js/main.js',
-  './js/carrito.js',
-  './js/producto.js',
-  './js/oferta.js',
+  /* OJO: css y js NO se pre-guardan aquí a propósito.
+     Son los archivos que cambian en cada despliegue y ya se sirven RED PRIMERO
+     más abajo. Guardarlos en la instalación solo servía para tener una copia
+     vieja de reserva: si la red fallaba, el navegador devolvía el CSS antiguo
+     junto al HTML nuevo y la página salía sin estilos. Se siguen guardando al
+     vuelo cada vez que se descargan bien, así que sin conexión sigue
+     funcionando con la última versión que sí se cargó. */
   './assets/imgs/logo/logo.png',
   './assets/imgs/logo/footer-logo.png',
   './assets/imgs/icons/icon-192.png',
