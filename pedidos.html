@@ -106,7 +106,7 @@
      y "corrige" lo que uno escribe. Estos estilos dan sitio al boton que muestra
      lo escrito, para poder comprobarlo antes de entrar. */
   .login-clave{display:flex; align-items:center; gap:8px}
-  .login-clave input{flex:1 1 auto; min-width:0}
+  .login-caja .login-clave input{flex:1 1 auto; width:auto; min-width:0}
   .login-ver{flex:none; padding:11px 13px; border:1px solid var(--line); background:#f1f5f9;
     color:var(--slate); border-radius:10px; font-size:12.5px; font-weight:700;
     font-family:inherit; line-height:1; letter-spacing:.3px; cursor:pointer}
@@ -668,9 +668,19 @@
     }).then(function (r) {
       if (r.status === 401) { var e = new Error('Clave incorrecta.'); e.esClave = true; throw e; }
       if (r.status === 503) { var e2 = new Error('El servidor no esta configurado todavia.'); e2.esConfig = true; throw e2; }
-      if (r.status === 429) { var e3 = new Error('Demasiados intentos. Espera un momento.'); throw e3; }
-      if (!r.ok) throw new Error('Error del servidor (HTTP ' + r.status + ').');
+      if (r.status === 429) { var e3 = new Error('Demasiados intentos. Espera un momento.'); e3.esHttp = true; throw e3; }
+      if (!r.ok) { var e4 = new Error('Error del servidor (HTTP ' + r.status + ').'); e4.esHttp = true; throw e4; }
       return r.json();
+    }).catch(function (err) {
+      /* El navegador corta la peticion ANTES de que salga cuando el servidor no
+         autoriza la cabecera x-admin-clave (CORS), o cuando no hay internet.
+         Eso llega aqui como un error de red sin mensaje util ("Failed to fetch").
+         Se marca como error de red para que el aviso diga la verdad y no haga
+         pensar que la clave esta mal cuando el problema es otro. */
+      if (err && (err.esClave || err.esConfig || err.esHttp)) throw err;
+      var red = new Error('No se pudo conectar con el servidor.');
+      red.esRed = true;
+      throw red;
     });
   }
 
@@ -786,7 +796,8 @@
         if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
         errorLogin(err && err.esClave ? 'Esa clave no es. Inténtalo otra vez.'
                  : (err && err.esConfig ? 'El servidor no está configurado: falta ADMIN_PASSWORD en Cloudflare.'
-                 : (err && err.message) || 'No se pudo conectar con el servidor.'));
+                 : (err && err.esRed ? 'No hay conexión con el servidor. Revisa tu internet y vuelve a intentar: la clave no es el problema.'
+                 : (err && err.message) || 'No se pudo conectar con el servidor.')));
       });
   }
 
