@@ -392,6 +392,12 @@
     v.addEventListener('ended', function () {
       if (v === videoDe(actual) && !reloj) siguiente();
     });
+    /* En el primer cálculo el navegador todavía no sabía el tamaño real del
+       video, así que el alto salía largo y dejaba un hueco de más bajo la
+       tarjeta (se notaba sobre todo en tableta). Cuando ya lo sabe, se vuelve
+       a medir. */
+    v.addEventListener('loadedmetadata', ajustarAlto);
+    v.addEventListener('loadeddata', ajustarAlto);
   });
 
   if (flechaPrev) flechaPrev.addEventListener('click', function () { ir(actual - 1); });
