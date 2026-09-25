@@ -2218,3 +2218,81 @@ h1, h2, h3, h4 {
     margin-left: 2px;
   }
 }
+
+/* ============================================================
+   BANNER DEL VIDEO EN MÓVIL Y TABLETA: A SANGRE COMPLETA
+   (25-sep-2026, a petición de la clienta)
+
+   Antes, en móvil, el video era una tarjeta redondeada con márgenes y el
+   texto caía DEBAJO en un bloque blanco de 230 px. Eso dejaba dos huecos:
+   los márgenes alrededor de la tarjeta y el bloque blanco de abajo.
+
+   Ahora el video cubre todo el banner y el texto va ENCIMA, a la derecha.
+
+   El alto se da con `svh` (small viewport height) y no con `vh`: en iOS y en
+   Android la barra del navegador aparece y desaparece al hacer scroll, y con
+   `vh` el banner cambia de alto y se ve cortado o con un salto. `svh` se
+   calcula siempre con la barra visible, así que no baila. Se deja `vh` antes
+   como respaldo para navegadores viejos.
+   ============================================================ */
+@media (max-width: 900px) {
+  .carrusel-slide--video {
+    padding: 0;
+    position: relative;
+    height: 68vh;
+    height: 68svh;
+    min-height: 340px;
+    max-height: 640px;
+  }
+  .carrusel-slide--video .container {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+  .carrusel-slide--video .slide-video {
+    position: absolute;
+    inset: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+  .carrusel-slide--video .slide-video-el {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: cover;
+    /* Un poco hacia la derecha, para no cortarle la cara a la modelo */
+    object-position: 58% center;
+  }
+
+  /* El texto vuelve ENCIMA del video, pegado a la derecha */
+  .carrusel-slide--video .video-texto {
+    /* `position: absolute` tiene que ir EXPLÍCITO: más arriba, en el bloque de
+       <=768 px, está puesto como `static`. Sin esto el texto caía debajo del
+       video, se salía de la caja que recorta y desaparecía de la pantalla. */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: 0;
+    width: 76%;
+    align-items: flex-end;
+    text-align: right;
+    padding: 26px 20px;
+    /* El velo blanco nace en la derecha, que es donde va el texto, y se
+       desvanece hacia la izquierda para dejar ver a la modelo */
+    background: linear-gradient(to left,
+      rgba(255, 255, 255, .95) 0%,
+      rgba(255, 255, 255, .80) 52%,
+      rgba(255, 255, 255, 0) 100%);
+    /* Aquí el texto es lo principal, no un adorno: que aparezca rápido */
+    animation-delay: .4s;
+  }
+  .carrusel-slide--video .video-titular { font-size: clamp(24px, 6.4vw, 34px); }
+  .carrusel-slide--video .video-sub { font-size: 13.5px; }
+
+  /* Las flechas del carrusel caen justo encima del texto, que ahora está a la
+     derecha. En táctil lo natural es deslizar, y abajo quedan los puntos que
+     indican en qué lámina se está. */
+  .carrusel-flecha { display: none; }
+}
