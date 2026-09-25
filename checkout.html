@@ -112,7 +112,30 @@
             <span>Crédito y débito</span>
           </div>
         </div>
-        <p class="checkout-aviso">
+        <!-- ============ ¿CÓMO QUIERES PAGAR? ============
+             Las dos formas conviven: el pago en línea con MercadoPago y el
+             contra entrega, que es el que usa la app de VÓRTEX. -->
+        <fieldset class="pago-formas">
+          <legend class="pago-leyenda">¿Cómo quieres pagar?</legend>
+
+          <label class="pago-opcion">
+            <input type="radio" name="formaPago" value="mercadopago" checked>
+            <span class="pago-caja">
+              <span class="pago-titulo">Pagar ahora · PSE o tarjeta</span>
+              <span class="pago-texto">Cobro seguro con MercadoPago. No guardamos los datos de tu tarjeta.</span>
+            </span>
+          </label>
+
+          <label class="pago-opcion">
+            <input type="radio" name="formaPago" value="contra_entrega">
+            <span class="pago-caja">
+              <span class="pago-titulo">Pagar contra entrega</span>
+              <span class="pago-texto">Pagas en efectivo cuando recibes tu pedido. Sin tarjeta ni anticipos.</span>
+            </span>
+          </label>
+        </fieldset>
+
+        <p class="checkout-aviso" id="pagoAviso">
           Al continuar te llevamos a la pasarela segura de <strong>MercadoPago</strong> para completar el pago.
           No guardamos los datos de tu tarjeta.
         </p>
@@ -120,9 +143,20 @@
         <div class="checkout-error" id="checkoutError" hidden></div>
 
         <button type="submit" class="btn-pill checkout-pagar" id="btnPagar">
-          Pagar <span id="btnTotal">$0</span>
+          <span id="btnEtiqueta">Pagar</span> <span id="btnTotal">$0</span>
         </button>
       </form>
+
+      <!-- ============ PEDIDO CONTRA ENTREGA RECIBIDO ============
+           Los pedidos contra entrega no pasan por ninguna pasarela, así que
+           no hay a dónde redirigir: se confirma aquí mismo. -->
+      <div class="checkout-listo" id="checkoutListo" hidden>
+        <h2 class="checkout-sub">¡Listo, recibimos tu pedido!</h2>
+        <p class="checkout-listo-num">Tu número de pedido es <strong id="listoId"></strong></p>
+        <p>Te escribimos por WhatsApp al <strong id="listoTelefono"></strong> para confirmar la entrega.</p>
+        <p class="checkout-listo-nota">Pagas en efectivo cuando lo recibas. Si algo cambia, escríbenos y lo ajustamos.</p>
+        <a class="btn-pill btn-dark" href="index.html">Seguir mirando</a>
+      </div>
 
       <!-- ============ RESUMEN ============ -->
       <aside class="checkout-resumen">
@@ -297,6 +331,8 @@
     var est = estimarCupon(lineas);
     var descuento = lineas.length ? est.descuento : 0;
     var total = Math.max(0, sub - descuento);
+    // Se guarda para poder mandarlo al servidor si eligen contra entrega
+    totalActual = total;
 
     var lineaDesc = document.getElementById('lineaDescuento');
     lineaDesc.hidden = !(descuento > 0);
@@ -313,6 +349,30 @@
 
   window.pintarCheckout = pintar;
 
+  /* Total que se ve ahora mismo. Lo necesita el envío contra entrega, que no
+     pasa por la pasarela y por eso no lo recalcula nadie más. */
+  var totalActual = 0;
+
+  /* Qué forma de pago está marcada. */
+  function formaElegida() {
+    var m = document.querySelector('input[name="formaPago"]:checked');
+    return m ? m.value : 'mercadopago';
+  }
+
+  /* El botón y el aviso cambian según lo que elija, para que nunca diga
+     "Pagar" cuando en realidad no se paga nada todavía. */
+  function pintarFormaPago() {
+    var contra = formaElegida() === 'contra_entrega';
+    var etiqueta = document.getElementById('btnEtiqueta');
+    var aviso = document.getElementById('pagoAviso');
+    if (etiqueta) etiqueta.textContent = contra ? 'Pedir contra entrega' : 'Pagar';
+    if (aviso) {
+      aviso.innerHTML = contra
+        ? 'Al continuar registramos tu pedido y <strong>pagas en efectivo cuando lo recibas</strong>. Te escribimos por WhatsApp para confirmar.'
+        : 'Al continuar te llevamos a la pasarela segura de <strong>MercadoPago</strong> para completar el pago. No guardamos los datos de tu tarjeta.';
+    }
+  }
+
   window.addEventListener('load', function () {
     C.refrescar();
     // Si se llegó desde el botón de un kit, el código ya viene propuesto.
@@ -326,7 +386,12 @@
     pintar();
   });
 
-  document.getElementById('btnCupon').addEventListener('click', function () { aplicarCupon(); });
+  document.querySelectorAll('input[name="formaPago"]').forEach(function (r) {
+      r.addEventListener('change', pintarFormaPago);
+    });
+    pintarFormaPago();
+
+    document.getElementById('btnCupon').addEventListener('click', function () { aplicarCupon(); });
   document.getElementById('btnQuitarCupon').addEventListener('click', quitarCupon);
   if (inputCupon()) {
     inputCupon().addEventListener('keydown', function (e) {
@@ -400,6 +465,73 @@
     btn.disabled = true;
     btn.innerHTML = 'Creando el pago...';
 
+    /* ---------- CONTRA ENTREGA ----------
+       No hay pasarela: el pedido se guarda en la base de datos del servidor y
+       a ti te suena el teléfono. El dinero lo cobras al entregar. */
+    if (formaElegida() === 'contra_entrega') {
+      // El servidor exige un celular colombiano de 10 dígitos. Si lo escribió
+      // con el +57 delante, se quita: es el mismo número.
+      var tel = comprador.telefono.replace(/\D/g, '');
+      if (tel.length === 12 && tel.indexOf('57') === 0) tel = tel.slice(2);
+
+      var btnC = document.getElementById('btnPagar');
+      var textoC = btnC.innerHTML;
+      btnC.disabled = true;
+      btnC.innerHTML = 'Enviando tu pedido...';
+
+      try {
+        var rc = await fetch(beautenUrl('/api/pedido'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre: comprador.nombre,
+            apellido: comprador.apellido,
+            telefono: tel,
+            correo: comprador.email,
+            tipoDoc: comprador.tipoDocumento,
+            numDoc: comprador.documento,
+            departamento: comprador.departamento,
+            ciudad: comprador.ciudad,
+            direccion: comprador.direccion,
+            nota: comprador.notas,
+            // El servidor guarda un solo texto de producto: se arma con lo que
+            // lleva el carrito para que el pedido se entienda al despachar.
+            producto: lineas.map(function (l) {
+              return l.nombre + ' ×' + l.cantidad;
+            }).join(' + '),
+            cantidad: lineas.reduce(function (s, l) { return s + l.cantidad; }, 0),
+            valor: totalActual,
+            origen: 'checkout_web'
+          })
+        });
+
+        var dc = await rc.json().catch(function () { return {}; });
+
+        if (!rc.ok || !dc.id) {
+          btnC.disabled = false;
+          btnC.innerHTML = textoC;
+          mostrarError(dc.error || 'No pudimos registrar tu pedido. Revisa tus datos e intenta de nuevo.');
+          return;
+        }
+
+        // A partir de aquí el pedido ya está guardado: se vacía el carrito y se
+        // confirma en la misma pantalla, porque no hay pasarela a la que ir.
+        try { C.vaciar(); } catch (err) { /* sin problema */ }
+
+        document.getElementById('formCheckout').hidden = true;
+        document.getElementById('listoId').textContent = dc.id;
+        document.getElementById('listoTelefono').textContent = comprador.telefono;
+        document.getElementById('checkoutListo').hidden = false;
+        window.scrollTo(0, 0);
+      } catch (err) {
+        btnC.disabled = false;
+        btnC.innerHTML = textoC;
+        mostrarError('No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.');
+      }
+      return;
+    }
+
+    /* ---------- PAGAR AHORA (MercadoPago) ---------- */
     try {
       var r = await fetch(beautenUrl('/api/crear-pago'), {
         method: 'POST',

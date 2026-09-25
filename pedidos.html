@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestor Pedidos COD · Marlú</title>
+<style>
+  :root{
+    --bg:#f1f5f9; --card:#ffffff; --ink:#0f172a; --mut:#64748b; --line:#e2e8f0;
+    --teal:#00A6A6; --teal-d:#0b7e7e; --green:#15803d; --green-bg:#dcfce7;
+    --blue:#1d4ed8; --blue-bg:#dbeafe; --amber:#b45309; --amber-bg:#fef3c7;
+    --purple:#6d28d9; --purple-bg:#ede9fe; --red:#b91c1c; --red-bg:#fee2e2;
+    --slate:#475569; --slate-bg:#e2e8f0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:var(--ink); padding-bottom:60px}
+  .top{background:linear-gradient(135deg,#062a2a,#0b4a4a 55%,#0e6363); color:#fff; padding:16px 18px; position:sticky; top:0; z-index:50; box-shadow:0 2px 10px rgba(0,0,0,.25)}
+  .top h1{font-size:18px; letter-spacing:.3px}
+  .top h1 span{color:#4CE0D6}
+  .top .sub{font-size:12px; opacity:.85; margin-top:2px}
+  .top-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .btn{border:0; border-radius:10px; padding:9px 14px; font-size:14px; font-weight:600; cursor:pointer; background:#e2e8f0; color:#0f172a}
+  .btn:active{transform:scale(.97)}
+  .btn.teal{background:var(--teal); color:#fff}
+  .btn.teal:hover{background:var(--teal-d)}
+  .btn.ghost{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.5)}
+  .btn.danger{background:var(--red); color:#fff}
+  .btn.sm{padding:5px 9px; font-size:12px; border-radius:8px}
+  .wrap{max-width:1020px; margin:0 auto; padding:14px 14px 0}
+  .stats{display:flex; gap:8px; overflow-x:auto; padding:4px 0 10px; scrollbar-width:none}
+  .stats::-webkit-scrollbar{display:none}
+  .stat{flex:0 0 auto; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:7px 12px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:7px; box-shadow:0 1px 2px rgba(0,0,0,.05)}
+  .stat b{font-size:16px}
+  .stat.on{border-color:var(--teal); box-shadow:0 0 0 2px rgba(0,166,166,.25)}
+  .dot{width:9px; height:9px; border-radius:50%; display:inline-block}
+  .toolbar{display:flex; gap:8px; align-items:center; margin:6px 0 14px; flex-wrap:wrap}
+  .search{flex:1; min-width:200px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; font-size:14px; background:#fff}
+  .list{display:grid; grid-template-columns:1fr; gap:12px}
+  @media(min-width:760px){ .list{grid-template-columns:1fr 1fr} }
+  .ord{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .ord.cancelado{opacity:.72; background:#fbfbfb}
+  .ord-h{display:flex; align-items:flex-start; gap:10px}
+  .ava{width:40px; height:40px; border-radius:50%; background:var(--teal); color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; flex:0 0 40px; font-size:15px}
+  .ord-h .who{flex:1; min-width:0}
+  .who .nm{font-weight:700; font-size:15px; line-height:1.25}
+  .who .ph{font-size:12.5px; color:var(--mut); word-break:break-all}
+  .who .prod{font-size:13px; color:var(--ink); margin-top:2px}
+  .who .prod b{color:var(--teal-d)}
+  .fecha{font-size:11px; color:var(--mut); margin-top:2px}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
+  .chip{border:1.5px solid var(--line); background:#fff; color:var(--slate); border-radius:999px; padding:4px 11px; font-size:12.5px; font-weight:600; cursor:pointer; user-select:none; line-height:1.4}
+  .chip:active{transform:scale(.96)}
+  .chip.si-compro{border-color:#22c55e; background:var(--green-bg); color:var(--green)}
+  .chip.no-compro{border-color:#ef4444; background:var(--red-bg); color:var(--red)}
+  .chip.pagado{border-color:var(--teal); background:#ccf3f3; color:var(--teal-d)}
+  .chip.salio{border-color:#a855f7; background:var(--purple-bg); color:var(--purple)}
+  .chip.guia{border-color:#3b82f6; background:var(--blue-bg); color:var(--blue)}
+  .chip.camino{border-color:#f59e0b; background:var(--amber-bg); color:var(--amber)}
+  .chip.entregado{border-color:#16a34a; background:#bbf7d0; color:#14532d}
+  .chip.pend{background:var(--slate-bg); color:var(--slate)}
+  .guiainput{width:150px; padding:3px 7px; border-radius:7px; border:1.5px solid #3b82f6; font-size:12px}
+  .nota{margin-top:8px; font-size:12.5px; color:var(--mut); background:#f8fafc; border-left:3px solid var(--line); padding:5px 8px; border-radius:0 6px 6px 0; white-space:pre-wrap}
+  .ord-f{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; border-top:1px dashed var(--line); padding-top:9px; align-items:center}
+  .ord-f .upd{margin-left:auto; font-size:11px; color:var(--mut)}
+  .lbl-upd{font-size:11.5px; font-weight:700; color:var(--teal-d); letter-spacing:.4px}
+  .empty{background:var(--card); border:1.5px dashed var(--line); border-radius:14px; padding:36px 18px; text-align:center; color:var(--mut)}
+  .empty b{display:block; font-size:16px; color:var(--ink); margin-bottom:6px}
+  /* modal */
+  .ov{position:fixed; inset:0; background:rgba(8,25,25,.55); display:none; align-items:flex-start; justify-content:center; overflow:auto; z-index:100; padding:18px 12px}
+  .ov.open{display:flex}
+  .modal{background:#fff; border-radius:16px; width:100%; max-width:560px; padding:18px; margin:auto 0; box-shadow:0 10px 40px rgba(0,0,0,.3)}
+  .modal h2{font-size:17px; margin-bottom:14px; color:#062a2a}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+  .f{display:flex; flex-direction:column; gap:4px; margin-bottom:10px}
+  .f label{font-size:12px; font-weight:600; color:var(--slate)}
+  .f input,.f select,.f textarea{border:1px solid var(--line); border-radius:9px; padding:9px 10px; font-size:14px; background:#fff}
+  .f input:focus,.f select:focus,.f textarea:focus{outline:2px solid rgba(0,166,166,.4); border-color:var(--teal)}
+  .f textarea{resize:vertical; min-height:52px}
+  .full{grid-column:1/-1}
+  .modal-actions{display:flex; gap:8px; justify-content:flex-end; margin-top:6px}
+  #toast{position:fixed; bottom:16px; left:50%; transform:translateX(-50%) translateY(80px); background:#062a2a; color:#fff; padding:10px 18px; border-radius:999px; font-size:13.5px; transition:.25s; z-index:200; opacity:0; pointer-events:none; max-width:92vw; text-align:center}
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .file-in{display:none}
+  @media(max-width:520px){ .grid2,.grid3{grid-template-columns:1fr} }
+
+  /* ============================================================
+     ACCESO PRIVADO + AVISO DE VENTA  (2026-09-17)
+     El gestor era publico: cualquiera con la direccion veia los pedidos y los
+     datos personales de los clientes. Ahora hay que entrar con la clave, y
+     ademas avisa con un sonido cuando entra un pedido nuevo de la web.
+     ============================================================ */
+  .login{position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#062a2a,#0b4a4a 55%,#0e6363); padding:18px}
+  .login.hide{display:none}
+  .login-caja{background:#fff; border-radius:16px; padding:24px 22px; width:100%; max-width:380px;
+    box-shadow:0 18px 46px rgba(0,0,0,.4)}
+  .login-caja h2{font-size:19px; margin-bottom:4px}
+  .login-caja p.sub{font-size:13px; color:var(--mut); margin-bottom:16px; line-height:1.45}
+  .login-caja label{display:block; font-size:12px; font-weight:700; color:var(--slate); margin-bottom:5px; text-transform:uppercase; letter-spacing:.4px}
+  .login-caja input[type=password],.login-caja input[type=text]{width:100%; padding:11px 12px; border:1px solid var(--line);
+    border-radius:10px; font-size:15px; font-family:inherit}
+  .login-caja input:focus{outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal)}
+  .login-caja .btn{width:100%; margin-top:14px; padding:12px}
+  .login-rec{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:var(--slate)}
+  .login-err{margin-top:12px; font-size:13px; color:var(--red); background:var(--red-bg);
+    border-radius:9px; padding:9px 11px; display:none; line-height:1.4}
+  .login-err.show{display:block}
+  .login-nota{margin-top:14px; font-size:11.5px; color:var(--mut); line-height:1.45;
+    border-top:1px solid var(--line); padding-top:11px}
+  .login-nota code{background:#f1f5f9; padding:1px 5px; border-radius:4px; font-size:11px}
+
+  /* barra de aviso: estado del sonido y del servidor */
+  .aviso{display:flex; align-items:center; gap:9px; flex-wrap:wrap; background:#fff; border:1px solid var(--line);
+    border-radius:12px; padding:9px 12px; margin:0 0 12px; font-size:13px}
+  .aviso .pt{display:flex; align-items:center; gap:7px; color:var(--slate)}
+  .aviso .pt .dot{background:#cbd5e1}
+  .aviso .pt.ok .dot{background:#16a34a}
+  .aviso .pt.mal .dot{background:var(--red)}
+  .aviso .sep{flex:1}
+  .btn.sonar.off{background:var(--amber-bg); color:var(--amber); border:1px solid #fcd34d}
+  .btn.sonar.on{background:var(--green-bg); color:var(--green); border:1px solid #86efac}
+
+  /* pedido nuevo: se resalta hasta que lo abras */
+  .ord.nuevo{box-shadow:0 0 0 2px var(--teal), 0 6px 20px rgba(0,166,166,.28);
+    animation:lateNuevo 1.1s ease-in-out infinite}
+  @keyframes lateNuevo{0%,100%{box-shadow:0 0 0 2px var(--teal), 0 6px 20px rgba(0,166,166,.28)}
+    50%{box-shadow:0 0 0 2px var(--teal), 0 6px 26px rgba(0,166,166,.55)}}
+  .ord .marca-nuevo{display:inline-block; background:var(--teal); color:#fff; font-size:10px; font-weight:800;
+    padding:2px 7px; border-radius:999px; margin-left:6px; letter-spacing:.5px; vertical-align:middle}
+  @media(prefers-reduced-motion:reduce){.ord.nuevo{animation:none}}
+
+  /* cartel de "entraron N pedidos" */
+  .banner-nuevos{display:none; align-items:center; gap:10px; background:var(--teal); color:#fff;
+    border-radius:12px; padding:11px 14px; margin:0 0 12px; font-weight:700; font-size:14px;
+    box-shadow:0 6px 18px rgba(0,166,166,.35)}
+  .banner-nuevos.show{display:flex}
+  #toast.tocable{cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+  /* ---------- confirmar antes de despachar, telefono y rendimiento ---------- */
+  .ord.pordespachar{box-shadow:0 0 0 2px #f59e0b inset}
+  .cf{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px;padding:9px;border-radius:9px;background:#f1f5f9}
+  .cf-ok{background:#dcfce7}
+  .cf-ojo{background:#fef3c7}
+  .cf-mal{background:#fee2e2}
+  .cf-t{font-size:12px;font-weight:800;color:#0f172a;margin-right:auto}
+  .tav{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 2px}
+  .tav-i{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px}
+  .tav-i.mal{background:#fee2e2;color:#991b1b}
+  .tav-i.ojo{background:#fef3c7;color:#92400e}
+  .tav-i.ok{background:#dcfce7;color:#166534}
+  .btn.okc{background:#15803d;color:#fff}
+  #rendBox{display:none;margin:12px 0 18px;padding:14px;background:#fff;border:1px solid var(--line);border-radius:12px}
+  .rend-top{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .btn.sel{background:#0f172a;color:#fff}
+  .rend-global{display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;margin-bottom:12px}
+  .rend-global.ok{background:#dcfce7}
+  .rend-global.ojo{background:#fef3c7}
+  .rend-global.mal{background:#fee2e2}
+  .rg-num{font-size:34px;font-weight:900;line-height:1}
+  .rg-txt{font-size:12px;color:#334155}
+  .rend-h{font-size:14px;font-weight:800;margin:16px 0 6px}
+  table.rend{width:100%;border-collapse:collapse;font-size:13px}
+  table.rend th{text-align:left;font-size:11px;text-transform:uppercase;color:#64748b;border-bottom:1px solid var(--line);padding:5px 4px}
+  table.rend td{padding:6px 4px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+  table.rend td.mal{color:#991b1b;font-weight:800}
+  table.rend td.ojo{color:#92400e;font-weight:800}
+  table.rend td.ok{color:#166534;font-weight:800}
+  .barra{height:5px;border-radius:3px;background:#e2e8f0;margin-top:4px;overflow:hidden}
+  .barra i{display:block;height:100%}
+  .barra i.mal{background:#dc2626}
+  .barra i.ojo{background:#f59e0b}
+  .barra i.ok{background:#16a34a}
+  .rend-nota{font-size:11.5px;color:#64748b;margin-top:10px;line-height:1.55}
+  .rk{padding:1px 5px;border-radius:4px;font-weight:700}
+  .rk.ok{background:#dcfce7}
+  .rk.ojo{background:#fef3c7}
+  .rk.mal{background:#fee2e2}
+  .banner-nuevos button{margin-left:auto; background:rgba(255,255,255,.22); border:0; color:#fff;
+    font-weight:700; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:13px; font-family:inherit}
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <div>
+      <h1>Marlú <span>Gadgets</span> · Gestor Pedidos COD</h1>
+      <div class="sub">Pedidos contra entrega por WhatsApp · listos para Dropi</div>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap">
+      <button class="btn teal" id="btnNuevo">+ Nuevo pedido</button>
+      <button class="btn ghost sm" id="btnExportar">Exportar JSON</button>
+      <button class="btn ghost sm" id="btnCSV">CSV (Excel)</button>
+      <button class="btn ghost sm" id="btnImportar">Importar</button>
+      <input type="file" id="fileImp" class="file-in" accept=".json,application/json">
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <input class="search" id="buscar" placeholder="Buscar por nombre, teléfono o producto…">
+    <button class="btn" id="btnLimpiarFiltro" style="display:none">Limpiar filtro</button>
+  </div>
+  <div id="lista" class="list"></div>
+  <div class="empty" id="vacio" style="display:none">
+    <b>Aún no hay pedidos registrados</b>
+    Pulsa "+ Nuevo pedido" para registrar el primero que llegue por WhatsApp.
+    <div style="margin-top:10px; font-size:12.5px; color:#94a3b8">Los datos se guardan automáticamente en este dispositivo. Usa Exportar para respaldar o moverlos a otro dispositivo.</div>
+  </div>
+</main>
+
+<!-- Modal formulario -->
+<div class="ov" id="ov">
+  <div class="modal">
+    <h2 id="modalTitulo">Nuevo pedido</h2>
+    <div class="grid2">
+      <div class="f"><label>Nombre *</label><input id="f_nombre" placeholder="Nombre del cliente"></div>
+      <div class="f"><label>Apellido</label><input id="f_apellido" placeholder="Apellido"></div>
+      <div class="f"><label>Teléfono / WhatsApp *</label><input id="f_telefono" inputmode="tel" placeholder="3001234567"></div>
+      <div class="f"><label>Correo (opcional)</label><input id="f_correo" type="email" placeholder="cliente@correo.com"></div>
+      <div class="f"><label>Tipo de documento</label><select id="f_tipoDoc"><option value="CC">CC — Cédula</option><option value="CE">CE — Cédula extranjería</option><option value="NIT">NIT</option><option value="TI">TI — Tarjeta identidad</option><option value="PAS">PAS — Pasaporte</option></select></div>
+      <div class="f"><label>Número de documento</label><input id="f_numDoc" inputmode="numeric" placeholder="1126705132"></div>
+      <div class="f full"><label>Dirección de entrega *</label><input id="f_direccion" placeholder="Calle, carrera, número, apartamento"></div>
+      <div class="f"><label>Ciudad *</label><input id="f_ciudad" value="Cali"></div>
+      <div class="f"><label>Departamento</label><input id="f_depto" value="Valle del Cauca"></div>
+      <div class="f"><label>Producto *</label><input id="f_producto" placeholder="Ej: Audífonos M10"></div>
+      <div class="f"><label>Cantidad</label><input id="f_cantidad" type="number" min="1" value="1"></div>
+      <div class="f"><label>Valor total (COP)</label><input id="f_valor" type="number" min="0" placeholder="69930"></div>
+      <div class="f full"><label>Notas (color, talla, cupón, referencias…)</label><textarea id="f_nota" placeholder="Detalles del pedido, cupón aplicado, observaciones"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="btnCancelarModal">Cancelar</button>
+      <button class="btn teal" id="btnGuardar">Guardar pedido</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  var LS_KEY = 'marlu_cod_pedidos_v1';
+  var pedidos = [];
+  var filtro = 'todos';
+  var termino = '';
+  var editId = null;
+
+  /* ---------- utilidades ---------- */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+  function money(n){ n=Number(n)||0; return '$'+n.toLocaleString('es-CO'); }
+  function hoyISO(){ return new Date().toISOString(); }
+  function fmtFecha(iso){
+    if(!iso) return '';
+    var d = new Date(iso);
+    if(isNaN(d)) return '';
+    return d.toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'2-digit'})+' '+d.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+  }
+  function toast(msg, alTocar){
+    var t=$('toast'); t.textContent=msg; t.classList.add('show');
+    t.onclick = null;
+    clearTimeout(t._h);
+    if (alTocar) {
+      /* Con accion: no se oculta solo (hay que poder tocarlo para ver el detalle). */
+      t.classList.add('tocable');
+      t.onclick = function () {
+        t.classList.remove('show');
+        t.classList.remove('tocable');
+        t.onclick = null;
+        alTocar();
+      };
+      return;
+    }
+    t._h = setTimeout(function(){t.classList.remove('show');},2400);
+  }
+  function guardar(){
+    localStorage.setItem(LS_KEY, JSON.stringify(pedidos));
+    /* Si hay servidor conectado, lo que acaba de cambiar se sube en segundo plano.
+       Si no lo hay, esto no hace nada y el gestor funciona como siempre. */
+    sincronizarCambios();
+    render();
+  }
+  function cargar(){
+    try{
+      var raw = localStorage.getItem(LS_KEY);
+      pedidos = raw ? JSON.parse(raw) : [];
+      if(!Array.isArray(pedidos)) pedidos=[];
+    }catch(e){ pedidos=[]; }
+  }
+  function idNuevo(){ return 'P' + Date.now().toString(36).toUpperCase(); }
+  function copiar(texto, okMsg){
+    function fallback(){
+      var ta=document.createElement('textarea'); ta.value=texto; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand('copy'); okMsg && toast(okMsg);}catch(e){ toast('No se pudo copiar'); }
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(function(){ okMsg && toast(okMsg); }, fallback);
+    } else fallback();
+  }
+
+  /* ---------- estado por pedido ---------- */
+  function iniPedido(){
+    return {
+      id:idNuevo(), creado:hoyISO(), updated:hoyISO(),
+      nombre:'', apellido:'', telefono:'', correo:'', direccion:'', ciudad:'Cali', departamento:'Valle del Cauca',
+      tipoDoc:'CC', numDoc:'',
+      producto:'', cantidad:1, valor:0, nota:'',
+      compro:'',      /* '' = sin definir | 'si' | 'no' */
+      pagado:false, salio:false, camino:false, entregado:false, guia:''
+    };
+  }
+  function resumenEstados(p){
+    var r=[];
+    if(p.compro==='no') r.push('no_compra');
+    else{
+      if(p.compro==='si') r.push('compro');
+      if(p.pagado) r.push('pagado');
+      if(p.salio) r.push('salio');
+      if(p.guia) r.push('guia');
+      if(p.camino) r.push('camino');
+      if(p.entregado) r.push('entregado');
+    }
+    return r;
+  }
+  function categoria(p){
+    if(p.compro==='no') return 'rechazados';
+    var e = resumenEstados(p);
+    if(p.entregado) return 'entregados';
+    if(p.camino) return 'camino';
+    if(p.guia) return 'guia';
+    if(p.pagado) return 'pagados';
+    if(p.compro==='si') return 'confirmados';
+    return 'sinconfirmar';
+  }
+  function enFiltro(p){
+    var cat = categoria(p);
+    if(filtro!=='todos' && cat!==filtro) return false;
+    if(termino){
+      var q = termino.toLowerCase();
+      var hay = (p.nombre+' '+p.apellido+' '+p.telefono+' '+p.producto+' '+p.ciudad+' '+p.direccion+' '+p.guia+' '+(p.numDoc||'')).toLowerCase();
+      if(hay.indexOf(q)===-1) return false;
+    }
+    return true;
+  }
+
+  /* ---------- render ---------- */
+  var CATS = [
+    ['todos','Todos'],['sinconfirmar','Por confirmar'],['confirmados','Compró'],['pagados','Pagó'],
+    ['guia','Con guía'],['camino','En camino'],['entregados','Entregado'],['rechazados','No compró']
+  ];
+  var DOT = {todos:'#0f172a',sinconfirmar:'#94a3b8',confirmados:'#22c55e',pagados:'#00A6A6',guia:'#3b82f6',camino:'#f59e0b',entregados:'#16a34a',rechazados:'#ef4444'};
+  function renderStats(){
+    var c={}; CATS.forEach(function(x){c[x[0]]=0;});
+    pedidos.forEach(function(p){ c[categoria(p)]++; c.todos++; });
+    var h='';
+    CATS.forEach(function(x){
+      h+='<div class="stat'+(filtro===x[0]?' on':'')+'" data-f="'+x[0]+'">'+
+         '<span class="dot" style="background:'+DOT[x[0]]+'"></span><b>'+c[x[0]]+'</b> '+x[1]+'</div>';
+    });
+    $('stats').innerHTML=h;
+  }
+  function chipHtml(clase, label, on){
+    return '<span class="chip '+(on?clase:'pend')+'" data-t="'+clase+'">'+label+'</span>';
+  }
+  function cardHtml(p){
+    var ini = esc(((p.nombre||'?').charAt(0)+(p.apellido||'').charAt(0)).toUpperCase());
+    var linea = '';
+    var t = p.compro==='no' ? 'no-compro' : (p.compro==='si' ? 'si-compro' : 'pend');
+    var lCompra = p.compro==='si' ? '✓ Compró' : (p.compro==='no' ? '✕ No compró' : 'Compró?');
+    var wa = 'https://wa.me/' + String(p.telefono||'').replace(/\D/g,'');
+    var tel = p.telefono ? '<a href="'+wa+'" target="_blank" rel="noopener" style="color:var(--teal-d);text-decoration:none">'+esc(p.telefono)+'</a>' : '<i style="color:#cbd5e1">sin teléfono</i>';
+    var prod = p.producto ? esc(p.producto) : '<i style="color:#cbd5e1">sin producto</i>';
+    var f = '<span class="lbl-upd">'+(p.compro==='si'?'CONFIRMADO':'')+(p.compro==='si'&&p.pagado?' · ':'')+(p.pagado?'PAGADO':'')+'</span>';
+    var upd = p.updated ? fmtFecha(p.updated) : '';
+    /* Lo que NO esta confirmado no se puede despachar: se marca la ficha entera
+       para que se vea de un vistazo, sin tener que abrir nada. */
+    var porDespachar = !p.entregado && p.compro !== 'no' && p.confirmacion !== 'confirmado';
+    return '<article class="ord'+(p.compro==='no'?' cancelado':'')+(nuevosIds[p.id]?' nuevo':'')+(porDespachar?' pordespachar':'')+'" data-id="'+esc(p.id)+'">'+
+      '<div class="ord-h">'+
+        '<div class="ava">'+ini+'</div>'+
+        '<div class="who">'+
+          '<div class="nm">'+esc(p.nombre||'(sin nombre)')+' '+esc(p.apellido||'')+
+            (nuevosIds[p.id]?'<span class="marca-nuevo">NUEVO</span>':'')+
+            (p.soloLocal?'<span class="marca-nuevo" style="background:#b45309">SOLO AQUÍ</span>':'')+'</div>'+
+          '<div class="ph">📱 '+tel+(p.correo?' · ✉ '+esc(p.correo):'')+'</div>'+
+          bloqueTel(p)+
+          (p.numDoc?'<div class="ph">🪪 '+esc(p.tipoDoc||'CC')+' '+esc(p.numDoc)+'</div>':'')+
+          '<div class="prod"><b>'+prod+'</b> ×'+Number(p.cantidad||1)+' · '+money(p.valor)+'</div>'+
+          '<div class="prod" style="color:var(--mut)">📍 '+esc(p.direccion||'')+' · '+esc(p.ciudad||'')+(p.departamento?', '+esc(p.departamento):'')+'</div>'+
+          '<div class="fecha">Registrado: '+(p.creado?fmtFecha(p.creado):'')+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="chips">'+
+        '<span class="chip '+t+'" data-t="compro">'+lCompra+'</span>'+
+        chipHtml('pagado','Pagó',!!p.pagado)+
+        chipHtml('salio','Salió de proveedor',!!p.salio)+
+        '<span class="chip '+(p.guia?'guia':'pend')+'" data-t="guia">Guía '+(p.guia?'#'+esc(p.guia):'—')+'</span>'+
+        chipHtml('camino','En camino',!!p.camino)+
+        chipHtml('entregado','Entregado',!!p.entregado)+
+      '</div>'+
+      (p.nota?'<div class="nota">📝 '+esc(p.nota)+'</div>':'')+
+      bloqueConf(p)+
+      '<div class="ord-f">'+
+        '<button class="btn sm" data-a="wa">WhatsApp</button>'+
+        '<button class="btn sm" data-a="copiar">Copiar para Dropi</button>'+
+        '<button class="btn sm" data-a="editar">Editar</button>'+
+        '<button class="btn sm danger" data-a="borrar">Borrar</button>'+
+        (f?'<span class="upd">'+f+'</span>':'')+
+      '</div>'+
+    '</article>';
+  }
+  function render(){
+    renderStats();
+    var vis = pedidos.filter(enFiltro).sort(function(a,b){ return (b.creado||'').localeCompare(a.creado||''); });
+    $('lista').innerHTML = vis.map(cardHtml).join('');
+    $('vacio').style.display = pedidos.length ? 'none' : 'block';
+    $('btnLimpiarFiltro').style.display = (filtro!=='todos'||termino)?'inline-block':'none';
+  }
+
+  /* ---------- modal ---------- */
+  function abrirModal(p){
+    editId = p ? p.id : null;
+    $('modalTitulo').textContent = p ? 'Editar pedido '+p.id : 'Nuevo pedido';
+    $('f_nombre').value=p?p.nombre:''; $('f_apellido').value=p?p.apellido:'';
+    $('f_telefono').value=p?p.telefono:''; $('f_correo').value=p?p.correo:'';
+    $('f_direccion').value=p?p.direccion:''; $('f_ciudad').value=p?(p.ciudad||'Cali'):'Cali';
+    $('f_tipoDoc').value=(p&&p.tipoDoc)?p.tipoDoc:'CC'; $('f_numDoc').value=p?(p.numDoc||''):'';
+    $('f_depto').value=p?(p.departamento||'Valle del Cauca'):'Valle del Cauca';
+    $('f_producto').value=p?p.producto:''; $('f_cantidad').value=p?(p.cantidad||1):1;
+    $('f_valor').value=p?(p.valor||''):''; $('f_nota').value=p?p.nota:'';
+    $('ov').classList.add('open');
+    setTimeout(function(){ $('f_nombre').focus(); },60);
+  }
+  function cerrarModal(){ $('ov').classList.remove('open'); editId=null; }
+  function leerForm(){
+    var datos={
+      nombre:$('f_nombre').value.trim(), apellido:$('f_apellido').value.trim(),
+      telefono:$('f_telefono').value.trim(), correo:$('f_correo').value.trim(),
+      direccion:$('f_direccion').value.trim(), ciudad:$('f_ciudad').value.trim()||'Cali',
+      departamento:$('f_depto').value.trim()||'Valle del Cauca',
+      tipoDoc:$('f_tipoDoc').value, numDoc:$('f_numDoc').value.trim(),
+      producto:$('f_producto').value.trim(), cantidad:Math.max(1,parseInt($('f_cantidad').value,10)||1),
+      valor:Math.max(0,parseInt($('f_valor').value,10)||0), nota:$('f_nota').value.trim()
+    };
+    var errs=[];
+    if(!datos.nombre) errs.push('nombre');
+    if(!datos.telefono) errs.push('teléfono');
+    if(!datos.direccion) errs.push('dirección');
+    if(!datos.ciudad) errs.push('ciudad');
+    if(!datos.producto) errs.push('producto');
+    if(errs.length){ toast('Faltan: '+errs.join(', ')); return null; }
+    return datos;
+  }
+  function guardarForm(){
+    var d = leerForm(); if(!d) return;
+    if(editId){
+      var p = pedidos.find(function(x){return x.id===editId;});
+      if(p){ for(var k in d){ p[k]=d[k]; } p.updated=hoyISO(); toast('Pedido actualizado'); }
+    } else {
+      var n = iniPedido();
+      for(var k2 in d){ n[k2]=d[k2]; }
+      pedidos.push(n); toast('Pedido registrado');
+    }
+    cerrarModal(); guardar();
+  }
+
+  /* ---------- toggle estado ---------- */
+  function toggleEstado(p, tipo){
+    if(tipo==='compro'){
+      p.compro = p.compro==='si' ? '' : (p.compro==='no' ? 'si' : 'si');
+      if(p.compro==='no'){ p.pagado=false; } /* si no compró no puede haber pagado */
+      p.updated=hoyISO(); guardar(); return;
+    }
+    switch(tipo){
+      case 'pagado': p.pagado=!p.pagado; break;
+      case 'salio': p.salio=!p.salio; break;
+      case 'camino': p.camino=!p.camino; if(p.camino) p.salio=true; break;
+      case 'entregado': p.entregado=!p.entregado; if(p.entregado){ p.pagado=true; } break;
+    }
+    p.updated=hoyISO(); guardar();
+  }
+  function pedirGuia(p){
+    var actual = p.guia||'';
+    var val = prompt('Número de guía (Dropi) para '+p.nombre+':', actual);
+    if(val===null) return;
+    p.guia = val.trim();
+    p.updated=hoyISO(); guardar();
+    if(val.trim()) toast('Guía guardada: '+val.trim());
+  }
+
+  /* ---------- acciones ---------- */
+  function textoDropi(p){
+    var t='PEDIDO '+p.id+' — Marlú (COD)\n';
+    t+='Producto: '+p.producto+' ×'+p.cantidad+'\n';
+    t+='Valor: '+money(p.valor)+'\n';
+    t+='Cliente: '+(p.nombre||'')+' '+(p.apellido||'')+'\n';
+    t+='Teléfono: '+p.telefono+'\n';
+    if(p.numDoc) t+='Documento: '+(p.tipoDoc||'CC')+' '+p.numDoc+'\n';
+    if(p.correo) t+='Correo: '+p.correo+'\n';
+    t+='Dirección: '+(p.direccion||'')+'\n';
+    t+='Ciudad: '+p.ciudad+(p.departamento?', '+p.departamento:'')+'\n';
+    if(p.nota) t+='Nota: '+p.nota+'\n';
+    t+='Estado: '+(p.compro==='si'?'confirmó':(p.compro==='no'?'NO compró':'por confirmar'))+(p.pagado?' · pagó':'')+(p.guia?' · guía '+p.guia:'')+(p.entregado?' · ENTREGADO':'');
+    return t;
+  }
+  function msjWA(p){
+    var m='Hola '+(p.nombre||'')+', 👋\n';
+    m+='Tu pedido en Marlú: '+p.producto+' ×'+p.cantidad+' ('+money(p.valor)+')\n';
+    if(p.compro!=='no' && !p.entregado){
+      m+=(p.guia?'Tu guía es: '+p.guia+'. ':'')+(p.camino?'Tu pedido va en camino. ':'')+(p.salio&&!p.camino?'Tu pedido ya salió de nuestro proveedor. ':'');
+      m+='\nRecuerda: pagas contra entrega, en efectivo. ¿Confirmas tu dirección?\n'+(p.direccion?('📍 '+p.direccion+', '+p.ciudad):'');
+    } else if(p.entregado){
+      m+='\n¡Gracias por tu compra! 🙌 Si tienes dudas de garantía escríbenos.';
+    }
+    return m;
+  }
+  function abrirWA(p){
+    if(!p.telefono){ toast('El pedido no tiene teléfono'); return; }
+    var wa='https://wa.me/'+String(p.telefono).replace(/\D/g,'')+'?text='+encodeURIComponent(msjWA(p));
+    window.open(wa,'_blank');
+  }
+
+  /* ---------- export / import ---------- */
+  function exportJSON(){
+    var blob = {app:'gestor-pedidos-cod-marlu', version:1, exportado:new Date().toISOString(), pedidos:pedidos};
+    var txt = JSON.stringify(blob, null, 2);
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));
+    a.download='pedidos-marlu-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); },400);
+    toast('Respaldo JSON exportado ('+pedidos.length+' pedidos)');
+  }
+  function exportCSV(){
+    var cols=['ID','Fecha registro','Nombre','Apellido','Teléfono','Correo','Tipo doc','N° documento','Dirección','Ciudad','Departamento','Producto','Cantidad','Valor COP','Notas','¿Compró?','Pagó','Salió proveedor','Guía','En camino','Entregado'];
+    function c(s){ s=String(s==null?'':s); return '"'+s.replace(/"/g,'""')+'"'; }
+    var rows=[cols.map(c).join(';')];
+    pedidos.forEach(function(p){
+      rows.push([p.id,p.creado,p.nombre,p.apellido,p.telefono,p.correo,p.tipoDoc,p.numDoc,p.direccion,p.ciudad,p.departamento,
+        p.producto,p.cantidad,p.valor,p.nota,
+        p.compro==='si'?'SÍ':(p.compro==='no'?'NO':''), p.pagado?'SÍ':'', p.salio?'SÍ':'', p.guia,
+        p.camino?'SÍ':'', p.entregado?'SÍ':''].map(c).join(';'));
+    });
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+    a.download='pedidos-marlu-'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); },400);
+    toast('CSV exportado ('+pedidos.length+' filas)');
+  }
+  function importJSON(file){
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var d=JSON.parse(r.result);
+        var arr=Array.isArray(d)?d:(d&&Array.isArray(d.pedidos)?d.pedidos:null);
+        if(!arr){ toast('Archivo no válido'); return; }
+        if(arr.length && confirm('¿Reemplazar los '+pedidos.length+' pedidos actuales por los '+arr.length+' del archivo?')){
+          pedidos=arr.map(function(p){ p.id=p.id||idNuevo(); p.creado=p.creado||hoyISO(); p.updated=p.updated||p.creado; return p; });
+          guardar(); toast('Importados '+arr.length+' pedidos');
+        }
+      }catch(e){ toast('Error al leer el archivo'); }
+    };
+    r.readAsText(file);
+  }
+
+
+  /* ==========================================================================
+     ACCESO PRIVADO, SINCRONIZACION Y AVISO DE VENTA   (2026-09-17)
+     ==========================================================================
+     QUE CAMBIA Y POR QUE
+
+     1) ANTES el gestor era PUBLICO: cualquiera que supiera la direccion veia los
+        pedidos y los datos personales de los clientes (nombre, cedula, telefono,
+        direccion). Ahora hay que entrar con la clave, que se comprueba contra la
+        API. La clave NO esta escrita en esta pagina: se escribe a mano y se manda
+        en la cabecera x-admin-clave.
+
+     2) ANTES los pedidos que llegaban de la web NO aparecian aqui: la web los
+        mandaba por WhatsApp y guardaba una copia en el navegador DEL CLIENTE. El
+        gestor solo tenia lo que el dueno tecleaba a mano. Ahora el panel trae los
+        pedidos del servidor, que son los que entran solos.
+
+     3) NADA SE PIERDE: los pedidos que ya estaban guardados en este navegador
+        siguen visibles (marcados como "solo en este navegador") y se pueden subir
+        al servidor con un boton, para acabar con una sola lista.
+
+     4) AVISO CON SONIDO: mientras el panel este abierto se pregunta cada 20 s si
+        entro algo. Si entra un pedido, suena un "cha-ching" tipo Hotmart, vibra
+        el movil (si se puede) y el pedido queda resaltado.
+
+     DOS COSAS QUE CONVIENE SABER
+       - El sonido solo suena con el panel ABIERTO: es lo que pidio el dueno. Para
+         que suene con el panel cerrado habria que anadir un aviso por Telegram.
+       - Los navegadores bloquean el audio hasta que el usuario toca algo. De ahi
+         el boton "Activar sonido": hay que tocarlo UNA vez por sesion.
+     ========================================================================== */
+
+  /* Direccion del servidor. Se rellena al desplegar el Worker (carpeta marlu-api).
+     Ejemplo: 'https://marlu-pedidos.tucuenta.workers.dev'
+     Si se deja vacio, se puede escribir desde la pantalla de acceso. */
+  var API_FIJA = 'https://marlu-pedidos.granadoalejandro97.workers.dev';   // Worker marlu-pedidos, desplegado el 2026-09-17
+
+  /* Archivo del aviso. Para cambiarlo por otro sonido, basta reemplazar este
+     archivo manteniendo el nombre (beauten-github/audio/aviso-venta.wav). */
+  var AUDIO_AVISO = 'audio/aviso-venta.wav';
+
+  var K_API = 'marlu_api';
+  var K_CLAVE = 'marlu_admin_clave';
+  var K_SONIDO = 'marlu_sonido';
+
+  var apiActiva = false;      /* sesion validada contra el servidor */
+  var clave = '';
+  var conocidos = {};         /* ids que YA existen en el servidor */
+  var foto = {};              /* id -> huella del ultimo estado enviado */
+  var nuevosIds = {};         /* pedidos que aun no ha visto el dueno */
+  var ultimoVisto = null;     /* fecha del pedido mas nuevo ya contabilizado */
+  var relojAviso = null;
+  var sonidoOn = false;
+  var elAudio = null;
+  var tituloBase = document.title;
+  var tituloReloj = null;
+
+  function leer(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function escribir(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function borrar(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+  function apiBase() {
+    return String(leer(K_API) || API_FIJA || '').replace(/\/+$/, '');
+  }
+
+  /* Huella de un pedido: si cambia, hay algo que subir al servidor. Incluye los
+     datos ademas de los estados, porque el panel tambien corrige direcciones. */
+  function huella(p) {
+    return [p.compro, p.pagado, p.salio, p.camino, p.entregado, p.guia,
+            p.nombre, p.apellido, p.telefono, p.correo, p.tipoDoc, p.numDoc,
+            p.departamento, p.ciudad, p.direccion, p.nota, p.producto,
+            p.cantidad, p.valor, p.confirmacion, p.confirmadoEn, p.avisos].join('\u0001');
+  }
+
+  /* ---------- llamadas a la API ---------- */
+  function pedirApi(ruta, opciones) {
+    var o = opciones || {};
+    var cab = { 'x-admin-clave': clave };
+    if (o.cuerpo !== undefined) cab['Content-Type'] = 'application/json';
+    return fetch(apiBase() + ruta, {
+      method: o.metodo || 'GET',
+      headers: cab,
+      body: o.cuerpo === undefined ? undefined : JSON.stringify(o.cuerpo),
+      cache: 'no-store'
+    }).then(function (r) {
+      if (r.status === 401) { var e = new Error('Clave incorrecta.'); e.esClave = true; throw e; }
+      if (r.status === 503) { var e2 = new Error('El servidor no esta configurado todavia.'); e2.esConfig = true; throw e2; }
+      if (r.status === 429) { var e3 = new Error('Demasiados intentos. Espera un momento.'); throw e3; }
+      if (!r.ok) throw new Error('Error del servidor (HTTP ' + r.status + ').');
+      return r.json();
+    });
+  }
+
+  /* ---------- pantalla de acceso ---------- */
+  function pintarLogin() {
+    var ya = document.getElementById('login');
+    if (ya) { ya.classList.remove('hide'); return ya; }
+
+    var d = document.createElement('div');
+    d.className = 'login';
+    d.id = 'login';
+    var faltaApi = !apiBase();
+    d.innerHTML =
+      '<div class="login-caja">' +
+        '<h2>Panel de pedidos <span style="color:#00A6A6">Marlú</span></h2>' +
+        '<p class="sub">Zona privada. Escribe tu clave para ver los pedidos y los datos de envío de tus clientes.</p>' +
+        (faltaApi ?
+          '<label for="l_api">Dirección del servidor</label>' +
+          '<input id="l_api" type="text" placeholder="https://marlu-pedidos.tucuenta.workers.dev" ' +
+          'autocomplete="off" spellcheck="false">' : '') +
+        '<label for="l_clave">Clave de acceso</label>' +
+        '<input id="l_clave" type="password" autocomplete="current-password" placeholder="Tu clave">' +
+        '<label class="login-rec"><input type="checkbox" id="l_rec"> Recordar en este dispositivo</label>' +
+        '<div class="login-err" id="l_err"></div>' +
+        '<button class="btn teal" id="l_entrar">Entrar</button>' +
+        '<div class="login-nota">La clave se configura en Cloudflare, en la variable ' +
+        '<code>ADMIN_PASSWORD</code>. No está guardada en esta página: se comprueba contra el servidor ' +
+        'cada vez que entras.</div>' +
+      '</div>';
+    document.body.appendChild(d);
+
+    var entrar = function () { intentarEntrar(); };
+    document.getElementById('l_entrar').onclick = entrar;
+    document.getElementById('l_clave').onkeydown = function (e) { if (e.key === 'Enter') entrar(); };
+    if (faltaApi) {
+      var ia = document.getElementById('l_api');
+      ia.value = leer(K_API) || '';
+      ia.onkeydown = function (e) { if (e.key === 'Enter') entrar(); };
+    }
+    setTimeout(function () {
+      var c = document.getElementById('l_clave');
+      if (c) c.focus();
+    }, 120);
+    return d;
+  }
+
+  function errorLogin(msj) {
+    var e = document.getElementById('l_err');
+    if (!e) return;
+    e.textContent = msj;
+    e.classList.add('show');
+  }
+
+  function intentarEntrar() {
+    var caja = document.getElementById('login');
+    if (!caja) return;
+    var campoApi = document.getElementById('l_api');
+    if (campoApi) {
+      var u = String(campoApi.value || '').trim().replace(/\/+$/, '');
+      if (!/^https:\/\/.+/i.test(u)) {
+        errorLogin('Escribe la dirección del servidor. Empieza por https://');
+        return;
+      }
+      escribir(K_API, u);
+    }
+    var campo = document.getElementById('l_clave');
+    var v = String(campo ? campo.value : '').trim();
+    if (!v) { errorLogin('Escribe tu clave.'); return; }
+
+    var btn = document.getElementById('l_entrar');
+    if (btn) { btn.disabled = true; btn.textContent = 'Comprobando…'; }
+    var e = document.getElementById('l_err');
+    if (e) e.classList.remove('show');
+
+    clave = v;
+    /* Se comprueba pidiendo el periodo mas corto posible: si la clave es mala, la
+       API responde 401 y NO devuelve datos; aqui no se guarda nada hasta que pase. */
+    pedirApi('/api/pedidos?dias=1')
+      .then(function () {
+        apiActiva = true;
+        var rec = document.getElementById('l_rec');
+        if (rec && rec.checked) escribir(K_CLAVE, v);
+        else { borrar(K_CLAVE); try { sessionStorage.setItem(K_CLAVE, v); } catch (err) {} }
+        caja.classList.add('hide');
+        if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+        return sincronizar().then(function () {
+          ultimoVisto = new Date().toISOString();
+          vigilar();
+          pintarAviso();
+          revisarPush();
+          toast('Bienvenido. Ya puedes ver tus pedidos.');
+        });
+      })
+      .catch(function (err) {
+        clave = '';
+        apiActiva = false;
+        if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+        errorLogin(err && err.esClave ? 'Esa clave no es. Inténtalo otra vez.'
+                 : (err && err.esConfig ? 'El servidor no está configurado: falta ADMIN_PASSWORD en Cloudflare.'
+                 : (err && err.message) || 'No se pudo conectar con el servidor.'));
+      });
+  }
+
+  function salir() {
+    clave = '';
+    apiActiva = false;
+    borrar(K_CLAVE);
+    try { sessionStorage.removeItem(K_CLAVE); } catch (e) {}
+    if (relojAviso) { clearInterval(relojAviso); relojAviso = null; }
+    if (tituloReloj) { clearInterval(tituloReloj); tituloReloj = null; document.title = tituloBase; }
+    conocidos = {}; foto = {}; nuevosIds = {};
+    pedidos = [];                 /* que no quede ni un dato en pantalla al salir */
+    render();
+    var a = document.getElementById('avisoBox'); if (a) a.innerHTML = '';
+    var b = document.getElementById('bannerNuevos'); if (b) b.classList.remove('show');
+    pintarLogin();
+    toast('Has salido. Vuelve a entrar con tu clave.');
+  }
+
+  /* ---------- traer los pedidos del servidor ---------- */
+  function sincronizar() {
+    if (!apiActiva) return Promise.resolve();
+    return pedirApi('/api/pedidos?dias=3650').then(function (j) {
+      var delServidor = (j && j.pedidos) || [];
+      conocidos = {}; foto = {};
+      delServidor.forEach(function (p) {
+        conocidos[p.id] = true;
+        foto[p.id] = huella(p);
+      });
+      /* Los pedidos que solo estaban en este navegador NO se borran: se quedan al
+         final, marcados, hasta que el dueno decida subirlos. */
+      var locales = [];
+      try {
+        var raw = localStorage.getItem(LS_KEY);
+        var arr = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(arr)) locales = arr;
+      } catch (e) { locales = []; }
+      /* La marca de "no compro / cancelado" NO existe en el servidor: solo vive en
+         esta lista local. Al traer la lista del servidor hay que copiarla de vuelta,
+         porque si no, al recargar el panel un pedido cancelado volveria a aparecer
+         como si nada. */
+      var comproLocal = {};
+      locales.forEach(function (p) { if (p && p.id && p.compro) comproLocal[p.id] = p.compro; });
+      delServidor.forEach(function (p) { if (comproLocal[p.id]) p.compro = comproLocal[p.id]; });
+
+      var soloLocal = locales.filter(function (p) { return p && p.id && !conocidos[p.id]; });
+      soloLocal.forEach(function (p) { p.soloLocal = true; });
+      pedidos = delServidor.concat(soloLocal);
+      render();
+      pintarAviso();
+      return pedidos;
+    }).catch(function (err) {
+      if (err && err.esClave) { salir(); return; }
+      toast('No se pudo traer la lista del servidor: ' + ((err && err.message) || 'error'));
+      return [];
+    });
+  }
+
+  /* ---------- subir al servidor lo que cambio ---------- */
+  var subiendo = false;
+  function sincronizarCambios() {
+    if (!apiActiva || subiendo) return;
+    var cola = pedidos.filter(function (p) { return foto[p.id] !== huella(p); });
+    if (!cola.length) return;
+    subiendo = true;
+    var pendientes = cola.length;
+    cola.forEach(function (p) {
+      var cuerpo = {
+        id: p.id, compro: p.compro, pagado: !!p.pagado, salio: !!p.salio,
+        camino: !!p.camino, entregado: !!p.entregado, guia: p.guia || '',
+        nombre: p.nombre, apellido: p.apellido, telefono: p.telefono, correo: p.correo,
+        tipoDoc: p.tipoDoc, numDoc: p.numDoc, departamento: p.departamento,
+        ciudad: p.ciudad, direccion: p.direccion, nota: p.nota,
+        producto: p.producto, cantidad: p.cantidad, valor: p.valor,
+        confirmacion: p.confirmacion || '',
+        confirmado_en: p.confirmadoEn || '',
+        avisos: p.avisos || 0
+      };
+      var yaEsta = !!conocidos[p.id];
+      var prom = yaEsta
+        ? pedirApi('/api/pedido-estado', { metodo: 'POST', cuerpo: cuerpo })
+        : fetch(apiBase() + '/api/pedido', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cuerpo),
+            keepalive: true
+          }).then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          });
+      prom.then(function () {
+        conocidos[p.id] = true;
+        foto[p.id] = huella(p);
+        p.soloLocal = false;
+        pintarAviso();
+      }).catch(function () {
+        /* Sin conexion: no se pierde nada, se reintenta en la siguiente edicion. */
+      }).then(function () {
+        pendientes--;
+        if (pendientes <= 0) { subiendo = false; render(); }
+      });
+    });
+  }
+
+  /* ---------- vigilar si entra un pedido nuevo ---------- */
+  function vigilar() {
+    if (relojAviso) { clearInterval(relojAviso); relojAviso = null; }
+    if (!apiActiva) return;
+    relojAviso = setInterval(function () {
+      var desde = ultimoVisto || new Date(Date.now() - 86400000).toISOString();
+      pedirApi('/api/nuevos?desde=' + encodeURIComponent(desde)).then(function (j) {
+        var lista = (j && j.pedidos) || [];
+        if (!lista.length) return;
+        var cuenta = 0;
+        lista.forEach(function (p) {
+          if (p.creado > (ultimoVisto || '')) ultimoVisto = p.creado;
+          if (!foto[p.id] && !nuevosIds[p.id]) { nuevosIds[p.id] = true; cuenta++; }
+        });
+        if (!cuenta) return;
+        avisar(Object.keys(nuevosIds).length);
+        return sincronizar();
+      }).catch(function (err) {
+        /* Si el servidor no contesta, se sigue intentando sin molestar al dueno.
+           Salvo que la clave haya caducado: entonces si hay que volver a entrar. */
+        if (err && err.esClave && apiActiva) {
+          apiActiva = false;
+          pintarAviso();
+        }
+      });
+    }, 20000);
+  }
+
+  /* ---------- el aviso: sonido, vibracion y resaltado ---------- */
+  function avisar(cuantos) {
+    if (sonidoOn) {
+      try {
+        if (!elAudio) { elAudio = new Audio(AUDIO_AVISO); elAudio.preload = 'auto'; }
+        elAudio.currentTime = 0;
+        var prom = elAudio.play();
+        if (prom && prom.catch) prom.catch(function () {});
+      } catch (e) {}
+    }
+    try { if (navigator.vibrate) navigator.vibrate([180, 90, 180]); } catch (e) {}
+
+    var b = document.getElementById('bannerNuevos');
+    if (b) {
+      var t = b.querySelector('span');
+      if (t) t.textContent = cuantos === 1 ? '¡Entró 1 pedido nuevo!' : '¡Entraron ' + cuantos + ' pedidos nuevos!';
+      b.classList.add('show');
+    }
+    if (!tituloReloj) {
+      var on = false;
+      tituloReloj = setInterval(function () {
+        on = !on;
+        document.title = on ? '🔔 PEDIDO NUEVO · Marlú' : tituloBase;
+      }, 900);
+    }
+  }
+
+  function pararAvisoVisual() {
+    if (tituloReloj) { clearInterval(tituloReloj); tituloReloj = null; document.title = tituloBase; }
+  }
+
+  function abrirNuevos() {
+    nuevosIds = {};
+    pararAvisoVisual();
+    var b = document.getElementById('bannerNuevos');
+    if (b) b.classList.remove('show');
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function activarSonido() {
+    if (!elAudio) { elAudio = new Audio(AUDIO_AVISO); elAudio.preload = 'auto'; }
+    var activar = function () {
+      sonidoOn = true;
+      escribir(K_SONIDO, '1');
+      pintarAviso();
+      toast('Aviso con sonido activado.');
+    };
+    /* Reproducir AHORA es lo que desbloquea el audio para el resto de la sesion:
+       los navegadores solo dejan sonar despues de un toque del usuario. */
+    try {
+      elAudio.currentTime = 0;
+      var p = elAudio.play();
+      if (p && p.then) {
+        p.then(function () { elAudio.pause(); elAudio.currentTime = 0; activar(); })
+         .catch(function () {
+           sonidoOn = false;
+           pintarAviso();
+           toast('El navegador bloqueó el sonido. Vuelve a tocar el botón.');
+         });
+      } else { elAudio.pause(); elAudio.currentTime = 0; activar(); }
+    } catch (e) {
+      activar();
+    }
+  }
+
+
+  /* ==========================================================================
+     AVISOS AL TELEFONO (push)   [2026-09-18]
+     ==========================================================================
+     POR QUE EXISTE ESTO
+     El aviso con sonido funcionaba solo con el panel ABIERTO, porque el sonido lo
+     reproducia la pagina. El dueno no va a tener el panel abierto todo el dia, ni
+     en el computador ni en el celular. Con esto el aviso lo hace el PROPIO
+     TELEFONO, asi que suena aunque no haya nada abierto.
+
+     LIMITE QUE NO SE PUEDE SALTAR (y conviene decirlo claro)
+     Una notificacion web NO puede sonar con un sonido propio: el sonido lo elige
+     el sistema operativo, no la web. Lo que SI puede hacer el dueno en Android es
+     elegir cual quiere: Ajustes -> Notificaciones -> Chrome -> sonido. Ahi puede
+     poner uno inconfundible.
+
+     OJO CON EL PERMISO
+     `Notification.requestPermission()` TIENE que llamarse dentro del manejador del
+     clic. Si se pidiera solo al abrir la pagina, el navegador lo bloquea y despues
+     hay que desbloquearlo a mano en los ajustes. Por eso va todo dentro de
+     activarPush(), que solo se ejecuta al tocar el boton.
+     ========================================================================== */
+
+  var K_PUSH = 'marlu_push_activo';
+  var pushEstado = '';   /* apagado | concedido | activo | bloqueado | no-soportado */
+  var ultimoErrorPush = '';
+
+  /* Detalle del aparato y del error. Sirve para saber POR QUE falla: el mensaje
+     "push service error" por si solo no distingue entre una VPN, que falte la
+     cuenta de Google, o que el navegador no sea Chrome. */
+  function diagnosticoPush() {
+    var ua = String(navigator.userAgent || '');
+    var esChrome = /Chrome\//.test(ua) && !/Edg|OPR|Opera|SamsungBrowser|Firefox/.test(ua);
+    return [
+      'Permiso de notificaciones: ' + (('Notification' in window) ? Notification.permission : 'no disponible'),
+      'Navegador: ' + ua.slice(0, 150),
+      '¿Es Chrome? ' + (esChrome ? 'sí' : 'NO (esto suele ser la causa)'),
+      'Service worker: ' + (('serviceWorker' in navigator) ? 'soportado' : 'NO'),
+      'Push: ' + (('PushManager' in window) ? 'soportado' : 'NO'),
+      'Conexión: ' + (navigator.onLine ? 'en línea' : 'SIN conexión'),
+      'Último error: ' + (ultimoErrorPush || '(ninguno)')
+    ].join('\n');
+  }
+
+  /* Se muestra al fallar: el aviso corto no cabe tanto detalle. */
+  function mostrarDiagnostico() {
+    alert('No se pudieron activar los avisos al teléfono.\n\n' +
+      'Casi siempre es una de estas tres cosas:\n\n' +
+      '1) TIENES UNA VPN ENCENDIDA. Es la causa más común: apágala y vuelve a intentar.\n\n' +
+      '2) Estás usando un navegador que no es Chrome (Samsung Internet, el de Xiaomi, ' +
+      'Opera...). Abre el panel en Chrome.\n\n' +
+      '3) El teléfono no tiene cuenta de Google activa o le falta Google Play Services.\n\n' +
+      'Otras veces es un fallo pasajero: espera unos segundos y toca otra vez.\n\n' +
+      '--- DETALLE PARA ENVIAR ---\n' + diagnosticoPush());
+  }
+
+  function soportaPush() {
+    return ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
+  }
+
+  /* base64url -> bytes (lo que necesita applicationServerKey) */
+  function urlB64aBytes(b64) {
+    var s = String(b64 || '').replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var bin = atob(s);
+    var u = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return u;
+  }
+
+  /* Mira en que estado estan los avisos en ESTE aparato. */
+  function revisarPush() {
+    if (!soportaPush()) { pushEstado = 'no-soportado'; pintarAviso(); return; }
+    if (Notification.permission === 'denied') { pushEstado = 'bloqueado'; pintarAviso(); return; }
+    navigator.serviceWorker.ready.then(function (reg) {
+      return reg.pushManager.getSubscription();
+    }).then(function (sub) {
+      pushEstado = sub ? 'activo' : (Notification.permission === 'granted' ? 'concedido' : 'apagado');
+      pintarAviso();
+    }).catch(function () {
+      pushEstado = 'apagado';
+      pintarAviso();
+    });
+  }
+
+  function activarPush() {
+    if (!apiActiva) { toast('Primero entra con tu clave.', true); return; }
+    if (!soportaPush()) {
+      toast('Este navegador no permite avisos al teléfono. En Android, ábrelo en Chrome.', true);
+      return;
+    }
+    Notification.requestPermission().then(function (permiso) {
+      if (permiso !== 'granted') {
+        revisarPush();
+        toast(permiso === 'denied'
+          ? 'Bloqueaste los avisos. Para activarlos: toca el candado junto a la dirección → Notificaciones → Permitir.'
+          : 'No diste permiso para los avisos.', true);
+        return;
+      }
+      return pedirApi('/api/push-clave').then(function (j) {
+        if (!j || !j.clave) throw new Error('el servidor no devolvió su clave de avisos');
+        return navigator.serviceWorker.ready.then(function (reg) {
+          return reg.pushManager.getSubscription().then(function (ya) {
+            if (ya) return ya;
+            var opciones = {
+              userVisibleOnly: true,
+              applicationServerKey: urlB64aBytes(j.clave)
+            };
+            /* Un fallo de FCM muchas veces es pasajero. Se intenta una vez mas
+               antes de molestar al dueno: la segunda suele funcionar. */
+            return reg.pushManager.subscribe(opciones).catch(function (e1) {
+              return new Promise(function (listo) { setTimeout(listo, 2500); })
+                .then(function () { return reg.pushManager.subscribe(opciones); });
+            });
+          });
+        });
+      }).then(function (sub) {
+        var s = sub.toJSON();
+        return pedirApi('/api/push-suscribir', {
+          metodo: 'POST',
+          cuerpo: {
+            endpoint: s.endpoint,
+            keys: s.keys,
+            etiqueta: String(navigator.userAgent).slice(0, 45)
+          }
+        });
+      }).then(function () {
+        pushEstado = 'activo';
+        escribir(K_PUSH, '1');
+        pintarAviso();
+        toast('Avisos activados en este aparato. Sonará aunque cierres el panel.');
+      });
+    }).catch(function (e) {
+      pushEstado = 'apagado';
+      /* Se guarda el nombre Y el mensaje: el nombre ("NotAllowedError",
+         "InvalidStateError"...) es lo que distingue una causa de otra. */
+      ultimoErrorPush = [e && e.name, e && e.message].filter(Boolean).join(': ') || 'desconocido';
+      pintarAviso();
+      toast('No se pudieron activar los avisos. Toca aquí para ver por qué.', true, function () {
+        mostrarDiagnostico();
+      });
+    });
+  }
+
+  function probarPush() {
+    toast('Enviando aviso de prueba…');
+    pedirApi('/api/push-probar', { metodo: 'POST', cuerpo: {} }).then(function (j) {
+      if (j && j.ok) {
+        toast('Aviso enviado a ' + j.dispositivos + ' aparato(s). Debería sonar en segundos.');
+      } else {
+        toast((j && j.error) || 'El servicio de avisos lo rechazó.', true);
+      }
+    }).catch(function (e) {
+      toast('No se pudo probar: ' + ((e && e.message) || 'error'), true);
+    });
+  }
+
+  function apagarPush() {
+    if (!soportaPush()) return;
+    navigator.serviceWorker.ready.then(function (reg) {
+      return reg.pushManager.getSubscription();
+    }).then(function (sub) {
+      if (!sub) throw new Error('no había nada que apagar');
+      var endpoint = sub.endpoint;
+      return sub.unsubscribe().then(function () {
+        return pedirApi('/api/push-borrar', { metodo: 'POST', cuerpo: { endpoint: endpoint } });
+      });
+    }).then(function () {
+      pushEstado = 'apagado';
+      borrar(K_PUSH);
+      pintarAviso();
+      toast('Avisos al teléfono apagados en este aparato.');
+    }).catch(function (e) {
+      toast('No se pudieron apagar: ' + ((e && e.message) || 'error'), true);
+    });
+  }
+
+  /* Botones y estado de los avisos al teléfono, para meterlos en la barra. */
+  function botonesPush() {
+    if (!apiActiva) return '';
+    if (pushEstado === 'no-soportado') {
+      return '<span class="pt mal"><span class="dot"></span>Avisos no disponibles aquí</span>';
+    }
+    if (pushEstado === 'bloqueado') {
+      return '<span class="pt mal"><span class="dot"></span>Avisos bloqueados' +
+             '<button class="btn sm" id="btnVerPush" style="margin-left:6px">Cómo activarlos</button></span>';
+    }
+    if (pushEstado === 'activo') {
+      return '<span class="pt ok"><span class="dot"></span>Avisos al teléfono activos</span>' +
+             '<button class="btn sm" id="btnProbarPush">Probar</button>' +
+             '<button class="btn ghost sm" id="btnApagarPush">Apagar</button>';
+    }
+    return '<button class="btn accent sm" id="btnActivarPush">Activar avisos al teléfono</button>' +
+           (ultimoErrorPush ? '<button class="btn sm" id="btnPorQuePush">¿Por qué no funciona?</button>' : '');
+  }
+
+  function conectarBotonesPush() {
+    var a = document.getElementById('btnActivarPush');
+    if (a) a.onclick = activarPush;
+    var pq = document.getElementById('btnPorQuePush');
+    if (pq) pq.onclick = mostrarDiagnostico;
+    var p = document.getElementById('btnProbarPush');
+    if (p) p.onclick = probarPush;
+    var ap = document.getElementById('btnApagarPush');
+    if (ap) ap.onclick = function () {
+      if (confirm('¿Apagar los avisos al teléfono en este aparato?')) apagarPush();
+    };
+    var v = document.getElementById('btnVerPush');
+    if (v) v.onclick = function () {
+      alert('Los avisos están bloqueados para esta página.\n\n' +
+            'Para activarlos: toca el candado (o el icono de ajustes) junto a la ' +
+            'dirección del sitio → Notificaciones → Permitir. Luego vuelve aquí y ' +
+            'pulsa "Activar avisos al teléfono".\n\n' +
+            'Si no aparece esa opción, borra los datos del sitio para esta página y vuelve a entrar.');
+    };
+  }
+
+
+  /* ==========================================================================
+     CONFIRMAR ANTES DE DESPACHAR, VALIDAR EL TELEFONO Y MEDIR LA ENTREGA
+     ==========================================================================
+     POR QUE ESTO ES LO MAS RENTABLE QUE HAY EN EL PANEL
+
+     La tasa de entrega es la palanca mas rentable del negocio: pasar del 70 % al
+     80 % es como ganar un 14 % mas de ingresos SIN gastar un peso mas en
+     publicidad. Ningun producto y ningun pais dan eso gratis.
+
+     Y la palanca numero uno para bajarla es NO DESPACHAR SIN CONFIRMAR: cuenta el
+     30-40 % de las devoluciones. La confirmacion por WhatsApp tiene un 75-85 % de
+     respuesta en LATAM.
+
+     OJO CON LA VALIDACION POR CODIGO SMS: eso necesita un proveedor de pago
+     (Twilio). Lo que se hace aqui es lo que se puede hacer GRATIS y filtra
+     igual o mas: formato, duplicados y patrones de fraude con el propio
+     historial. Y la confirmacion por WhatsApp es una validacion REAL: si el
+     cliente contesta desde ese numero, el numero existe.
+     ========================================================================== */
+
+  var CONF_ESPERA_HORAS = 24;
+
+  /* ---------- 1. EL TELEFONO ---------- */
+
+  /* Deja el numero como lo necesita WhatsApp: 57 + los 10 digitos. */
+  function telIntl(t) {
+    var d = String(t || '').replace(/[^0-9]/g, '');
+    if (d.length === 12 && d.indexOf('57') === 0) d = d.slice(2);
+    if (d.length === 10 && d.charAt(0) === '3') return '57' + d;
+    return d;
+  }
+
+  /* Marcas de alarma de un telefono, mirando el propio historial. NO bloquea
+     nada: solo avisa. La decision siempre es del dueno. */
+  function analizarTel(p) {
+    var avisos = [];
+    var d = telIntl(p.telefono).slice(-10);
+    var valido = d.length === 10 && d.charAt(0) === '3';
+    if (!valido) avisos.push({ t: 'mal', m: 'Teléfono mal formado' });
+    if (valido) {
+      var mismo = pedidos.filter(function (q) { return telIntl(q.telefono).slice(-10) === d; });
+      if (mismo.length >= 3) {
+        avisos.push({ t: 'mal', m: 'Este número ya tiene ' + mismo.length + ' pedidos' });
+      } else if (mismo.length === 2) {
+        avisos.push({ t: 'ojo', m: 'Ya hay otro pedido con este número' });
+      }
+      var fallidos = mismo.filter(function (q) { return q.id !== p.id && q.compro === 'no'; });
+      if (fallidos.length) {
+        avisos.push({ t: 'mal', m: fallidos.length + ' pedido(s) NO entregado(s) con este número' });
+      }
+    }
+    if (p.confirmacion === 'confirmado') {
+      avisos.push({ t: 'ok', m: 'Número validado: confirmó por WhatsApp' });
+    }
+    return avisos;
+  }
+
+  function bloqueTel(p) {
+    var a = analizarTel(p);
+    if (!a.length) return '';
+    return '<div class="tav">' + a.map(function (x) {
+      return '<span class="tav-i ' + x.t + '">' + esc(x.m) + '</span>';
+    }).join('') + '</div>';
+  }
+
+  /* ---------- 2. CONFIRMAR POR WHATSAPP ---------- */
+
+  function msgConfirmar(p, recordatorio) {
+    var nombre = String(p.nombre || '').split(' ')[0] || 'cliente';
+    var lineas = recordatorio
+      ? ['Hola ' + nombre + ', te escribo otra vez de Marlú.',
+         '',
+         'Tu pedido sigue reservado, pero no lo podemos despachar hasta confirmarlo:',
+         '- ' + (p.producto || '') + ' — ' + money(p.valor),
+         '',
+         '¿Lo recibes y pagas contra entrega? Responde SÍ o NO, por favor.']
+      : ['Hola ' + nombre + ', te escribo de Marlú.',
+         '',
+         'Recibimos tu pedido:',
+         '- Producto: ' + (p.producto || ''),
+         '- Valor a pagar: ' + money(p.valor),
+         '- Ciudad: ' + (p.ciudad || ''),
+         '',
+         '¿Confirmas que lo recibes y pagas contra entrega? Responde SÍ o NO, por favor.'];
+    return lineas.join('\n');
+  }
+
+  /* Abre WhatsApp con el mensaje ya escrito y deja el pedido marcado como
+     enviado. OJO: la ventana se abre ANTES de tocar nada del estado, porque si
+     se hiciera algo antes de abrirla el navegador la bloquearia. */
+  function waConfirmar(p, recordatorio) {
+    var tel = telIntl(p.telefono);
+    if (tel.length < 12) {
+      toast('Ese teléfono (' + (p.telefono || 'vacío') + ') no sirve para WhatsApp.', true);
+      return;
+    }
+    window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(msgConfirmar(p, recordatorio)),
+                '_blank');
+    p.confirmacion = 'enviado';
+    p.confirmadoEn = new Date().toISOString();
+    p.avisos = (p.avisos || 0) + 1;
+    guardar();
+    toast(recordatorio ? 'Recordatorio enviado. Avísale que confirme, por favor.'
+                       : 'Mensaje abierto. Cuando conteste, márcalo como "Confirmó".');
+  }
+
+  function marcarConf(p, estado) {
+    p.confirmacion = estado;
+    p.confirmadoEn = new Date().toISOString();
+    if (estado === 'cancelado') p.compro = 'no';
+    if (estado === 'confirmado') p.compro = 'si';
+    guardar();
+    var t = {
+      confirmado: 'Marcado como confirmado. Este sí se puede despachar.',
+      sin_respuesta: 'Marcado como sin respuesta. Mándale el recordatorio.',
+      cancelado: 'Marcado como no confirmado: queda cancelado.'
+    };
+    toast(t[estado] || 'Guardado.');
+  }
+
+  /* Cuantos pedidos no se pueden despachar todavia. Es el numero que importa. */
+  function sinConfirmar() {
+    return pedidos.filter(function (p) {
+      return !p.entregado && p.compro !== 'no' && p.confirmacion !== 'confirmado';
+    }).length;
+  }
+
+  /* Si un pedido lleva mas de CONF_ESPERA_HORAS en "enviado" sin respuesta, pasa
+     a "sin respuesta" para que el dueno lo vea y decida. */
+  function revisarVencidos() {
+    var ahora = Date.now();
+    var hubo = false;
+    pedidos.forEach(function (p) {
+      if (p.confirmacion === 'enviado' && p.confirmadoEn) {
+        var horas = (ahora - new Date(p.confirmadoEn).getTime()) / 3600000;
+        if (horas >= CONF_ESPERA_HORAS) { p.confirmacion = 'sin_respuesta'; hubo = true; }
+      }
+    });
+    if (hubo) guardar();
+    return hubo;
+  }
+
+  var TEXTO_CONF = {
+    '':            { c: 'gris',  t: 'Sin contactar' },
+    enviado:       { c: 'ojo',   t: 'Mensaje enviado, esperando respuesta' },
+    confirmado:    { c: 'ok',    t: 'CONFIRMADO — se puede despachar' },
+    sin_respuesta: { c: 'mal',   t: 'Sin respuesta — insiste o cancela' },
+    cancelado:     { c: 'mal',   t: 'No confirmó — cancelado' }
+  };
+
+  function bloqueConf(p) {
+    var e = p.confirmacion || '';
+    var info = TEXTO_CONF[e] || TEXTO_CONF[''];
+    var mandar = (e === 'enviado' || e === 'sin_respuesta');
+    return '<div class="cf cf-' + info.c + '">' +
+      '<span class="cf-t">' + esc(info.t) + '</span>' +
+      '<button class="btn accent sm" data-cf="wa" data-cf-rec="' + (mandar ? '1' : '0') + '">' +
+        (mandar ? 'Reenviar recordatorio' : 'Confirmar por WhatsApp') + '</button>' +
+      (e !== 'confirmado' ? '<button class="btn okc sm" data-cf="si">Confirmó</button>' : '') +
+      (e !== 'cancelado' ? '<button class="btn sm" data-cf="no">No confirmó</button>' : '') +
+      '</div>';
+  }
+
+  /* ---------- 3. RENDIMIENTO: TASA DE ENTREGA ---------- */
+
+  /* Un pedido esta CERRADO cuando ya se sabe como acabo. Los que van en camino
+     NO cuentan: incluirlos hundiria la tasa artificialmente y daria una lectura
+     falsa. Es el error mas comun al medir esto. */
+  function cerrado(p) { return !!p.entregado || p.compro === 'no'; }
+
+  function claveProducto(s) {
+    var t = String(s || '').trim();
+    t = t.replace(/^[0-9]+\s*x\s*/i, '');           /* quitar el "1x " del principio */
+    t = t.split(' — ')[0].split(' - ')[0];           /* quedarse con el nombre */
+    return t.trim().slice(0, 60) || '(sin producto)';
+  }
+
+  function calcularRend(dias) {
+    var desde = dias ? Date.now() - dias * 86400000 : 0;
+    var lista = pedidos.filter(function (p) {
+      if (!cerrado(p)) return false;
+      if (desde) {
+        var t = new Date(p.creado).getTime();
+        if (t && t < desde) return false;
+      }
+      return true;
+    });
+    function agrupar(clave) {
+      var m = {};
+      lista.forEach(function (p) {
+        var k = clave(p);
+        if (!m[k]) m[k] = { pedidos: 0, ok: 0 };
+        m[k].pedidos++;
+        if (p.entregado) m[k].ok++;
+      });
+      return Object.keys(m).map(function (k) {
+        return {
+          nombre: k, pedidos: m[k].pedidos, ok: m[k].ok,
+          tasa: m[k].pedidos ? Math.round(m[k].ok * 100 / m[k].pedidos) : 0
+        };
+      }).sort(function (a, b) { return a.tasa - b.tasa; });
+    }
+    return {
+      total: lista.length,
+      ok: lista.filter(function (p) { return !!p.entregado; }).length,
+      porProducto: agrupar(function (p) { return claveProducto(p.producto); }),
+      porCiudad: agrupar(function (p) { return String(p.ciudad || '').trim() || '(sin ciudad)'; })
+    };
+  }
+
+  function claseTasa(t) { return t < 70 ? 'mal' : (t > 80 ? 'ok' : 'ojo'); }
+
+  function tablaRend(cabecera, filas) {
+    if (!filas.length) return '<p class="rend-nota">Sin pedidos cerrados en este periodo.</p>';
+    return '<table class="rend"><thead><tr><th>' + cabecera +
+      '</th><th>Pedidos</th><th>Entreg.</th><th>Tasa</th></tr></thead><tbody>' +
+      filas.map(function (f) {
+        return '<tr><td>' + esc(f.nombre) + '</td><td>' + f.pedidos + '</td><td>' + f.ok +
+          '</td><td class="' + claseTasa(f.tasa) + '">' + f.tasa + '%' +
+          '<div class="barra"><i class="' + claseTasa(f.tasa) + '" style="width:' + f.tasa + '%"></i></div>' +
+          '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  function pintarRendimiento() {
+    var caja = document.getElementById('rendBox');
+    if (!caja) return;
+    var dias = parseInt(caja.getAttribute('data-dias') || '90', 10);
+    var r = calcularRend(dias);
+    var g = r.total ? Math.round(r.ok * 100 / r.total) : 0;
+    var aviso = r.total < 20
+      ? '<p class="rend-nota"><b>Cuidado:</b> solo hay ' + r.total +
+        ' pedido(s) cerrado(s). Con menos de 20 la tasa todavía no es fiable — ' +
+        'un pedido de más o de menos la mueve varios puntos.</p>'
+      : '';
+    caja.innerHTML =
+      '<div class="rend-top">' +
+        '<button class="btn sm" data-rd="30">30 días</button>' +
+        '<button class="btn sm" data-rd="90">90 días</button>' +
+        '<button class="btn sm" data-rd="0">Todo</button>' +
+        '<button class="btn ghost sm" id="btnRendCerrar" style="margin-left:auto">Cerrar</button>' +
+      '</div>' +
+      '<div class="rend-global ' + claseTasa(g) + '">' +
+        '<span class="rg-num">' + g + '%</span>' +
+        '<span class="rg-txt">tasa de entrega global<br>' +
+        '<b>' + r.ok + '</b> entregados de <b>' + r.total + '</b> pedidos cerrados</span>' +
+      '</div>' + aviso +
+      '<h3 class="rend-h">Por producto</h3>' + tablaRend('Producto', r.porProducto) +
+      '<h3 class="rend-h">Por ciudad</h3>' + tablaRend('Ciudad', r.porCiudad) +
+      '<p class="rend-nota">Solo cuentan los pedidos <b>cerrados</b> (entregados o cancelados): ' +
+      'los que van en camino todavía no cuentan, o falsearían la tasa. ' +
+      '<span class="rk ok">Verde: más del 80 %</span> · ' +
+      '<span class="rk ojo">Ámbar: 70–80 %</span> · ' +
+      '<span class="rk mal">Rojo: menos del 70 % — ahí se pierde dinero</span>. ' +
+      'Ordenado de peor a mejor: lo de arriba es lo que hay que cortar o arreglar.</p>';
+
+    Array.prototype.forEach.call(caja.querySelectorAll('[data-rd]'), function (b) {
+      b.classList.toggle('sel', String(dias) === b.getAttribute('data-rd'));
+      b.onclick = function () {
+        caja.setAttribute('data-dias', b.getAttribute('data-rd'));
+        pintarRendimiento();
+      };
+    });
+    var cerrar = document.getElementById('btnRendCerrar');
+    if (cerrar) cerrar.onclick = function () {
+      caja.style.display = 'none';
+      caja.setAttribute('data-abierto', '0');
+    };
+  }
+
+  function alternarRendimiento() {
+    var caja = document.getElementById('rendBox');
+    if (!caja) return;
+    var abierto = caja.getAttribute('data-abierto') === '1';
+    if (abierto) {
+      caja.style.display = 'none';
+      caja.setAttribute('data-abierto', '0');
+    } else {
+      caja.style.display = 'block';
+      caja.setAttribute('data-abierto', '1');
+      pintarRendimiento();
+    }
+  }
+
+  /* ---------- barra de estado ---------- */
+  function pintarAviso() {
+    var caja = document.getElementById('avisoBox');
+    var stats = document.getElementById('stats');
+    if (!stats) return;
+    if (!caja) {
+      caja = document.createElement('div');
+      caja.className = 'aviso';
+      caja.id = 'avisoBox';
+      stats.parentNode.insertBefore(caja, stats);
+    }
+    var soloLocal = pedidos.filter(function (p) { return p.soloLocal; }).length;
+    caja.innerHTML =
+      '<span class="pt ' + (apiActiva ? 'ok' : 'mal') + '"><span class="dot"></span>' +
+        (apiActiva ? 'Conectado al servidor' : 'Sin conexión con el servidor') + '</span>' +
+      '<span class="pt ' + (sonidoOn ? 'ok' : '') + '"><span class="dot"></span>' +
+        (sonidoOn ? 'Aviso con sonido activo' : 'Aviso con sonido apagado') + '</span>' +
+      (soloLocal ? '<span class="pt"><span class="dot"></span>' + soloLocal +
+        ' pedido(s) solo en este navegador</span>' : '') +
+      '<span class="sep"></span>' +
+      (soloLocal ? '<button class="btn teal sm" id="btnSubirLocales">Subir los locales</button>' : '') +
+      (sonidoOn ? '' : '<button class="btn sonar off sm" id="btnSonido">Aviso con sonido (panel abierto)</button>') +
+      (sonidoOn ? '<button class="btn sonar on sm" id="btnSonido">Sonido del panel activo</button>' : '') +
+      botonesPush() +
+      '<button class="btn sm" id="btnCorreos">Correos</button>' +
+      '<button class="btn sm" id="btnRendimiento">Rendimiento</button>' +
+      '<button class="btn sm" id="btnRefrescar">Actualizar</button>' +
+      '<button class="btn ghost sm" id="btnSalir" style="background:#e2e8f0;color:#0f172a">Salir</button>';
+
+    var bs = document.getElementById('btnSonido');
+    if (bs) bs.onclick = activarSonido;
+    var br = document.getElementById('btnRefrescar');
+    if (br) br.onclick = function () {
+      toast('Actualizando…');
+      sincronizar().then(function () { toast('Lista actualizada'); });
+    };
+    var bl = document.getElementById('btnSubirLocales');
+    if (bl) bl.onclick = function () {
+      var n = pedidos.filter(function (p) { return p.soloLocal; }).length;
+      if (!confirm('¿Subir ' + n + ' pedido(s) que solo están en este navegador? Así quedará una sola lista.')) return;
+      sincronizarCambios();
+      toast('Subiendo ' + n + ' pedido(s)…');
+    };
+    var bx = document.getElementById('btnSalir');
+    if (bx) bx.onclick = function () { if (confirm('¿Cerrar la sesión del panel?')) salir(); };
+    conectarBotonesPush();
+    var br = document.getElementById('btnRendimiento');
+    if (br) br.onclick = alternarRendimiento;
+    var bc = document.getElementById('btnCorreos');
+    if (bc) bc.onclick = alternarCorreos;
+    /* La caja de rendimiento vive fuera de la barra (que se repinta entera), asi
+       que solo se crea una vez y se coloca despues del resumen. */
+    if (!document.getElementById('rendBox')) {
+      var rb = document.createElement('div');
+      rb.id = 'rendBox';
+      rb.setAttribute('data-dias', '90');
+      rb.setAttribute('data-abierto', '0');
+      var st = document.getElementById('stats');
+      if (st && st.parentNode) st.parentNode.insertBefore(rb, st.nextSibling);
+    }
+    /* La caja de correos tambien vive fuera de la barra (que se repinta entera),
+       asi que se crea una sola vez. */
+    if (!document.getElementById('correosBox')) {
+      var cb = document.createElement('div');
+      cb.id = 'correosBox';
+      cb.style.display = 'none';
+      cb.setAttribute('data-dias', '0');
+      var st2 = document.getElementById('stats');
+      if (st2 && st2.parentNode) st2.parentNode.insertBefore(cb, st2.nextSibling);
+    }
+  }
+
+  /* ---------- CORREOS (leads) [2026-09-22] ----------
+     Los correos que la gente deja en el formulario del pie a cambio del cupon del
+     10 %. Se guardan en la base de datos (D1) y aqui se ven y se descargan. */
+  var correosCache = [];
+
+  function alternarCorreos() {
+    var caja = document.getElementById('correosBox');
+    if (!caja) return;
+    var abierta = caja.getAttribute('data-abierto') === '1';
+    if (abierta) {
+      caja.style.display = 'none';
+      caja.setAttribute('data-abierto', '0');
+      return;
+    }
+    caja.style.display = '';
+    caja.setAttribute('data-abierto', '1');
+    pintarCorreos();
+  }
+
+  function pintarCorreos() {
+    var caja = document.getElementById('correosBox');
+    if (!caja) return;
+    var dias = caja.getAttribute('data-dias') || '0';
+    caja.innerHTML =
+      '<div class="rend-top">' +
+        '<button class="btn sm" data-cd="0">Todo</button>' +
+        '<button class="btn sm" data-cd="30">30 días</button>' +
+        '<button class="btn sm" data-cd="90">90 días</button>' +
+        '<button class="btn ghost sm" id="btnCorreosCsv">Descargar CSV</button>' +
+        '<button class="btn ghost sm" id="btnCorreosCerrar" style="margin-left:auto">Cerrar</button>' +
+      '</div>' +
+      '<p class="rend-nota">Cargando los correos…</p>';
+
+    var cerrar = document.getElementById('btnCorreosCerrar');
+    if (cerrar) cerrar.onclick = alternarCorreos;
+    Array.prototype.forEach.call(caja.querySelectorAll('[data-cd]'), function (b) {
+      b.classList.toggle('sel', String(dias) === b.getAttribute('data-cd'));
+      b.onclick = function () {
+        caja.setAttribute('data-dias', b.getAttribute('data-cd'));
+        pintarCorreos();
+      };
+    });
+
+    /* Se piden TODOS y el filtro de dias se hace en el navegador: asi cambiar de
+       periodo no gasta otra peticion ni espera. */
+    pedirApi('/api/leads?dias=3650').then(function (j) {
+      correosCache = (j && j.leads) || [];
+      dibujarCorreos(j ? j.total : correosCache.length, j ? j.activos : 0, dias);
+    }).catch(function (e) {
+      caja.innerHTML =
+        '<div class="rend-top">' +
+          '<button class="btn ghost sm" id="btnCorreosCerrar" style="margin-left:auto">Cerrar</button>' +
+        '</div>' +
+        '<p class="rend-nota">Comprobando de dónde viene el fallo…</p>';
+      /* DOS causas distintas dan el mismo error, y hay que distinguirlas:
+           - la clave es incorrecta (el problema esta aqui), o
+           - el Worker de Cloudflare todavia NO tiene esta ruta (falta pegarlo).
+         Se distinguen preguntando por los PEDIDOS: si eso responde bien, la clave es
+         correcta y lo que falta es actualizar el Worker. Sin esto el aviso diria
+         "Clave incorrecta" y te haria buscar el problema donde no esta. */
+      pedirApi('/api/pedidos?dias=1')
+        .then(function () { errorCorreos(e.message, true); })
+        .catch(function () { errorCorreos(e.message, false); });
+    });
+  }
+
+  function dibujarCorreos(totalServidor, activosServidor, dias) {
+    var caja = document.getElementById('correosBox');
+    if (!caja) return;
+    var lista = correosCache.slice();
+    if (dias !== '0') {
+      var desde = Date.now() - parseInt(dias, 10) * 24 * 60 * 60 * 1000;
+      lista = lista.filter(function (l) { return new Date(l.creado).getTime() >= desde; });
+    }
+    var bajas = lista.filter(function (l) { return l.baja; }).length;
+    var activos = lista.length - bajas;
+
+    var aviso = totalServidor === 0
+      ? '<p class="rend-nota">Todavía no hay ningún correo. Aparecerán aquí solos en cuanto ' +
+        'alguien escriba su correo en el formulario del pie de la app.</p>'
+      : '';
+
+    caja.innerHTML =
+      '<div class="rend-top">' +
+        '<button class="btn sm" data-cd="0">Todo</button>' +
+        '<button class="btn sm" data-cd="30">30 días</button>' +
+        '<button class="btn sm" data-cd="90">90 días</button>' +
+        '<button class="btn ghost sm" id="btnCorreosCsv">Descargar CSV</button>' +
+        '<button class="btn ghost sm" id="btnCorreosCerrar" style="margin-left:auto">Cerrar</button>' +
+      '</div>' +
+      '<div class="rend-global">' +
+        '<span class="rg-num">' + activos + '</span>' +
+        '<span class="rg-txt">correo(s) en la lista<br>' +
+        '<b>' + totalServidor + '</b> en total' +
+        (bajas ? ' · <b>' + bajas + '</b> dado(s) de baja' : '') + '</span>' +
+      '</div>' + aviso +
+      '<p class="rend-nota">' +
+        'Entran solos desde el formulario "Únete y recibe 10 %" del pie de la app. ' +
+        'El mismo correo no se guarda dos veces: si alguien vuelve a suscribirse, se anota ' +
+        'la fecha y ya está. Los que se dan de baja <b>no se borran</b>, quedan marcados: ' +
+        'así queda la prueba de que se respetó la Ley 1581.' +
+      '</p>' +
+      (lista.length ? buscarCorreosHtml() + tablaCorreosHtml(lista) : '');
+
+    var cerrar = document.getElementById('btnCorreosCerrar');
+    if (cerrar) cerrar.onclick = alternarCorreos;
+    var csv = document.getElementById('btnCorreosCsv');
+    if (csv) csv.onclick = function () { descargarCorreosCSV(lista); };
+    Array.prototype.forEach.call(caja.querySelectorAll('[data-cd]'), function (b) {
+      b.classList.toggle('sel', String(dias) === b.getAttribute('data-cd'));
+      b.onclick = function () {
+        caja.setAttribute('data-dias', b.getAttribute('data-cd'));
+        dibujarCorreos(totalServidor, activosServidor, b.getAttribute('data-cd'));
+      };
+    });
+    var buscador = document.getElementById('buscarCorreo');
+    if (buscador) buscador.oninput = function () {
+      var f = String(buscador.value || '').trim().toLowerCase();
+      Array.prototype.forEach.call(caja.querySelectorAll('tr[data-correo]'), function (tr) {
+        var texto = String(tr.getAttribute('data-correo') || '').toLowerCase();
+        tr.style.display = (f === '' || texto.indexOf(f) > -1) ? '' : 'none';
+      });
+    };
+    Array.prototype.forEach.call(caja.querySelectorAll('[data-baja]'), function (b) {
+      b.onclick = function () {
+        var correo = b.getAttribute('data-baja');
+        var quitar = b.getAttribute('data-estado') !== '1';
+        if (!confirm((quitar ? '¿Dar de baja' : '¿Volver a dar de alta') + ' a ' + correo + '?')) return;
+        pedirApi('/api/lead-baja', { metodo: 'POST', cuerpo: { correo: correo, baja: quitar ? 1 : 0 } })
+          .then(function () {
+            toast(quitar ? 'Correo dado de baja' : 'Correo dado de alta');
+            pintarCorreos();
+          })
+          .catch(function (e) { toast('No se pudo: ' + e.message, true); });
+      };
+    });
+  }
+
+  /* Aviso de error de la seccion de correos. "faltaWorker" solo se pone cuando ya se
+     comprobo que la clave SI funciona (los pedidos responden), o sea que el unico
+     fallo posible es que el Worker de Cloudflare no este actualizado todavia. */
+  function errorCorreos(mensaje, faltaWorker) {
+    var caja = document.getElementById('correosBox');
+    if (!caja) return;
+    caja.innerHTML =
+      '<div class="rend-top">' +
+        '<button class="btn ghost sm" id="btnCorreosCerrar" style="margin-left:auto">Cerrar</button>' +
+      '</div>' +
+      (faltaWorker
+        ? '<p class="rend-nota"><b>Falta un paso, y no es en el panel.</b> Tu clave está bien ' +
+          '(los pedidos responden), pero el servidor todavía no conoce esta parte.<br>' +
+          'Ve a Cloudflare → <b>Workers &amp; Pages</b> → <b>marlu-pedidos</b> → ' +
+          '<b>Edit code</b>, borra todo, pega el <b>worker.js</b> nuevo y pulsa ' +
+          '<b>Deploy</b>. Después vuelve aquí y pulsa "Actualizar".<br>' +
+          'Está explicado paso a paso en el LEEME-API.md, y no hay que tocar la base de ' +
+          'datos ni los secretos.<br>' +
+          'Mientras tanto los correos <b>no se pierden, pero quedan a medias</b>: se guardan ' +
+          'en el teléfono de cada visitante y suben solos en cuanto esa persona vuelva a ' +
+          'abrir la app. Por eso conviene hacerlo hoy, no la semana que viene.</p>'
+        : '<p class="rend-nota">No se pudieron traer los correos: ' + esc(mensaje) + '</p>');
+    var c2 = document.getElementById('btnCorreosCerrar');
+    if (c2) c2.onclick = alternarCorreos;
+  }
+
+  function buscarCorreosHtml() {
+    return '<div class="rend-top" style="margin-top:6px">' +
+      '<input id="buscarCorreo" type="search" placeholder="Buscar un correo…" ' +
+      'style="flex:1;min-width:180px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px">' +
+      '</div>';
+  }
+
+  function tablaCorreosHtml(lista) {
+    function fecha(iso) {
+      if (!iso) return '';
+      try {
+        var d = new Date(iso);
+        return d.toLocaleDateString('es-CO') + ' ' +
+          d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+      } catch (e) { return String(iso).slice(0, 16); }
+    }
+    return '<table class="rend"><thead><tr>' +
+      '<th>Correo</th><th>Entró</th><th>Última vez</th><th></th>' +
+      '</tr></thead><tbody>' +
+      lista.map(function (l) {
+        return '<tr data-correo="' + esc(l.correo) + '">' +
+          '<td>' + esc(l.correo) +
+            (l.baja ? ' <span class="rk mal">de baja</span>'
+                    : ' <span class="rk ok">activo</span>') + '</td>' +
+          '<td>' + esc(fecha(l.creado)) + '</td>' +
+          '<td>' + esc(fecha(l.ultima || l.creado)) + '</td>' +
+          '<td><button class="btn ghost sm" data-baja="' + esc(l.correo) + '" ' +
+            'data-estado="' + (l.baja ? '1' : '0') + '">' +
+            (l.baja ? 'Dar de alta' : 'Dar de baja') + '</button></td>' +
+          '</tr>';
+      }).join('') +
+      '</tbody></table>';
+  }
+
+  function descargarCorreosCSV(lista) {
+    if (!lista || !lista.length) { toast('No hay correos que descargar', true); return; }
+    function c(s) { s = String(s == null ? '' : s); return '"' + s.replace(/"/g, '""') + '"'; }
+    var filas = ['"Correo";"Entró";"Última vez";"Origen";"Cupón";"Estado"'];
+    lista.forEach(function (l) {
+      filas.push([l.correo, l.creado, l.ultima || l.creado, l.origen, l.cupon,
+        l.baja ? 'DE BAJA' : 'activo'].map(c).join(';'));
+    });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\uFEFF' + filas.join('\r\n')],
+      { type: 'text/csv;charset=utf-8' }));
+    a.download = 'correos-marlu-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 400);
+    toast('CSV descargado (' + lista.length + ' correo(s))');
+  }
+
+  function pintarBanner() {
+    var stats = document.getElementById('stats');
+    if (!stats || document.getElementById('bannerNuevos')) return;
+    var b = document.createElement('div');
+    b.className = 'banner-nuevos';
+    b.id = 'bannerNuevos';
+    b.innerHTML = '<span>¡Entró un pedido nuevo!</span><button id="btnVerNuevos">Ver</button>';
+    stats.parentNode.insertBefore(b, stats);
+    document.getElementById('btnVerNuevos').onclick = abrirNuevos;
+  }
+
+  /* ---------- arranque del panel ---------- */
+  function arrancarPanel() {
+    pintarBanner();
+    /* Al volver a la pestaña, se deja de parpadear el titulo: ya lo estas viendo. */
+    window.addEventListener('focus', pararAvisoVisual);
+
+    /* Los botones de confirmacion se manejan por delegacion: asi funcionan tambien
+       en las fichas que se pintan despues (pedidos nuevos, cambio de filtro). */
+    document.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('[data-cf]') : null;
+      if (!b) return;
+      e.preventDefault();
+      var art = b.closest('.ord');
+      if (!art) return;
+      var id = art.getAttribute('data-id');
+      var p = pedidos.filter(function (x) { return x.id === id; })[0];
+      if (!p) return;
+      var accion = b.getAttribute('data-cf');
+      if (accion === 'wa') waConfirmar(p, b.getAttribute('data-cf-rec') === '1');
+      else if (accion === 'si') marcarConf(p, 'confirmado');
+      else if (accion === 'no') marcarConf(p, 'cancelado');
+    });
+
+    /* Los pedidos que llevan mas de un dia esperando respuesta se marcan solos. */
+    revisarVencidos();
+    setInterval(revisarVencidos, 600000);
+    /* Si aun no hay servidor configurado, el panel funciona como siempre y se
+       avisa de que todavia no esta protegido. Bloquearlo sin servidor dejaria al
+       dueno sin acceso a sus propios pedidos, que seria peor. */
+    if (!apiBase()) {
+      render();
+      pintarAviso();
+      var caja = document.getElementById('avisoBox');
+      if (caja) {
+        caja.innerHTML = '<span class="pt mal"><span class="dot"></span>' +
+          'Sin servidor: el panel todavía no está protegido con clave</span>' +
+          '<span class="sep"></span>' +
+          '<span style="font-size:12px;color:#64748b">Despliega la API (carpeta <b>marlu-api</b>) ' +
+          'para activar el acceso privado y los avisos.</span>';
+      }
+      return;
+    }
+    /* Con servidor configurado: primero la clave, y ni un pedido en pantalla
+       hasta que se valide. */
+    var guardada = leer(K_CLAVE);
+    try { guardada = guardada || sessionStorage.getItem(K_CLAVE) || ''; } catch (e) {}
+    if (guardada) {
+      clave = guardada;
+      apiActiva = true;
+      sincronizar().then(function () {
+        if (!apiActiva) return;
+        ultimoVisto = new Date().toISOString();
+        vigilar();
+        pintarAviso();
+        revisarPush();
+      });
+    } else {
+      pedidos = [];
+      render();
+      pintarLogin();
+    }
+    if (leer(K_SONIDO) === '1') {
+      /* El navegador no dejara sonar hasta que haya un toque: se deja el boton
+         encendido visualmente y se reactiva en el primer clic del usuario. */
+      var reactivar = function () {
+        document.removeEventListener('click', reactivar);
+        if (!sonidoOn) activarSonido();
+      };
+      document.addEventListener('click', reactivar, { once: true });
+    }
+  }
+
+  /* ---------- eventos ---------- */
+  $('btnNuevo').onclick=function(){ abrirModal(null); };
+  $('btnCancelarModal').onclick=cerrarModal;
+  $('btnGuardar').onclick=guardarForm;
+  $('btnExportar').onclick=exportJSON;
+  $('btnCSV').onclick=exportCSV;
+  $('btnImportar').onclick=function(){ $('fileImp').click(); };
+  $('fileImp').onchange=function(){ if(this.files[0]) importJSON(this.files[0]); this.value=''; };
+  $('btnLimpiarFiltro').onclick=function(){ filtro='todos'; termino=''; $('buscar').value=''; render(); };
+  $('buscar').oninput=function(){ termino=this.value.trim(); render(); };
+  $('stats').onclick=function(e){
+    var el=e.target.closest('.stat'); if(!el) return;
+    filtro=el.dataset.f; render();
+  };
+  $('lista').onclick=function(e){
+    var chip=e.target.closest('.chip');
+    var card=e.target.closest('.ord');
+    if(!card) return;
+    var p=pedidos.find(function(x){return x.id===card.dataset.id;}); if(!p) return;
+    if(chip){
+      var t=chip.dataset.t;
+      if(t==='guia') pedirGuia(p); else toggleEstado(p,t);
+      return;
+    }
+    var btn=e.target.closest('[data-a]'); if(!btn) return;
+    var a=btn.dataset.a;
+    if(a==='editar') abrirModal(p);
+    else if(a==='borrar'){ if(confirm('¿Borrar el pedido de '+(p.nombre||p.id)+'?')){ pedidos=pedidos.filter(function(x){return x.id!==p.id;}); guardar(); toast('Pedido borrado'); } }
+    else if(a==='copiar') copiar(textoDropi(p),'Datos copiados — pégalos en Dropi');
+    else if(a==='wa') abrirWA(p);
+  };
+  $('ov').onclick=function(e){ if(e.target===$('ov')) cerrarModal(); };
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') cerrarModal(); });
+
+  /* ---------- arranque ---------- */
+  /* cargar() lee la copia local; arrancarPanel() decide si hay que pedir la clave
+     (cuando hay servidor) o dejar el gestor como siempre (cuando no lo hay). */
+  cargar();
+  arrancarPanel();
+})();
+</script>
+</body>
+</html>

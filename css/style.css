@@ -2299,3 +2299,130 @@ h1, h2, h3, h4 {
      indican en qué lámina se está. */
   .carrusel-flecha { display: none; }
 }
+
+/* ============================================================
+   FORMAS DE PAGO EN EL CHECKOUT
+   (25-sep-2026)
+
+   Las dos formas conviven: pagar ahora con MercadoPago o pagar contra
+   entrega. Se dibujan como dos tarjetas que se pueden tocar enteras, no
+   como dos bolitas pequeñas: en el móvil es más fácil acertarle.
+   ============================================================ */
+
+.pago-formas {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 14px;
+  border: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.pago-leyenda {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 4px;
+  padding: 0;
+}
+
+.pago-opcion { display: block; cursor: pointer; }
+
+/* La bolita del radio se esconde, pero sigue existiendo para el teclado y los
+   lectores de pantalla: quitarla del todo dejaría el campo sin accesible. */
+.pago-opcion input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.pago-caja {
+  position: relative;
+  display: block;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px 14px 46px;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.pago-caja::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pago-opcion input:checked + .pago-caja {
+  border-color: var(--accent);
+  background: var(--pink-soft);
+  box-shadow: 0 6px 18px rgba(238, 45, 122, 0.10);
+}
+.pago-opcion input:checked + .pago-caja::before {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 5px var(--accent);
+}
+
+/* Para quien navega con el teclado: se tiene que ver dónde está parado. */
+.pago-opcion input:focus-visible + .pago-caja {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pago-titulo {
+  display: block;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.pago-texto {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gray-mid);
+  margin-top: 2px;
+}
+
+/* ---------- Pedido contra entrega recibido ---------- */
+.checkout-listo {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  padding: 32px 26px;
+  text-align: center;
+}
+.checkout-listo h2 { margin-bottom: 14px; }
+.checkout-listo p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--gray-dark);
+  margin-bottom: 10px;
+}
+.checkout-listo-num { font-size: 16px; }
+.checkout-listo-num strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--accent-dark);
+  margin-top: 4px;
+}
+.checkout-listo-nota {
+  background: var(--pink-soft);
+  border-radius: 12px;
+  padding: 13px 15px;
+  font-size: 13.5px;
+}
+.checkout-listo .btn-pill { margin-top: 16px; }
