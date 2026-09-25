@@ -131,7 +131,7 @@
   // Los códigos válidos de verdad están en la variable de entorno CUPONES
   // del backend. Si allí se cambia el porcentaje, hay que cambiarlo aquí
   // para que la estimación no mienta.
-  const CUPONES_ESTIMADOS = { BEAUTEN10: 10 };
+  const CUPONES_ESTIMADOS = { MARLU10: 10 };
 
   const kitPorCodigo = (codigo) => {
     const c = String(codigo || '').trim().toUpperCase();

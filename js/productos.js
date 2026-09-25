@@ -236,7 +236,7 @@ window.BEAUTEN_PRODUCTOS = [
   },
   {
     id: '2151590',
-    nombre: 'Almohada Cervical Ortopédica',
+    nombre: 'Almohada Cervical Ortopédica Clásica',
     descripcion: 'Duerme sin dolor de cuello: soporte ortopédico que alinea tu columna mientras descansas.',
     proveedor: 'Ventas Margarita',
     precioProveedor: 30000,
@@ -247,7 +247,7 @@ window.BEAUTEN_PRODUCTOS = [
     rating: 4.7,
     reviews: 132,
     nicho: 'Bienestar',
-    beneficio: 'Despierta sin dolor de cuello ni cabeza',
+    beneficio: 'Soporte ortopédico que alinea tu columna',
     caracteristicas: [
       'Soporte ortopédico',
       'Alinea tu columna mientras descansas',
@@ -390,7 +390,7 @@ window.BEAUTEN_PRODUCTOS = [
   },
   {
     id: '1997245',
-    nombre: 'Almohada Cervical Ortopédica',
+    nombre: 'Almohada Cervical Ergonómica Premium',
     descripcion: 'Diseño ergonómico que sostiene el cuello y acomoda la columna mientras duermes.',
     proveedor: 'FAKA STORE SAS',
     precioProveedor: 42000,
@@ -401,7 +401,7 @@ window.BEAUTEN_PRODUCTOS = [
     rating: null,
     reviews: 0,
     nicho: 'Bienestar',
-    beneficio: 'Despierta sin dolor de cuello ni cabeza',
+    beneficio: 'Diseño ergonómico que sostiene tu cuello',
     caracteristicas: [
       'Diseño ergonómico',
       'Sostiene el cuello',
