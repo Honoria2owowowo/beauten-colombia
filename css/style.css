@@ -2189,3 +2189,32 @@ h1, h2, h3, h4 {
   .barra-confianza-grupo .barra-confianza-item svg { width: 22px; height: 22px; }
   .barra-confianza-pista { animation-duration: 34s; }
 }
+
+/* ============================================================
+   CABECERA DE MÓVIL: logo a la izquierda, menú a la derecha
+   (25-sep-2026, a petición de la clienta)
+
+   Antes:  [menú] [logo] [carrito] [lupa] [carrito duplicado]
+   Ahora:  [logo] [carrito] [lupa] [menú]
+
+   Solo cambia en móvil y tableta. En escritorio la cabecera lleva el menú
+   completo a la vista, así que el orden no aplica igual.
+   ============================================================ */
+@media (max-width: 768px) {
+  /* El logo se queda a la izquierda: se le quita el centrado automático */
+  .brand {
+    order: 0;
+    margin-inline: 0;
+  }
+  /* Los iconos se empujan a la derecha */
+  .header-actions {
+    order: 1;
+    margin-left: auto;
+    gap: 2px;
+  }
+  /* El menú pasa al extremo derecho */
+  .nav-toggle {
+    order: 2;
+    margin-left: 2px;
+  }
+}
