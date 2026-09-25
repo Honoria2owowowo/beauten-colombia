@@ -402,7 +402,10 @@
         '<div class="who">'+
           '<div class="nm">'+esc(p.nombre||'(sin nombre)')+' '+esc(p.apellido||'')+
             (nuevosIds[p.id]?'<span class="marca-nuevo">NUEVO</span>':'')+
-            (p.soloLocal?'<span class="marca-nuevo" style="background:#b45309">SOLO AQUÍ</span>':'')+'</div>'+
+            (p.soloLocal?'<span class="marca-nuevo" style="background:#b45309">SOLO AQUÍ</span>':'')+
+            /* Los que se pagaron con tarjeta o PSE NO vienen del contra entrega:
+               se marcan para no confundirlos con un pedido por cobrar. */
+            (p.origen==='mercadopago'?'<span class="marca-nuevo" style="background:#009ee3">PAGÓ EN LÍNEA</span>':'')+'</div>'+
           '<div class="ph">📱 '+tel+(p.correo?' · ✉ '+esc(p.correo):'')+'</div>'+
           bloqueTel(p)+
           (p.numDoc?'<div class="ph">🪪 '+esc(p.tipoDoc||'CC')+' '+esc(p.numDoc)+'</div>':'')+
@@ -633,7 +636,7 @@
   /* Version visible en la pantalla de acceso. Sirve para saber, sin adivinar, si
      el navegador esta mostrando el panel nuevo o una copia vieja en cache.
      Al cambiar el panel, subir este numero. */
-  var PANEL_VERSION = 'v4 · 25 sep 2026';
+  var PANEL_VERSION = 'v5 · 25 sep 2026';
 
   var apiActiva = false;      /* sesion validada contra el servidor */
   var clave = '';
