@@ -1,5 +1,5 @@
 /* ============================================================
-   BeauTen Colombia — Catálogo real (Dropi)
+   Marlú Colombia — Catálogo real (Dropi)
    Productos validados en Dropi (cuenta ORGANIC ECOM).
    Orden de aparición = prioridad de venta recomendada.
    ============================================================ */

@@ -1,5 +1,5 @@
 /* ============================================================
-   BeauTen Colombia — PWA (main.js)
+   Marlú Colombia — PWA (main.js)
    Menú móvil, filtros, animaciones scroll, PWA install, extras
    ============================================================ */
 (function () {
@@ -120,17 +120,17 @@
       { t: 'Esta página debe abrirse en Chrome (o tu navegador).' },
       { t: 'Toca el menú ⋮ (arriba a la derecha).' },
       { t: 'Selecciona "Agregar a pantalla de inicio" o "Instalar aplicación".' },
-      { t: 'Confirma y listo: BeauTen quedará en tu inicio como una app.' }
+      { t: 'Confirma y listo: Marlú quedará en tu inicio como una app.' }
     ],
     ios: [
       { t: 'Abre esta página en Safari (el navegador de Apple).' },
       { t: 'Toca el botón Compartir (cuadro con flecha hacia arriba).' },
       { t: 'Desliza hacia abajo y toca "Agregar a pantalla de inicio".' },
-      { t: 'Toca "Agregar" y listo: BeauTen quedará en tu inicio.' }
+      { t: 'Toca "Agregar" y listo: Marlú quedará en tu inicio.' }
     ],
     desktop: [
       { t: 'Chrome / Edge: haz clic en el icono de instalar (monitor con +) en la barra de direcciones.' },
-      { t: 'O abre el menú ⋮ → "Instalar BeauTen Colombia…".' },
+      { t: 'O abre el menú ⋮ → "Instalar Marlú Colombia…".' },
       { t: 'Confirma en el diálogo y la app se abrirá en su propia ventana.' }
     ]
   };
@@ -195,7 +195,7 @@
     appInstalled = true;
     deferredPrompt = null;
     closeIfStandalone();
-    console.log('BeauTen instalada correctamente');
+    console.log('Marlú instalada correctamente');
   });
 
   /* --- Cierres del modal: X, clic fuera y tecla ESC --- */
@@ -260,7 +260,7 @@
 })();
 
 /* ============================================================
-   Catálogo real BeauTen — render desde window.BEAUTEN_PRODUCTOS
+   Catálogo real Marlú — render desde window.BEAUTEN_PRODUCTOS
    + registro de pedidos → exportación CSV formato Dropi
    ============================================================ */
 (function () {
@@ -287,7 +287,7 @@
       ? '<div class="prod-rating"><span>' + estrellas + '</span><strong>' + Number(p.rating).toFixed(1) + '</strong><small>(' + p.reviews + ')</small></div>'
       : '';
     const msg = encodeURIComponent(
-      'Hola BeauTen 👋 quiero pedir el producto *' + p.nombre +
+      'Hola Marlú 👋 quiero pedir el producto *' + p.nombre +
       '*\n📦 ID Dropi: ' + p.id +
       '\n🏭 Proveedor: ' + p.proveedor +
       '\n💄 Beneficio: ' + p.beneficio +

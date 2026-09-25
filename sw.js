@@ -1,4 +1,4 @@
-/* Service Worker — BeauTen Colombia PWA */
+/* Service Worker — Marlú Colombia PWA */
 const VERSION = 'beauten-v3.13.0';
 const CORE = 'beauten-core-v3.13';
 const RUNTIME = 'beauten-runtime-v3.13';

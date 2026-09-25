@@ -1,5 +1,5 @@
 /* ============================================================
-   BeauTen Colombia — PWA
+   Marlú Colombia — PWA
    Sistema de diseño inspirado en la plantilla "Beauten" (ThemeWolfs)
    Paleta: #FAF9F6 / #FFEFF2 / #FFF0F3 / #0C0C0C / #EE2D7A / #F2C94C
    Tipografía: Playfair Display (títulos) + Lato (cuerpo)
@@ -1487,7 +1487,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
 /* ============================================================
    CARRUSEL PRINCIPAL
    Adaptado del carrusel de la otra tienda de la clienta, con la identidad
-   de BeauTen: fondo rosa con degradado, tipografía y botones de la casa.
+   de Marlú: fondo rosa con degradado, tipografía y botones de la casa.
    Reutiliza .hero-grid, .hero-copy, .hero-sub, .hero-cta, .hero-trust,
    .hero-card, .play-btn y .btn-pill, así que no duplica estilos.
    ============================================================ */

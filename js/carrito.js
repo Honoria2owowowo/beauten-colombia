@@ -1,5 +1,5 @@
 /* ============================================================
-   BeauTen Colombia — Carrito de compras
+   Marlú Colombia — Carrito de compras
    El pago se hace con PSE y tarjetas a través de MercadoPago.
    El carrito se guarda en el navegador; el cobro lo crea el
    backend (Netlify Function) para que la clave nunca se exponga.

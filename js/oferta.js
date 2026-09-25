@@ -1,5 +1,5 @@
 /* ============================================================
-   BeauTen Colombia — Contador de oferta y kits que ahorran
+   Marlú Colombia — Contador de oferta y kits que ahorran
    (tarea #109 del tablero)
 
    Se carga en index.html y en checkout.html:

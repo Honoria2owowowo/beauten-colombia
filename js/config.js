@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   BeauTen — configuracion de la API
+   Marlú — configuracion de la API
    ------------------------------------------------------------
    El sitio vive en GitHub Pages (solo archivos estaticos).
    Las funciones de pago necesitan un servidor aparte: el Worker

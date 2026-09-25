@@ -1,5 +1,5 @@
 /* ============================================================
-   BeauTen Colombia — Página de detalle de producto (PDP)
+   Marlú Colombia — Página de detalle de producto (PDP)
    Lee el producto desde window.BEAUTEN_PRODUCTOS usando ?id=
    Regla: solo se muestran datos reales que ya existen en el
    catálogo. No se inventa ninguna especificación ni precio.
@@ -21,7 +21,7 @@
   function mostrarError() {
     if ($('pdpCargando')) $('pdpCargando').hidden = true;
     if ($('pdpError')) $('pdpError').hidden = false;
-    document.title = 'Producto no encontrado — BeauTen Colombia';
+    document.title = 'Producto no encontrado — Marlú Colombia';
   }
 
   if (!producto) {
@@ -40,7 +40,7 @@
   const tieneResenas = Number(p.reviews) > 0;
 
   /* ---------- Cabecera y metadatos ---------- */
-  document.title = p.nombre + ' — BeauTen Colombia';
+  document.title = p.nombre + ' — Marlú Colombia';
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) {
     metaDesc.setAttribute(
@@ -241,7 +241,7 @@
   if (wa) {
     wa.href =
       'https://wa.me/' + WA + '?text=' +
-      encodeURIComponent('Hola BeauTen 👋 quiero preguntar por *' + p.nombre + '*');
+      encodeURIComponent('Hola Marlú 👋 quiero preguntar por *' + p.nombre + '*');
   }
 
   /* ---------- Pintar la página ---------- */
