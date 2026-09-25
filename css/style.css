@@ -18,7 +18,8 @@
   --star: #F2C94C;
   --dark: #202020;
   --line: #E8E2DE;
-  --serif: 'Playfair Display', Georgia, serif;
+  /* Serif editorial de alto contraste (referencia: Raving). */
+  --serif: 'Bodoni Moda', Georgia, serif;
   --sans: 'Lato', Arial, sans-serif;
   --radius: 20px;
   --radius-sm: 16px;
@@ -53,7 +54,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   color: var(--accent);
   margin-bottom: 14px;
 }
-h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15; color: var(--ink); }
+h1, h2, h3, h4 {
+  font-family: var(--serif);
+  /* 600 mejor que 700: con un contraste tan alto, el peso grueso
+     engorda los trazos finos y el titular pierde la elegancia. */
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
 .section { padding: 96px 0; }
 .section-head { text-align: center; max-width: 640px; margin: 0 auto 52px; }
 .section-head h2 { font-size: clamp(30px, 4vw, 44px); }
@@ -69,7 +78,16 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
   height: var(--header-h);
 }
 .header-inner { display: flex; align-items: center; justify-content: space-between; height: 100%; gap: 16px; }
-.brand img { height: 58px; width: auto; }
+.brand { display: inline-flex; align-items: center; gap: 11px; }
+.brand-marca { height: 46px; width: auto; flex: none; }
+.brand-texto {
+  font-family: var(--serif);
+  font-size: 31px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.6px;
+  color: var(--accent-dark);
+}
 .main-nav ul { display: flex; gap: 30px; }
 .main-nav a {
   font-size: 14.5px; font-weight: 600; letter-spacing: 0.2px;
@@ -741,6 +759,9 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
   display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr;
   gap: 44px; padding: 72px 0 56px;
 }
+.footer-brand .brand-pie { display: inline-flex; align-items: center; gap: 10px; }
+.footer-brand .brand-pie .brand-marca { height: 40px; }
+.footer-brand .brand-pie .brand-texto { color: var(--white); font-size: 27px; }
 .footer-brand p { margin: 18px 0 22px; font-size: 14.5px; color: #cdcdcd; max-width: 300px; }
 .socials { display: flex; gap: 10px; }
 .socials a {
