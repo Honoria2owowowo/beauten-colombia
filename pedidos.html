@@ -117,6 +117,10 @@
   .login-err{margin-top:12px; font-size:13px; color:var(--red); background:var(--red-bg);
     border-radius:9px; padding:9px 11px; display:none; line-height:1.4}
   .login-err.show{display:block}
+  .login-olvido{margin-top:12px; font-size:12.5px; text-align:center; line-height:1.45}
+  .login-olvido a{color:var(--teal); text-decoration:underline}
+  .login-version{display:inline-block; margin-top:5px; font-size:10.5px; color:#94a3b8;
+    letter-spacing:.3px}
   .login-nota{margin-top:14px; font-size:11.5px; color:var(--mut); line-height:1.45;
     border-top:1px solid var(--line); padding-top:11px}
   .login-nota code{background:#f1f5f9; padding:1px 5px; border-radius:4px; font-size:11px}
@@ -626,6 +630,11 @@
   var K_CLAVE = 'marlu_admin_clave';
   var K_SONIDO = 'marlu_sonido';
 
+  /* Version visible en la pantalla de acceso. Sirve para saber, sin adivinar, si
+     el navegador esta mostrando el panel nuevo o una copia vieja en cache.
+     Al cambiar el panel, subir este numero. */
+  var PANEL_VERSION = 'v4 · 25 sep 2026';
+
   var apiActiva = false;      /* sesion validada contra el servidor */
   var clave = '';
   var conocidos = {};         /* ids que YA existen en el servidor */
@@ -643,7 +652,13 @@
   function borrar(k) { try { localStorage.removeItem(k); } catch (e) {} }
 
   function apiBase() {
-    return String(leer(K_API) || API_FIJA || '').replace(/\/+$/, '');
+    /* API_FIJA manda: es la direccion que viene escrita en esta misma pagina.
+       Antes se le daba prioridad a lo que hubiera guardado en el navegador, y
+       como el campo para cambiarla solo aparece cuando la direccion esta vacia,
+       una direccion equivocada guardada en un intento anterior dejaba el panel
+       sin poder entrar NUNCA y sin decir por que. */
+    if (API_FIJA) return String(API_FIJA).replace(/\/+$/, '');
+    return String(leer(K_API) || '').replace(/\/+$/, '');
   }
 
   /* Huella de un pedido: si cambia, hay algo que subir al servidor. Incluye los
@@ -710,9 +725,11 @@
         '<label class="login-rec"><input type="checkbox" id="l_rec"> Recordar en este dispositivo</label>' +
         '<div class="login-err" id="l_err"></div>' +
         '<button class="btn teal" id="l_entrar">Entrar</button>' +
+        '<p class="login-olvido"><a href="#" id="l_olvidar">¿No consigues entrar? ' +
+        'Borrar los datos guardados de este navegador</a></p>' +
         '<div class="login-nota">La clave se configura en Cloudflare, en la variable ' +
         '<code>ADMIN_PASSWORD</code>. No está guardada en esta página: se comprueba contra el servidor ' +
-        'cada vez que entras.</div>' +
+        'cada vez que entras.<br><span class="login-version">Versión del panel: ' + PANEL_VERSION + '</span></div>' +
       '</div>';
     document.body.appendChild(d);
 
@@ -729,6 +746,20 @@
         var oculta = c.type === 'password';
         c.type = oculta ? 'text' : 'password';
         btnVer.textContent = oculta ? 'Ocultar' : 'Ver';
+      };
+    }
+    /* Ultimo recurso: si el panel sigue sin entrar y ya se probo de todo, esto
+       borra lo que este navegador tenga guardado (direccion y clave) y recarga.
+       No toca nada del servidor: los pedidos no corren ningun riesgo. */
+    var olvidar = document.getElementById('l_olvidar');
+    if (olvidar) {
+      olvidar.onclick = function (ev) {
+        ev.preventDefault();
+        if (!confirm('Se borraran la clave y la direccion guardadas en ESTE navegador. ' +
+                     'Los pedidos del servidor no se tocan. ¿Continuar?')) return;
+        borrar(K_API); borrar(K_CLAVE);
+        try { sessionStorage.removeItem(K_CLAVE); } catch (e) {}
+        location.reload();
       };
     }
     if (faltaApi) {
