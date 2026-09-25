@@ -2262,7 +2262,9 @@ h1, h2, h3, h4 {
     aspect-ratio: auto;
     object-fit: cover;
     /* Un poco hacia la derecha, para no cortarle la cara a la modelo */
-    object-position: 58% center;
+    /* Hacia la derecha: el texto ocupa la izquierda, así que la modelo
+       tiene que verse claramente en la mitad derecha. */
+    object-position: 66% center;
   }
 
   /* El texto vuelve ENCIMA del video, pegado a la derecha */
@@ -2273,15 +2275,16 @@ h1, h2, h3, h4 {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: auto;
-    right: 0;
+    /* El texto va a la IZQUIERDA; la modelo se queda a la derecha. */
+    left: 0;
+    right: auto;
     width: 76%;
-    align-items: flex-end;
-    text-align: right;
-    padding: 26px 20px;
-    /* El velo blanco nace en la derecha, que es donde va el texto, y se
-       desvanece hacia la izquierda para dejar ver a la modelo */
-    background: linear-gradient(to left,
+    align-items: flex-start;
+    text-align: left;
+    padding: 26px 18px 26px 22px;
+    /* El velo blanco nace en la izquierda, que es donde va el texto, y se
+       desvanece hacia la derecha para dejar ver bien a la modelo */
+    background: linear-gradient(to right,
       rgba(255, 255, 255, .95) 0%,
       rgba(255, 255, 255, .80) 52%,
       rgba(255, 255, 255, 0) 100%);
