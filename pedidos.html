@@ -101,6 +101,17 @@
   .login-caja input[type=password],.login-caja input[type=text]{width:100%; padding:11px 12px; border:1px solid var(--line);
     border-radius:10px; font-size:15px; font-family:inherit}
   .login-caja input:focus{outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal)}
+  /* Campo de la clave + boton "Ver".
+     La clave del panel es larga y en el telefono el teclado pone mayuscula sola
+     y "corrige" lo que uno escribe. Estos estilos dan sitio al boton que muestra
+     lo escrito, para poder comprobarlo antes de entrar. */
+  .login-clave{display:flex; align-items:center; gap:8px}
+  .login-clave input{flex:1 1 auto; min-width:0}
+  .login-ver{flex:none; padding:11px 13px; border:1px solid var(--line); background:#f1f5f9;
+    color:var(--slate); border-radius:10px; font-size:12.5px; font-weight:700;
+    font-family:inherit; line-height:1; letter-spacing:.3px; cursor:pointer}
+  .login-ver:hover{background:#e2e8f0}
+  .login-ver:focus-visible{outline:2px solid var(--teal); outline-offset:1px}
   .login-caja .btn{width:100%; margin-top:14px; padding:12px}
   .login-rec{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:var(--slate)}
   .login-err{margin-top:12px; font-size:13px; color:var(--red); background:var(--red-bg);
@@ -681,7 +692,11 @@
           '<input id="l_api" type="text" placeholder="https://marlu-pedidos.tucuenta.workers.dev" ' +
           'autocomplete="off" spellcheck="false">' : '') +
         '<label for="l_clave">Clave de acceso</label>' +
-        '<input id="l_clave" type="password" autocomplete="current-password" placeholder="Tu clave">' +
+        '<div class="login-clave">' +
+          '<input id="l_clave" type="password" autocomplete="current-password" ' +
+          'autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Tu clave">' +
+          '<button type="button" class="login-ver" id="l_ver">Ver</button>' +
+        '</div>' +
         '<label class="login-rec"><input type="checkbox" id="l_rec"> Recordar en este dispositivo</label>' +
         '<div class="login-err" id="l_err"></div>' +
         '<button class="btn teal" id="l_entrar">Entrar</button>' +
@@ -694,6 +709,18 @@
     var entrar = function () { intentarEntrar(); };
     document.getElementById('l_entrar').onclick = entrar;
     document.getElementById('l_clave').onkeydown = function (e) { if (e.key === 'Enter') entrar(); };
+    /* Boton "Ver": permite comprobar lo escrito antes de entrar. Con una clave
+       larga, en el telefono, es la diferencia entre entrar y no entrar. */
+    var btnVer = document.getElementById('l_ver');
+    if (btnVer) {
+      btnVer.onclick = function () {
+        var c = document.getElementById('l_clave');
+        if (!c) return;
+        var oculta = c.type === 'password';
+        c.type = oculta ? 'text' : 'password';
+        btnVer.textContent = oculta ? 'Ocultar' : 'Ver';
+      };
+    }
     if (faltaApi) {
       var ia = document.getElementById('l_api');
       ia.value = leer(K_API) || '';
