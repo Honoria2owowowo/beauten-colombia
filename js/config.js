@@ -7,7 +7,7 @@
 
    Para cambiar de servidor, edita SOLO esta linea.
    ============================================================ */
-window.BEAUTEN_API = 'https://beauten-pedidos.granadoalejandro97.workers.dev';
+window.BEAUTEN_API = 'https://marlu-pedidos.granadoalejandro97.workers.dev';
 
 /* Atajo: devuelve la URL completa de un endpoint */
 window.beautenUrl = function (ruta) {
