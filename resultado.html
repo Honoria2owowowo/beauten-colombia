@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e0699a">
+<title>Resultado del pago — BeauTen</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-pagina="resultado">
+
+<header class="checkout-top">
+  <div class="container checkout-top-inner">
+    <a href="index.html" class="checkout-volver">&larr; Ir a la tienda</a>
+    <a href="index.html" class="checkout-marca">BeauTen</a>
+  </div>
+</header>
+
+<main class="section resultado-pagina">
+  <div class="container resultado-caja">
+
+    <div id="cargando" class="resultado-estado">
+      <div class="resultado-spinner"></div>
+      <h1>Verificando tu pago…</h1>
+      <p>Estamos confirmando el estado con la pasarela. No cierres esta página.</p>
+    </div>
+
+    <div id="aprobado" class="resultado-estado" hidden>
+      <div class="resultado-icono ok">&#10003;</div>
+      <h1>¡Pago confirmado!</h1>
+      <p class="resultado-sub">Gracias por tu compra. Ya estamos preparando tu pedido.</p>
+      <div class="resultado-detalle" id="detalleAprobado"></div>
+      <p class="resultado-nota">Te contactaremos al WhatsApp que registraste para coordinar la entrega.</p>
+      <a href="index.html" class="btn-pill">Seguir comprando</a>
+    </div>
+
+    <div id="pendiente" class="resultado-estado" hidden>
+      <div class="resultado-icono warn">&#8226;</div>
+      <h1>Pago en proceso</h1>
+      <p class="resultado-sub">Tu pago quedó <strong>pendiente</strong>. Con PSE es normal: el banco todavía no nos confirmó la transacción.</p>
+      <div class="resultado-detalle" id="detallePendiente"></div>
+      <p class="resultado-nota">Te avisaremos por WhatsApp en cuanto se confirme. Si prefieres, escríbenos y lo revisamos juntos.</p>
+      <a href="index.html" class="btn-pill">Volver a la tienda</a>
+    </div>
+
+    <div id="rechazado" class="resultado-estado" hidden>
+      <div class="resultado-icono error">&times;</div>
+      <h1>El pago no se completó</h1>
+      <p class="resultado-sub" id="motivoRechazo">La pasarela rechazó la transacción. No se te hizo ningún cobro.</p>
+      <p class="resultado-nota">Puedes intentarlo otra vez con otro medio de pago u otro banco.</p>
+      <div class="resultado-acciones">
+        <a href="checkout.html" class="btn-pill">Reintentar el pago</a>
+        <a href="index.html" class="btn-pill btn-secundario">Volver a la tienda</a>
+      </div>
+    </div>
+
+    <div id="desconocido" class="resultado-estado" hidden>
+      <div class="resultado-icono warn">?</div>
+      <h1>No pudimos verificar el pago</h1>
+      <p class="resultado-sub">No encontramos el pago o hubo un problema de conexión.</p>
+      <p class="resultado-nota">Si ya pagaste, escríbenos por WhatsApp con tu número de pedido y lo revisamos.</p>
+      <a href="index.html" class="btn-pill">Volver a la tienda</a>
+    </div>
+
+  </div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/productos.js"></script>
+<script src="js/carrito.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var qs = new URLSearchParams(window.location.search);
+  var pagoId = qs.get('payment_id') || qs.get('collection_id') || qs.get('id');
+
+  var cajas = ['cargando', 'aprobado', 'pendiente', 'rechazado', 'desconocido'];
+  function mostrar(id) {
+    cajas.forEach(function (c) {
+      var el = document.getElementById(c);
+      if (el) el.hidden = (c !== id);
+    });
+  }
+
+  function dinero(n) {
+    return '$' + Number(n || 0).toLocaleString('es-CO');
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function datosComprador() {
+    try {
+      return JSON.parse(sessionStorage.getItem('beauten_comprador') || 'null');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function bloqueDetalle(pago) {
+    var c = datosComprador();
+    var html = '<div class="detalle-linea"><span>Número de pago</span><strong>' + esc(pago.id) + '</strong></div>';
+    if (pago.monto) html += '<div class="detalle-linea"><span>Monto</span><strong>' + dinero(pago.monto) + '</strong></div>';
+    if (pago.metodo) html += '<div class="detalle-linea"><span>Medio</span><strong>' + esc(String(pago.metodo).toUpperCase()) + '</strong></div>';
+    if (c) {
+      html += '<div class="detalle-linea"><span>Enviamos a</span><strong>' + esc(c.nombre + ' ' + c.apellido) + '</strong></div>';
+      html += '<div class="detalle-linea"><span>Dirección</span><strong>' + esc(c.direccion + ', ' + c.ciudad) + '</strong></div>';
+    }
+    return html;
+  }
+
+  if (!pagoId) {
+    mostrar('desconocido');
+    return;
+  }
+
+  fetch(beautenUrl('/api/consulta-pago?id=' + encodeURIComponent(pagoId)))
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      var pago = res.d || {};
+
+      if (!res.ok || !pago.estado) {
+        mostrar('desconocido');
+        return;
+      }
+
+      if (pago.estado === 'approved') {
+        document.getElementById('detalleAprobado').innerHTML = bloqueDetalle(pago);
+        mostrar('aprobado');
+        if (window.BeauTenCarrito) window.BeauTenCarrito.vaciar();
+      } else if (pago.estado === 'pending' || pago.estado === 'in_process' || pago.estado === 'authorized') {
+        document.getElementById('detallePendiente').innerHTML = bloqueDetalle(pago);
+        mostrar('pendiente');
+      } else {
+        if (pago.detalle) {
+          document.getElementById('motivoRechazo').textContent =
+            'La pasarela rechazó la transacción (' + pago.detalle + '). No se te hizo ningún cobro.';
+        }
+        mostrar('rechazado');
+      }
+    })
+    .catch(function () {
+      mostrar('desconocido');
+    });
+})();
+</script>
+</body>
+</html>

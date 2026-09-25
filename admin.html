@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pedidos — BeauTen</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<script src="js/config.js"></script>
+<body data-pagina="admin">
+
+<header class="checkout-top">
+  <div class="container checkout-top-inner">
+    <a href="index.html" class="checkout-volver">&larr; Ir a la tienda</a>
+    <span class="checkout-marca">BeauTen · Pedidos</span>
+  </div>
+</header>
+
+<main class="section admin-pagina">
+  <div class="container">
+
+    <!-- ============ ACCESO ============ -->
+    <div id="acceso" class="admin-caja">
+      <h1>Panel de pedidos</h1>
+      <p class="admin-sub">Zona privada. Introduce tu clave para ver los pedidos.</p>
+      <form id="formClave" class="admin-form">
+        <label class="campo">
+          <span>Clave de acceso</span>
+          <input type="password" id="clave" autocomplete="current-password" required placeholder="Tu clave de administrador">
+        </label>
+        <div class="checkout-error" id="accesoError" hidden></div>
+        <button type="submit" class="btn-pill checkout-pagar" id="btnEntrar">Entrar</button>
+      </form>
+      <p class="admin-nota">La clave se configura en Netlify, en la variable <code>ADMIN_PASSWORD</code>.</p>
+    </div>
+
+    <!-- ============ PANEL ============ -->
+    <div id="panel" hidden>
+      <div class="admin-cabecera">
+        <h1>Pedidos pagados</h1>
+        <div class="admin-acciones">
+          <label class="admin-selector">
+            Periodo
+            <select id="dias">
+              <option value="7">Últimos 7 días</option>
+              <option value="30">Últimos 30 días</option>
+              <option value="90" selected>Últimos 90 días</option>
+              <option value="365">Último año</option>
+            </select>
+          </label>
+          <button type="button" class="btn-pill btn-small" id="btnRefrescar">Actualizar</button>
+          <button type="button" class="btn-pill btn-small" id="btnCsv">Exportar CSV para Dropi</button>
+          <button type="button" class="btn-pill btn-small btn-secundario" id="btnSalir">Salir</button>
+        </div>
+      </div>
+
+      <div class="admin-resumen" id="resumen"></div>
+
+      <div class="admin-filtros" id="filtros">
+        <button type="button" class="pill active" data-estado="all">Todos</button>
+        <button type="button" class="pill" data-estado="approved">Aprobados</button>
+        <button type="button" class="pill" data-estado="pending">Pendientes</button>
+        <button type="button" class="pill" data-estado="rejected">Rechazados</button>
+      </div>
+
+      <div class="admin-tabla-caja">
+        <table class="admin-tabla" id="tabla">
+          <thead>
+            <tr>
+              <th>Fecha</th><th>Estado</th><th>Cliente</th><th>Teléfono</th>
+              <th>Documento</th><th>Dirección</th><th>Ciudad</th><th>Productos</th><th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo"></tbody>
+        </table>
+        <p class="admin-vacio" id="vacio" hidden>No hay pedidos en este periodo.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var CLAVE_SESION = 'beauten_admin_clave';
+  var pedidos = [];
+  var filtro = 'all';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function cop(n) { return '$' + Number(n || 0).toLocaleString('es-CO'); }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function fechaBonita(f) {
+    if (!f) return '—';
+    var d = new Date(f);
+    if (isNaN(d.getTime())) return esc(f);
+    return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) + ' ' +
+           d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  var ETIQUETA = {
+    approved: { txt: 'Aprobado', cls: 'ok' },
+    pending: { txt: 'Pendiente', cls: 'warn' },
+    in_process: { txt: 'En proceso', cls: 'warn' },
+    authorized: { txt: 'Autorizado', cls: 'warn' },
+    rejected: { txt: 'Rechazado', cls: 'error' },
+    cancelled: { txt: 'Cancelado', cls: 'error' },
+    refunded: { txt: 'Devuelto', cls: 'error' }
+  };
+
+  function pintarResumen(r) {
+    var el = $('resumen');
+    if (!r) { el.innerHTML = ''; return; }
+    el.innerHTML =
+      tarjeta('Pedidos', r.total_pedidos, '') +
+      tarjeta('Aprobados', r.aprobados, 'ok') +
+      tarjeta('Pendientes', r.pendientes, 'warn') +
+      tarjeta('Rechazados', r.rechazados, 'error') +
+      tarjeta('Recaudado', cop(r.recaudado), 'ok') +
+      (r.otros_cobros_ignorados > 0
+        ? tarjeta('Otros cobros ignorados', r.otros_cobros_ignorados, '')
+        : '');
+  }
+
+  function tarjeta(titulo, valor, clase) {
+    return '<div class="admin-tarjeta ' + clase + '"><span>' + esc(titulo) + '</span><strong>' + esc(valor) + '</strong></div>';
+  }
+
+  function pintarTabla() {
+    var visibles = pedidos.filter(function (p) {
+      if (filtro === 'all') return true;
+      if (filtro === 'pending') return p.estado === 'pending' || p.estado === 'in_process' || p.estado === 'authorized';
+      return p.estado === filtro;
+    });
+
+    $('vacio').hidden = visibles.length > 0;
+
+    $('cuerpo').innerHTML = visibles.map(function (p) {
+      var e = ETIQUETA[p.estado] || { txt: p.estado, cls: '' };
+      return '<tr>' +
+        '<td>' + fechaBonita(p.fecha) + '</td>' +
+        '<td><span class="estado-chip ' + e.cls + '">' + esc(e.txt) + '</span></td>' +
+        '<td>' + esc(p.cliente) + '</td>' +
+        '<td>' + esc(p.telefono) + '</td>' +
+        '<td>' + esc(p.documento) + '</td>' +
+        '<td>' + esc(p.direccion) + '</td>' +
+        '<td>' + esc(p.ciudad) + (p.departamento ? ', ' + esc(p.departamento) : '') + '</td>' +
+        '<td class="admin-prod">' + esc(p.items_detalle || '—') + '</td>' +
+        '<td><strong>' + cop(p.monto) + '</strong></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  /* ---------- Exportación CSV formato oficial Dropi ---------- */
+  var CSV_HEADERS = [
+    'NOMBRES', 'APELLIDOS', 'DIRECCIÓN Y BARRIO', 'DEPARTAMENTO', 'CIUDAD',
+    'TELÉFONO', 'ID DE PRODUCTO', 'CANTIDAD', 'PRECIO TOTAL (SIN PUNTOS NI COMAS)',
+    'CON RECAUDO', 'NOTA', 'EMAIL (OPCIONAL)', 'ID DE VARIABLE (OPCIONAL)',
+    'CODIGO POSTAL (OPCIONAL)', 'TRANSPORTADORA (OPCIONAL)', 'CEDULA (OPCIONAL)',
+    'COLONIA (OBLIGATORIO SOLO PARA QUIKEN)', 'SEGURO (SOLO APLICA PARA ENVIA)'
+  ];
+
+  function csvEscape(v) {
+    var s = v == null ? '' : String(v);
+    return /[",;\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+
+  function partirNombre(nombre) {
+    var partes = String(nombre || '').trim().split(/\s+/);
+    if (partes.length === 1) return { nombres: partes[0] || '', apellidos: '' };
+    return { nombres: partes[0], apellidos: partes.slice(1).join(' ') };
+  }
+
+  $('btnCsv').addEventListener('click', function () {
+    var aprobados = pedidos.filter(function (p) { return p.estado === 'approved'; });
+    if (!aprobados.length) {
+      alert('No hay pedidos APROBADOS en este periodo. Solo se exportan los pagados.');
+      return;
+    }
+    var filas = aprobados.map(function (p) {
+      var n = partirNombre(p.cliente);
+      return [
+        n.nombres, n.apellidos, p.direccion, p.departamento, p.ciudad,
+        p.telefono, p.item_id || '', p.item_cantidad || 1,
+        String(Math.round(Number(p.monto) || 0)),
+        '0',
+        (p.items_detalle || '') + (p.notas ? ' | ' + p.notas : ''),
+        p.email || '', '', '', '', p.documento || '', '', ''
+      ].map(csvEscape).join(';');
+    });
+    var contenido = '\uFEFF' + CSV_HEADERS.join(';') + '\n' + filas.join('\n');
+    var blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'pedidos-beauten-dropi-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  /* ---------- Carga de datos ---------- */
+  function cargar(clave) {
+    var dias = $('dias').value;
+    return fetch(beautenUrl('/api/admin-pedidos?dias=' + encodeURIComponent(dias)), {
+      headers: { 'x-admin-clave': clave }
+    }).then(function (r) {
+      return r.json().then(function (d) { return { ok: r.ok, status: r.status, d: d }; });
+    });
+  }
+
+  function entrar(clave) {
+    $('btnEntrar').disabled = true;
+    $('btnEntrar').textContent = 'Comprobando…';
+    $('accesoError').hidden = true;
+
+    cargar(clave).then(function (res) {
+      $('btnEntrar').disabled = false;
+      $('btnEntrar').textContent = 'Entrar';
+
+      if (!res.ok) {
+        $('accesoError').textContent = (res.d && res.d.error) || 'No se pudo entrar.';
+        $('accesoError').hidden = false;
+        return;
+      }
+
+      try { sessionStorage.setItem(CLAVE_SESION, clave); } catch (e) {}
+      pedidos = (res.d.pedidos || []).map(function (p) { return p; });
+      pintarResumen(res.d.resumen);
+      pintarTabla();
+      $('acceso').hidden = true;
+      $('panel').hidden = false;
+    }).catch(function () {
+      $('btnEntrar').disabled = false;
+      $('btnEntrar').textContent = 'Entrar';
+      $('accesoError').textContent = 'No pudimos conectar. Revisa tu conexión.';
+      $('accesoError').hidden = false;
+    });
+  }
+
+  $('formClave').addEventListener('submit', function (e) {
+    e.preventDefault();
+    entrar($('clave').value);
+  });
+
+  $('btnRefrescar').addEventListener('click', function () {
+    var clave = sessionStorage.getItem(CLAVE_SESION);
+    if (clave) entrar(clave);
+  });
+
+  $('dias').addEventListener('change', function () {
+    var clave = sessionStorage.getItem(CLAVE_SESION);
+    if (clave) entrar(clave);
+  });
+
+  $('filtros').addEventListener('click', function (e) {
+    var b = e.target.closest('.pill');
+    if (!b) return;
+    filtro = b.dataset.estado;
+    $('filtros').querySelectorAll('.pill').forEach(function (p) { p.classList.remove('active'); });
+    b.classList.add('active');
+    pintarTabla();
+  });
+
+  $('btnSalir').addEventListener('click', function () {
+    try { sessionStorage.removeItem(CLAVE_SESION); } catch (e) {}
+    pedidos = [];
+    $('panel').hidden = true;
+    $('acceso').hidden = false;
+    $('clave').value = '';
+  });
+
+  /* Si ya había sesión, entra solo */
+  var guardada = null;
+  try { guardada = sessionStorage.getItem(CLAVE_SESION); } catch (e) {}
+  if (guardada) entrar(guardada);
+})();
+</script>
+</body>
+</html>

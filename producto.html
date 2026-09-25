@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Cargando producto… — BeauTen Colombia</title>
+<meta name="description" content="Compra seguro en BeauTen Colombia: pago con PSE y tarjetas, envío a todo el país y garantía legal. Belleza limpia y cruelty-free.">
+<meta name="theme-color" content="#EE2D7A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="BeauTen">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/imgs/icons/icon-192.png">
+<link rel="apple-touch-icon" href="assets/imgs/icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Lato:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-pagina="producto">
+
+<!-- ============ CABECERA DE SUBPÁGINA ============ -->
+<header class="checkout-top">
+  <div class="container checkout-top-inner">
+    <a href="index.html#catalogo" class="checkout-volver">&larr; Seguir comprando</a>
+    <a href="index.html" class="checkout-marca">BeauTen</a>
+    <!-- carrito.js inserta aquí el botón del carrito -->
+    <div class="header-actions pdp-header-actions"></div>
+  </div>
+</header>
+
+<main class="section pdp-pagina">
+  <div class="container">
+
+    <nav class="pdp-migas" aria-label="Ruta de navegación">
+      <a href="index.html">Inicio</a>
+      <span aria-hidden="true">/</span>
+      <a href="index.html#catalogo" id="pdpMigaCategoria">Catálogo</a>
+      <span aria-hidden="true">/</span>
+      <span id="pdpMigaProducto">Producto</span>
+    </nav>
+
+    <p class="pdp-estado" id="pdpCargando">Cargando producto…</p>
+
+    <div class="pdp-estado pdp-error" id="pdpError" hidden>
+      <h1>No encontramos ese producto</h1>
+      <p>Puede que el enlace esté incompleto o que el producto ya no esté disponible.</p>
+      <a href="index.html#catalogo" class="btn-pill btn-pink">Ver todo el catálogo</a>
+    </div>
+
+    <article class="pdp-grid" id="pdpContenido" hidden>
+
+      <!-- ---------- Galería ---------- -->
+      <div class="pdp-media">
+        <div class="pdp-principal">
+          <img id="pdpImagen" src="" alt="" width="900" height="900">
+          <span class="pdp-tag" id="pdpTag" hidden></span>
+        </div>
+        <div class="pdp-minis" id="pdpMinis" hidden></div>
+      </div>
+
+      <!-- ---------- Columna de venta ---------- -->
+      <div class="pdp-info">
+
+        <h1 class="pdp-titulo" id="pdpTitulo"></h1>
+
+        <div class="pdp-rating" id="pdpRating" hidden></div>
+
+        <div class="pdp-precios">
+          <span class="pdp-antes" id="pdpAntes" hidden></span>
+          <span class="pdp-ahora" id="pdpAhora"></span>
+          <span class="pdp-dcto" id="pdpDescuento" hidden></span>
+        </div>
+
+        <p class="pdp-cuotas" id="pdpCuotas" hidden></p>
+
+        <!-- El contador de la ficha de producto se QUITÓ a petición de la
+             clienta (12 sep 2026): "este contador quítalo de todas partes;
+             solo deja el de 15 minutos en el checkout".
+             Aquí vivía la caja .pdp-urgencia con su fecha de cierre del
+             13 de septiembre de 2026 y el reloj #pdpReloj que la pintaba. -->
+
+        <p class="pdp-beneficio" id="pdpBeneficio"></p>
+        <p class="pdp-descripcion" id="pdpDescripcion"></p>
+
+        <!-- Resumen de confianza -->
+        <ul class="pdp-confianza" id="pdpConfianza"></ul>
+
+        <!-- Secciones desplegables -->
+        <div class="pdp-acordeones">
+
+          <section class="pdp-acordeon abierto">
+            <button type="button" class="pdp-acordeon-cab" aria-expanded="true" aria-controls="pdpPanelEspec">
+              <span>Especificaciones y detalles</span>
+              <span class="pdp-mas" aria-hidden="true"></span>
+            </button>
+            <div class="pdp-acordeon-panel" id="pdpPanelEspec">
+              <p class="pdp-acordeon-intro" id="pdpEspecIntro"></p>
+              <ul class="pdp-lista" id="pdpCaracteristicas"></ul>
+              <p class="pdp-acordeon-cierre" id="pdpEspecCierre"></p>
+            </div>
+          </section>
+
+          <section class="pdp-acordeon">
+            <button type="button" class="pdp-acordeon-cab" aria-expanded="false" aria-controls="pdpPanelEnvios">
+              <span>Envío y tiempos</span>
+              <span class="pdp-mas" aria-hidden="true"></span>
+            </button>
+            <div class="pdp-acordeon-panel" id="pdpPanelEnvios" hidden>
+              <ul class="pdp-lista pdp-lista-check" id="pdpEnvios"></ul>
+            </div>
+          </section>
+
+          <section class="pdp-acordeon">
+            <button type="button" class="pdp-acordeon-cab" aria-expanded="false" aria-controls="pdpPanelGarantia">
+              <span>Garantía y devoluciones</span>
+              <span class="pdp-mas" aria-hidden="true"></span>
+            </button>
+            <div class="pdp-acordeon-panel" id="pdpPanelGarantia" hidden>
+              <ul class="pdp-lista pdp-lista-check" id="pdpGarantia"></ul>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="pdp-cta">
+          <button type="button" class="btn-pill btn-pink pdp-btn-carrito" id="pdpAgregar">
+            <span>Agregar al carrito</span>
+          </button>
+          <button type="button" class="btn-pill btn-dark pdp-btn-comprar" id="pdpComprar">
+            <span>Comprar ahora</span>
+          </button>
+        </div>
+
+        <p class="pdp-nota">Pago 100% seguro con <strong>PSE</strong> y <strong>tarjetas</strong> a través de MercadoPago. No guardamos los datos de tu tarjeta.</p>
+
+      </div>
+    </article>
+
+  </div>
+</main>
+
+<!-- ============ PIE: MÉTODOS DE PAGO ============ -->
+<footer class="pdp-pie">
+  <div class="container">
+    <h2 class="pdp-pagos-titulo">Métodos de pago</h2>
+    <ul class="pdp-pagos-lista">
+      <li class="pdp-pago"><span class="pdp-pago-marca">PSE</span><span class="pdp-pago-nota">Débito desde tu banco</span></li>
+      <li class="pdp-pago"><span class="pdp-pago-marca">VISA</span></li>
+      <li class="pdp-pago"><span class="pdp-pago-marca">MASTERCARD</span></li>
+      <li class="pdp-pago"><span class="pdp-pago-marca">AMERICAN EXPRESS</span></li>
+      <li class="pdp-pago"><span class="pdp-pago-marca">MERCADO PAGO</span><span class="pdp-pago-nota">Pasarela segura</span></li>
+    </ul>
+    <p class="pdp-pie-nota">Pagas a través de la pasarela de MercadoPago. No guardamos los datos de tu tarjeta.</p>
+  </div>
+</footer>
+
+<!-- ============ BARRA FIJA INFERIOR (móvil) ============ -->
+<div class="pdp-sticky" id="pdpSticky" hidden>
+  <div class="pdp-sticky-info">
+    <span class="pdp-sticky-nombre" id="pdpStickyNombre"></span>
+    <span class="pdp-sticky-precio" id="pdpStickyPrecio"></span>
+  </div>
+  <button type="button" class="btn-pill btn-pink pdp-sticky-btn" id="pdpStickyBtn"><span>Agregar al carrito</span></button>
+</div>
+
+<a class="pdp-wa" id="pdpWa" href="https://wa.me/573181738642" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.5Z"/></svg>
+</a>
+
+<script src="js/productos.js"></script>
+<script src="js/main.js"></script>
+<script src="js/carrito.js"></script>
+<script src="js/producto.js"></script>
+</body>
+</html>

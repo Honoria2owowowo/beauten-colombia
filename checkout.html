@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e0699a">
+<title>Finalizar compra — BeauTen</title>
+<meta name="description" content="Completa tu pedido BeauTen y paga seguro con PSE o tarjeta.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-pagina="checkout">
+
+<header class="checkout-top">
+  <div class="container checkout-top-inner">
+    <a href="index.html" class="checkout-volver">&larr; Seguir comprando</a>
+    <a href="index.html" class="checkout-marca">BeauTen</a>
+  </div>
+</header>
+
+<main class="section checkout-pagina">
+  <div class="container">
+    <h1 class="checkout-titulo">Finalizar compra</h1>
+
+    <div class="checkout-grid">
+
+      <!-- ============ FORMULARIO ============ -->
+      <form class="checkout-form" id="formCheckout" novalidate>
+        <h2 class="checkout-sub">Datos de envío</h2>
+
+        <div class="campo-fila">
+          <label class="campo">
+            <span>Nombre *</span>
+            <input type="text" name="nombre" required autocomplete="given-name">
+          </label>
+          <label class="campo">
+            <span>Apellido *</span>
+            <input type="text" name="apellido" required autocomplete="family-name">
+          </label>
+        </div>
+
+        <div class="campo-fila">
+          <label class="campo">
+            <span>Tipo de documento *</span>
+            <select name="tipoDocumento" required>
+              <option value="CC">Cédula de ciudadanía</option>
+              <option value="CE">Cédula de extranjería</option>
+              <option value="NIT">NIT</option>
+              <option value="TI">Tarjeta de identidad</option>
+              <option value="PAS">Pasaporte</option>
+            </select>
+          </label>
+          <label class="campo">
+            <span>Número de documento *</span>
+            <input type="text" name="documento" required inputmode="numeric" pattern="[0-9]{5,15}" placeholder="Sin puntos ni comas">
+          </label>
+        </div>
+
+        <div class="campo-fila">
+          <label class="campo">
+            <span>Teléfono / WhatsApp *</span>
+            <input type="tel" name="telefono" required autocomplete="tel" placeholder="300 000 0000">
+          </label>
+          <label class="campo">
+            <span>Correo (opcional)</span>
+            <input type="email" name="email" autocomplete="email" placeholder="Para enviarte el comprobante">
+          </label>
+        </div>
+
+        <div class="campo-fila">
+          <label class="campo">
+            <span>Departamento *</span>
+            <input type="text" name="departamento" required autocomplete="address-level1">
+          </label>
+          <label class="campo">
+            <span>Ciudad *</span>
+            <input type="text" name="ciudad" required autocomplete="address-level2">
+          </label>
+        </div>
+
+        <label class="campo">
+          <span>Dirección *</span>
+          <input type="text" name="direccion" required autocomplete="street-address" placeholder="Calle, carrera, número, barrio">
+        </label>
+
+        <label class="campo">
+          <span>Notas para la entrega (opcional)</span>
+          <textarea name="notas" rows="3" placeholder="Punto de referencia, horario, nombre de quien recibe..."></textarea>
+        </label>
+
+        <h2 class="checkout-sub">Cupón de descuento</h2>
+        <div class="cupon-caja">
+          <div class="cupon-fila">
+            <input type="text" id="cuponCodigo" placeholder="Escribe tu código" autocomplete="off" spellcheck="false" aria-label="Código de descuento">
+            <button type="button" class="btn-pill btn-pink cupon-aplicar" id="btnCupon"><span>Aplicar</span></button>
+            <button type="button" class="cupon-quitar" id="btnQuitarCupon" hidden>Quitar cupón</button>
+          </div>
+          <p class="cupon-aviso" id="cuponAviso" hidden></p>
+          <p class="cupon-nota">El descuento se calcula y se valida al crear el pago, no en tu navegador. Si el código no es válido, puedes continuar sin descuento.</p>
+        </div>
+
+        <h2 class="checkout-sub">Método de pago</h2>
+        <div class="pago-metodos">
+          <div class="pago-chip">
+            <strong>PSE</strong>
+            <span>Débito desde tu banco</span>
+          </div>
+          <div class="pago-chip">
+            <strong>Tarjetas</strong>
+            <span>Crédito y débito</span>
+          </div>
+        </div>
+        <p class="checkout-aviso">
+          Al continuar te llevamos a la pasarela segura de <strong>MercadoPago</strong> para completar el pago.
+          No guardamos los datos de tu tarjeta.
+        </p>
+
+        <div class="checkout-error" id="checkoutError" hidden></div>
+
+        <button type="submit" class="btn-pill checkout-pagar" id="btnPagar">
+          Pagar <span id="btnTotal">$0</span>
+        </button>
+      </form>
+
+      <!-- ============ RESUMEN ============ -->
+      <aside class="checkout-resumen">
+        <h2 class="checkout-sub">Tu pedido</h2>
+        <div id="resumenItems" class="resumen-items"></div>
+        <div class="resumen-linea"><span>Subtotal</span><strong id="resumenSubtotal">$0</strong></div>
+        <div class="resumen-linea"><span>Envío</span><strong>Gratis</strong></div>
+        <div class="resumen-linea resumen-descuento" id="lineaDescuento" hidden><span id="etiquetaDescuento">Descuento</span><strong id="resumenDescuento">-$0</strong></div>
+        <div class="resumen-linea resumen-total"><span>Total</span><strong id="resumenTotal">$0</strong></div>
+
+        <!-- Contador de oferta: 15 minutos, se reinicia al llegar a cero.
+             Es el ÚNICO contador que queda en todo el sitio: se quitó el del
+             inicio (la franja de arriba y el del catálogo) y se trajo aquí a
+             petición de la clienta (12 sep 2026).
+
+             Se pinta desde js/oferta.js (PARTE 1), buscando el id
+             #ofertaContador; si este bloque no existiera, el script no hace
+             nada y no falla.
+
+             OJO, queda registrado: un reloj que vuelve a empezar cada vez que
+             se entra le dice al cliente que la oferta termina en 15 minutos
+             cuando no es así. La Ley 1480 (art. 20) considera engañosa la
+             publicidad cuyo mensaje "no corresponda a la realidad" y la SIC
+             la vigila. La clienta decidió dejarlo aquí a sabiendas. -->
+        <div class="oferta-contador" id="ofertaContador">
+          <p class="oferta-texto">Promoción de lanzamiento: últimos días
+          </p>
+          <div class="oferta-reloj" role="timer" aria-live="off">
+            <div class="oferta-unidad"><strong id="ofDias">00</strong><span>Días</span></div>
+            <div class="oferta-unidad"><strong id="ofHoras">00</strong><span>Horas</span></div>
+            <div class="oferta-unidad"><strong id="ofMinutos">00</strong><span>Minutos</span></div>
+            <div class="oferta-unidad"><strong id="ofSegundos">00</strong><span>Segundos</span></div>
+          </div>
+        </div>
+
+        <a href="index.html" class="checkout-seguir">Seguir comprando</a>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/productos.js"></script>
+<script src="js/carrito.js"></script>
+<script src="js/oferta.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var C = window.BeauTenCarrito;
+  var O = window.BeauTenOferta || null;
+
+  /* ============================================================
+     CUPÓN DE DESCUENTO (tarea #108)
+     Aquí solo se muestra una ESTIMACIÓN. El descuento que se cobra lo
+     calcula y lo valida el backend (netlify/functions/crear-pago.js), que
+     es el único que puede decidir el precio. Si el código es inválido, el
+     backend rechaza el pago con un mensaje claro y no se cobra nada.
+     ============================================================ */
+  var cuponCodigo = '';
+
+  var inputCupon = function () { return document.getElementById('cuponCodigo'); };
+
+  function avisoCupon(texto, tipo) {
+    var box = document.getElementById('cuponAviso');
+    if (!box) return;
+    if (!texto) {
+      box.textContent = '';
+      box.className = 'cupon-aviso';
+      box.hidden = true;
+      return;
+    }
+    box.textContent = texto;
+    box.className = 'cupon-aviso ' + (tipo || '');
+    box.hidden = false;
+  }
+
+  // Devuelve { ok, codigo, porcentaje, descuento, motivo } a partir de las
+  // líneas del carrito. Para un kit, el descuento solo cuenta sobre los
+  // productos del kit y solo si están los dos.
+  function estimarCupon(lineas, codigoManual) {
+    var codigo = String(codigoManual || cuponCodigo || '').trim().toUpperCase();
+    if (!codigo) return { ok: false, codigo: '', porcentaje: 0, descuento: 0, motivo: '' };
+
+    var pct = O ? O.porcentajeEstimado(codigo) : 0;
+    if (!pct) {
+      return {
+        ok: false, codigo: codigo, porcentaje: 0, descuento: 0,
+        motivo: 'El código ' + codigo + ' no es válido. Revisa que esté bien escrito.'
+      };
+    }
+
+    var kit = O ? O.kitPorCodigo(codigo) : null;
+    var base;
+
+    if (kit) {
+      var faltan = kit.productos.filter(function (id) {
+        return !lineas.some(function (l) { return String(l.id) === String(id); });
+      });
+      if (faltan.length) {
+        return {
+          ok: false, codigo: codigo, porcentaje: pct, descuento: 0,
+          motivo: 'El código ' + codigo + ' solo aplica con los dos productos del kit en el carrito.'
+        };
+      }
+      base = lineas
+        .filter(function (l) { return kit.productos.map(String).indexOf(String(l.id)) !== -1; })
+        .reduce(function (s, l) { return s + l.subtotal; }, 0);
+    } else {
+      base = lineas.reduce(function (s, l) { return s + l.subtotal; }, 0);
+    }
+
+    return { ok: true, codigo: codigo, porcentaje: pct, descuento: Math.round((base * pct) / 100), motivo: '' };
+  }
+
+  function aplicarCupon() {
+    var valor = String(inputCupon().value || '').trim().toUpperCase();
+    if (!valor) {
+      cuponCodigo = '';
+      avisoCupon('');
+      pintar();
+      return true;
+    }
+
+    var est = estimarCupon(C.lineas(), valor);
+    if (!est.ok) {
+      cuponCodigo = '';
+      inputCupon().value = valor;
+      avisoCupon(est.motivo || 'Ese código no es válido.', 'error');
+      pintar();
+      return false;
+    }
+
+    cuponCodigo = valor;
+    inputCupon().value = valor;
+    avisoCupon('Código ' + valor + ' aplicado: ' + est.porcentaje + '% de descuento (estimado). Se confirma al crear el pago.', 'ok');
+    document.getElementById('btnQuitarCupon').hidden = false;
+    pintar();
+    return true;
+  }
+
+  function quitarCupon() {
+    cuponCodigo = '';
+    if (inputCupon()) inputCupon().value = '';
+    document.getElementById('btnQuitarCupon').hidden = true;
+    avisoCupon('');
+    if (O && O.olvidarKit) O.olvidarKit();
+    pintar();
+  }
+
+  function pintar() {
+    var lineas = C.lineas();
+    var resumen = document.getElementById('resumenItems');
+    var sub = C.subtotal();
+
+    if (!lineas.length) {
+      resumen.innerHTML = '<p class="resumen-vacio">Tu carrito está vacío. <a href="index.html">Ver catálogo</a>.</p>';
+    } else {
+      resumen.innerHTML = lineas.map(function (l) {
+        return '<div class="resumen-item">' +
+          '<img src="' + l.imagen + '" alt="' + l.nombre + '" loading="lazy">' +
+          '<div><h4>' + l.nombre + '</h4><p>' + l.cantidad + ' × ' + C.cop(l.precio) + '</p></div>' +
+          '<strong>' + C.cop(l.subtotal) + '</strong>' +
+        '</div>';
+      }).join('');
+    }
+
+    document.getElementById('resumenSubtotal').textContent = C.cop(sub);
+
+    // Estimación del descuento (el real lo calcula el backend)
+    var est = estimarCupon(lineas);
+    var descuento = lineas.length ? est.descuento : 0;
+    var total = Math.max(0, sub - descuento);
+
+    var lineaDesc = document.getElementById('lineaDescuento');
+    lineaDesc.hidden = !(descuento > 0);
+    if (descuento > 0) {
+      document.getElementById('etiquetaDescuento').textContent =
+        'Descuento ' + est.codigo + ' (' + est.porcentaje + '%)';
+      document.getElementById('resumenDescuento').textContent = '-' + C.cop(descuento);
+    }
+
+    document.getElementById('resumenTotal').textContent = C.cop(total);
+    document.getElementById('btnTotal').textContent = C.cop(total);
+    document.getElementById('btnPagar').disabled = !lineas.length;
+  }
+
+  window.pintarCheckout = pintar;
+
+  window.addEventListener('load', function () {
+    C.refrescar();
+    // Si se llegó desde el botón de un kit, el código ya viene propuesto.
+    if (O && O.kitGuardado) {
+      var guardado = O.kitGuardado();
+      if (guardado && inputCupon()) {
+        inputCupon().value = guardado;
+        aplicarCupon();
+      }
+    }
+    pintar();
+  });
+
+  document.getElementById('btnCupon').addEventListener('click', function () { aplicarCupon(); });
+  document.getElementById('btnQuitarCupon').addEventListener('click', quitarCupon);
+  if (inputCupon()) {
+    inputCupon().addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        aplicarCupon();
+      }
+    });
+  }
+
+  // Códigos con los que el backend avisa que el descuento no se pudo aplicar.
+  function esErrorDeCupon(codigo) {
+    return [
+      'CUPON_INVALIDO',
+      'KIT_INCOMPLETO',
+      'DESCUENTO_INVALIDO',
+      'DESCUENTO_NO_CUADRA',
+      'TOTAL_NO_CUADRA'
+    ].indexOf(String(codigo || '')) !== -1;
+  }
+
+  function mostrarError(msg) {
+    var box = document.getElementById('checkoutError');
+    box.textContent = msg;
+    box.hidden = false;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  document.getElementById('formCheckout').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var form = e.target;
+    var box = document.getElementById('checkoutError');
+    box.hidden = true;
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    var lineas = C.lineas();
+    if (!lineas.length) return mostrarError('Tu carrito está vacío.');
+
+    // Si escribió un cupón y no pulsó «Aplicar», lo aplicamos ahora: nunca
+    // cobramos sin el descuento que el cliente espera.
+    var escrito = String(inputCupon().value || '').trim().toUpperCase();
+    if (escrito !== cuponCodigo) {
+      if (!escrito) {
+        quitarCupon();
+      } else if (!aplicarCupon()) {
+        mostrarError('No pudimos aplicar ese cupón. Revísalo o pulsa «Quitar cupón» para pagar sin descuento.');
+        return;
+      }
+    }
+
+    var fd = new FormData(form);
+    var comprador = {
+      nombre: (fd.get('nombre') || '').trim(),
+      apellido: (fd.get('apellido') || '').trim(),
+      tipoDocumento: (fd.get('tipoDocumento') || 'CC').trim(),
+      documento: (fd.get('documento') || '').replace(/\D/g, ''),
+      telefono: (fd.get('telefono') || '').trim(),
+      email: (fd.get('email') || '').trim(),
+      departamento: (fd.get('departamento') || '').trim(),
+      ciudad: (fd.get('ciudad') || '').trim(),
+      direccion: (fd.get('direccion') || '').trim(),
+      notas: (fd.get('notas') || '').trim()
+    };
+
+    var btn = document.getElementById('btnPagar');
+    var textoOriginal = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = 'Creando el pago...';
+
+    try {
+      var r = await fetch(beautenUrl('/api/crear-pago'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          comprador: comprador,
+          // El backend valida este código y recalcula el importe. Lo que se
+          // ve en pantalla es solo una estimación.
+          cupon: cuponCodigo,
+          items: lineas.map(function (l) {
+            return { id: l.id, title: l.nombre, quantity: l.cantidad, unit_price: l.precio };
+          })
+        })
+      });
+
+      var data = await r.json().catch(function () { return {}; });
+
+      if (!r.ok || !data.init_point) {
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+        // Si el backend rechazó el cupón, lo quitamos para que el siguiente
+        // intento se cobre sin descuento y el cliente pueda pagar igual.
+        if (esErrorDeCupon(data.codigo)) quitarCupon();
+        mostrarError(data.error || 'No pudimos iniciar el pago. Intenta de nuevo.');
+        return;
+      }
+
+      // Guardamos los datos de envío para mostrarlos en la confirmación
+      try {
+        sessionStorage.setItem('beauten_comprador', JSON.stringify(comprador));
+      } catch (err) { /* sin problema */ }
+
+      window.location.href = data.init_point;
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = textoOriginal;
+      mostrarError('No pudimos conectar con la pasarela. Revisa tu conexión e intenta de nuevo.');
+    }
+  });
+})();
+</script>
+</body>
+</html>

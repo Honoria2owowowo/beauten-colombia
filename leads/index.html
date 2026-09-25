@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#00A6A6">
+<meta name="robots" content="noindex, nofollow">
+<title>Registro de leads — VÓRTEX</title>
+<style>
+  :root{
+    --teal:#00A6A6; --teal-dark:#007E7E; --ink:#0F2027; --bg:#F4F7F8; --white:#fff;
+    --line:#DCE5E7; --mid:#6B7A80; --ok:#1E9E5A; --warn:#D98324; --bad:#C0392B;
+    --azul:#3D6F94; --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:15px; line-height:1.5;
+    padding-bottom:40px;
+  }
+  header{
+    background:var(--ink); color:#fff; padding:14px 16px calc(14px + env(safe-area-inset-top,0px));
+    position:sticky; top:0; z-index:20; padding-top:14px;
+  }
+  header h1{font-size:16px; font-weight:700; letter-spacing:.3px}
+  header p{font-size:12px; color:#9FB3B8; margin-top:2px}
+  main{padding:14px; max-width:720px; margin:0 auto; display:grid; gap:14px}
+
+  .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  .card h2{font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:var(--mid); margin-bottom:10px; font-weight:700}
+
+  /* --- Estadísticas --- */
+  .stats{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+  .stat{background:var(--bg); border-radius:10px; padding:10px 12px}
+  .stat b{display:block; font-size:22px; font-weight:800; letter-spacing:-.5px}
+  .stat span{font-size:11.5px; color:var(--mid)}
+  .stat.destacada{background:#E6F6F6}
+  .stat.destacada b{color:var(--teal-dark)}
+  .stat.mala b{color:var(--bad)}
+  .stat.buena b{color:var(--ok)}
+
+  /* --- Chips --- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px}
+  .chip{
+    border:1.5px solid var(--line); background:var(--white); color:var(--ink);
+    border-radius:99px; padding:9px 14px; font-size:13.5px; font-weight:600;
+    cursor:pointer; font-family:inherit; transition:.15s;
+  }
+  .chip:active{transform:scale(.97)}
+  .chip.sel{background:var(--teal); border-color:var(--teal); color:#fff}
+  .chip.sel[data-estado="cerrado"]{background:var(--ok); border-color:var(--ok)}
+  .chip.sel[data-estado="perdido"]{background:var(--bad); border-color:var(--bad)}
+  .chip.sel[data-estado="negociando"]{background:var(--warn); border-color:var(--warn)}
+  .chip.sel[data-estado="frio"]{background:var(--azul); border-color:var(--azul)}
+
+  .campo{margin-bottom:12px}
+  .campo label{display:block; font-size:12px; color:var(--mid); margin-bottom:6px; font-weight:600}
+  input[type=text],input[type=number],input[type=date],textarea,select{
+    width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:10px;
+    font-size:15px; font-family:inherit; background:var(--white); color:var(--ink);
+  }
+  input:focus,textarea:focus,select:focus{outline:none; border-color:var(--teal)}
+  textarea{resize:vertical; min-height:54px}
+
+  .btn{
+    width:100%; padding:14px; border:0; border-radius:10px; font-size:15.5px;
+    font-weight:700; font-family:inherit; cursor:pointer; background:var(--teal); color:#fff;
+  }
+  .btn:active{transform:scale(.99)}
+  .btn.sec{background:var(--bg); color:var(--ink); border:1.5px solid var(--line)}
+  .btn.peligro{background:#fff; color:var(--bad); border:1.5px solid #F0C4C0}
+  .fila-botones{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+
+  /* --- Lista de leads --- */
+  .lead{
+    display:flex; gap:10px; align-items:flex-start; padding:11px 0;
+    border-bottom:1px solid var(--line); cursor:pointer;
+  }
+  .lead:last-child{border-bottom:0}
+  .lead .info{flex:1; min-width:0}
+  .lead .nom{font-weight:700; font-size:14px}
+  .lead .meta{font-size:11.5px; color:var(--mid); margin-top:2px}
+  .lead .nota{font-size:12.5px; color:var(--mid); margin-top:3px; font-style:italic}
+  .lead .valor{font-weight:800; font-size:14px; white-space:nowrap}
+  .badge{
+    display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.4px;
+    padding:3px 9px; border-radius:99px; text-transform:uppercase;
+  }
+  .badge.nuevo{background:#E8EEF1; color:#4A5A60}
+  .badge.frio{background:#E4EDF5; color:var(--azul)}
+  .badge.negociando{background:#FDF0DF; color:#9C5E14}
+  .badge.cerrado{background:#E2F5EA; color:var(--ok)}
+  .badge.perdido{background:#FBE9E7; color:var(--bad)}
+  .vacio{text-align:center; color:var(--mid); font-size:13.5px; padding:22px 0}
+
+  /* --- Tabla por anuncio --- */
+  table{width:100%; border-collapse:collapse; font-size:13px}
+  th,td{padding:8px 6px; text-align:right; border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--mid)}
+  tfoot td{font-weight:800; border-bottom:0}
+
+  /* --- Modal --- */
+  .modal{
+    position:fixed; inset:0; background:rgba(15,32,39,.55); z-index:50;
+    display:none; align-items:flex-end; justify-content:center;
+  }
+  .modal.abierto{display:flex}
+  .modal-caja{
+    background:var(--white); width:100%; max-width:720px; border-radius:18px 18px 0 0;
+    padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px)); max-height:92vh; overflow-y:auto;
+  }
+  .modal-caja h3{font-size:16px; margin-bottom:14px}
+
+  .aviso{
+    background:#FFF8E1; border:1px solid #F0DFA8; border-radius:10px;
+    padding:10px 12px; font-size:12.5px; color:#7A5B12;
+  }
+  .ayuda{font-size:11.5px; color:var(--mid); margin-top:6px}
+  .oculto{display:none !important}
+  @media (max-width:380px){ .stats{gap:8px} .stat b{font-size:19px} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Registro de leads · VÓRTEX</h1>
+  <p id="sub">Cada chat que entra, registrado en 5 segundos. Todo se guarda en este dispositivo.</p>
+</header>
+
+<main>
+
+  <!-- ================= ESTADÍSTICAS ================= -->
+  <section class="card">
+    <h2>Tu embudo real</h2>
+    <div class="stats">
+      <div class="stat"><b id="sLeads">0</b><span>Leads registrados</span></div>
+      <div class="stat buena"><b id="sCerrados">0</b><span>Ventas cerradas</span></div>
+      <div class="stat destacada"><b id="sTasa">—</b><span>Tasa de cierre</span></div>
+      <div class="stat destacada"><b id="sIngresos">$0</b><span>Ingresos cobrados</span></div>
+      <div class="stat"><b id="sTicket">—</b><span>Ticket promedio</span></div>
+      <div class="stat" id="cajaCosto"><b id="sCosto">—</b><span>Coste por venta</span></div>
+      <div class="stat" id="cajaRoas"><b id="sRoas">—</b><span>ROAS</span></div>
+      <div class="stat"><b id="sGasto">$0</b><span>Gasto en publicidad</span></div>
+    </div>
+    <p class="ayuda" id="veredicto"></p>
+  </section>
+
+  <!-- ================= REGISTRAR LEAD ================= -->
+  <section class="card">
+    <h2>Registrar un lead</h2>
+
+    <div class="campo">
+      <label>¿De qué anuncio vino?</label>
+      <div class="chips" id="chipsAnuncio"></div>
+    </div>
+
+    <div class="campo">
+      <label>¿Qué producto pidió?</label>
+      <div class="chips" id="chipsProducto"></div>
+    </div>
+
+    <div class="campo">
+      <label>¿En qué quedó?</label>
+      <div class="chips" id="chipsEstado"></div>
+    </div>
+
+    <div class="campo" id="campoValor" style="display:none">
+      <label>¿Cuánto pagó? (COP)</label>
+      <input type="number" id="inValor" inputmode="numeric" placeholder="259900">
+    </div>
+
+    <div class="campo">
+      <label>Nota (opcional)</label>
+      <input type="text" id="inNota" placeholder="Pidió precio y no contestó">
+    </div>
+
+    <button class="btn" id="btnGuardar">Guardar lead</button>
+    <p class="ayuda" id="msgGuardar"></p>
+  </section>
+
+  <!-- ================= POR ANUNCIO ================= -->
+  <section class="card">
+    <h2>Rendimiento por anuncio</h2>
+    <table id="tablaAnuncios">
+      <thead><tr><th>Anuncio</th><th>Leads</th><th>Ventas</th><th>Cierre</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="ayuda">Esto es lo que te dice qué anuncio trae compradores y cuál solo trae curiosos.</p>
+  </section>
+
+  <!-- ================= HISTORIAL ================= -->
+  <section class="card">
+    <h2>Historial <span id="contadorHist" style="font-weight:400;text-transform:none;letter-spacing:0"></span></h2>
+    <div id="listaLeads"><p class="vacio">Aún no has registrado ningún lead.</p></div>
+    <button class="btn sec" id="btnVerTodos" style="margin-top:12px">Ver todos</button>
+  </section>
+
+  <!-- ================= CONFIGURACIÓN ================= -->
+  <section class="card">
+    <h2>Gasto y datos</h2>
+
+    <div class="campo">
+      <label>Gasto total en publicidad del periodo (COP)</label>
+      <input type="number" id="inGasto" inputmode="numeric" placeholder="0">
+      <p class="ayuda">Ponlo del Administrador de anuncios. Con esto calculo el coste por venta y el ROAS.</p>
+    </div>
+
+    <div class="campo">
+      <label>Este periodo empieza el</label>
+      <input type="date" id="inDesde">
+    </div>
+
+    <button class="btn sec" id="btnGuardarConfig">Guardar gasto</button>
+
+    <h2 style="margin-top:20px">Anuncios</h2>
+    <div id="listaAnuncios" style="margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="inNuevoAnuncio" placeholder="Nombre del anuncio">
+      <button class="btn sec" id="btnAddAnuncio" style="width:auto;padding:11px 16px">+</button>
+    </div>
+
+    <h2 style="margin-top:20px">Productos</h2>
+    <div id="listaProductos" style="margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="inNuevoProducto" placeholder="Nombre del producto">
+      <button class="btn sec" id="btnAddProducto" style="width:auto;padding:11px 16px">+</button>
+    </div>
+
+    <h2 style="margin-top:20px">Copia de seguridad</h2>
+    <p class="ayuda" style="margin-bottom:10px">
+      Los datos viven SOLO en este navegador. Si borras los datos del sitio, se pierden.
+      <strong>Exporta cada semana.</strong>
+    </p>
+    <div class="fila-botones">
+      <button class="btn sec" id="btnExportarCsv">Exportar CSV</button>
+      <button class="btn sec" id="btnExportarJson">Copia completa</button>
+    </div>
+    <div class="fila-botones" style="margin-top:10px">
+      <button class="btn sec" id="btnImportar">Restaurar copia</button>
+      <button class="btn peligro" id="btnBorrarTodo">Borrar todo</button>
+    </div>
+    <input type="file" id="inArchivo" accept=".json" style="display:none">
+  </section>
+
+</main>
+
+<!-- ================= MODAL DE EDICIÓN ================= -->
+<div class="modal" id="modal">
+  <div class="modal-caja">
+    <h3 id="mTitulo">Editar lead</h3>
+
+    <div class="campo">
+      <label>Estado</label>
+      <div class="chips" id="mChipsEstado"></div>
+    </div>
+
+    <div class="campo" id="mCampoValor">
+      <label>Valor cobrado (COP)</label>
+      <input type="number" id="mValor" inputmode="numeric">
+    </div>
+
+    <div class="campo">
+      <label>Nota</label>
+      <input type="text" id="mNota">
+    </div>
+
+    <button class="btn" id="mGuardar">Guardar cambios</button>
+    <div class="fila-botones" style="margin-top:10px">
+      <button class="btn sec" id="mCerrar">Cerrar</button>
+      <button class="btn peligro" id="mBorrar">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var CLAVE = 'vortex_leads_v1';
+
+  var ESTADOS = [
+    { id: 'nuevo',      txt: 'Nuevo' },
+    { id: 'frio',       txt: 'Pidió precio' },
+    { id: 'negociando', txt: 'Negociando' },
+    { id: 'cerrado',    txt: 'Vendido' },
+    { id: 'perdido',    txt: 'Perdido' }
+  ];
+
+  var DEFECTO = {
+    anuncios: [
+      'AN_VID_CineEnCasa_1',
+      'AN_IMG_CineEnCasa_AZUL',
+      'AN_IMG_CineEnCasa_Testimonio',
+      'AN_VID_CineEnCasa_COPIA',
+      'No vino de anuncio'
+    ],
+    productos: ['Proyector CineEnCasa'],
+    leads: [],
+    gasto: 0,
+    desde: ''
+  };
+
+  var estado = cargar();
+  var sel = { anuncio: '', producto: '', estado: 'nuevo' };
+  var editando = null;
+  var verTodos = false;
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------------- Persistencia ---------------- */
+  function cargar() {
+    try {
+      var bruto = localStorage.getItem(CLAVE);
+      if (!bruto) return JSON.parse(JSON.stringify(DEFECTO));
+      var d = JSON.parse(bruto);
+      return {
+        anuncios: d.anuncios && d.anuncios.length ? d.anuncios : DEFECTO.anuncios.slice(),
+        productos: d.productos && d.productos.length ? d.productos : DEFECTO.productos.slice(),
+        leads: Array.isArray(d.leads) ? d.leads : [],
+        gasto: Number(d.gasto) || 0,
+        desde: d.desde || ''
+      };
+    } catch (e) {
+      return JSON.parse(JSON.stringify(DEFECTO));
+    }
+  }
+  function guardar() {
+    try { localStorage.setItem(CLAVE, JSON.stringify(estado)); }
+    catch (e) { alert('No se pudo guardar. Puede que el navegador esté sin espacio.'); }
+  }
+
+  /* ---------------- Utilidades ---------------- */
+  function cop(n) {
+    if (n === null || n === undefined || n === '' || isNaN(n)) return '—';
+    return '$' + Number(n).toLocaleString('es-CO');
+  }
+  function fechaCorta(iso) {
+    var d = new Date(iso);
+    return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) + ' ' +
+           d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+  }
+  function etiquetaEstado(id) {
+    for (var i = 0; i < ESTADOS.length; i++) if (ESTADOS[i].id === id) return ESTADOS[i].txt;
+    return id;
+  }
+  function escapar(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ---------------- Chips ---------------- */
+  function pintarChips(contenedor, lista, campo, seleccionado) {
+    contenedor.innerHTML = lista.map(function (valor) {
+      var esEst = ESTADOS.some(function (e) { return e.id === valor; });
+      var texto = esEst ? etiquetaEstado(valor) : valor;
+      var activo = (seleccionado === valor) ? ' sel' : '';
+      var attr = esEst ? ' data-estado="' + escapar(valor) + '"' : '';
+      return '<button type="button" class="chip' + activo + '"' + attr +
+             ' data-campo="' + campo + '" data-valor="' + escapar(valor) + '">' +
+             escapar(texto) + '</button>';
+    }).join('');
+  }
+
+  document.addEventListener('click', function (e) {
+    var chip = e.target.closest ? e.target.closest('.chip[data-campo]') : null;
+    if (!chip) return;
+    var campo = chip.getAttribute('data-campo');
+    var valor = chip.getAttribute('data-valor');
+    if (campo === 'anuncio' || campo === 'producto' || campo === 'estado') {
+      sel[campo] = (sel[campo] === valor) ? '' : valor;
+      pintarFormulario();
+    } else if (campo === 'meditando') {
+      if (!editando) return;
+      editando.estado = (editando.estado === valor) ? '' : valor;
+      pintarModal();
+    }
+  });
+
+  /* ---------------- Formulario ---------------- */
+  function pintarFormulario() {
+    pintarChips($('chipsAnuncio'), estado.anuncios, 'anuncio', sel.anuncio);
+    pintarChips($('chipsProducto'), estado.productos, 'producto', sel.producto);
+    pintarChips($('chipsEstado'), ESTADOS.map(function (e) { return e.id; }), 'estado', sel.estado);
+    $('campoValor').style.display = (sel.estado === 'cerrado') ? 'block' : 'none';
+  }
+
+  $('btnGuardar').addEventListener('click', function () {
+    if (!sel.anuncio) { aviso('Dime de qué anuncio vino (o elige "No vino de anuncio").'); return; }
+    var valor = sel.estado === 'cerrado' ? Number($('inValor').value) || 0 : 0;
+    estado.leads.unshift({
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      fecha: new Date().toISOString(),
+      anuncio: sel.anuncio,
+      producto: sel.producto || '(sin especificar)',
+      estado: sel.estado,
+      valor: valor,
+      nota: $('inNota').value.trim()
+    });
+    guardar();
+    sel.anuncio = ''; sel.producto = ''; sel.estado = 'nuevo';
+    $('inValor').value = ''; $('inNota').value = '';
+    pintarFormulario();
+    pintarTodo();
+    aviso('Lead guardado. ' + estado.leads.length + ' en total.');
+  });
+
+  function aviso(t) {
+    $('msgGuardar').textContent = t;
+    setTimeout(function () { $('msgGuardar').textContent = ''; }, 4000);
+  }
+
+  /* ---------------- Estadísticas ---------------- */
+  function calcular() {
+    var total = estado.leads.length;
+    var cerrados = estado.leads.filter(function (l) { return l.estado === 'cerrado'; });
+    var ingresos = cerrados.reduce(function (a, l) { return a + (Number(l.valor) || 0); }, 0);
+    var tasa = total ? (cerrados.length / total) * 100 : null;
+    var ticket = cerrados.length ? ingresos / cerrados.length : null;
+    var gasto = Number(estado.gasto) || 0;
+    var costo = (cerrados.length && gasto) ? gasto / cerrados.length : null;
+    var roas = (gasto && ingresos) ? ingresos / gasto : null;
+    return { total: total, cerrados: cerrados.length, ingresos: ingresos,
+             tasa: tasa, ticket: ticket, gasto: gasto, costo: costo, roas: roas };
+  }
+
+  function pintarEstadisticas() {
+    var m = calcular();
+    $('sLeads').textContent = m.total;
+    $('sCerrados').textContent = m.cerrados;
+    $('sTasa').textContent = m.tasa === null ? '—' : m.tasa.toFixed(1) + '%';
+    $('sIngresos').textContent = cop(m.ingresos);
+    $('sTicket').textContent = m.ticket === null ? '—' : cop(Math.round(m.ticket));
+    $('sGasto').textContent = cop(m.gasto);
+    $('sCosto').textContent = m.costo === null ? '—' : cop(Math.round(m.costo));
+    $('sRoas').textContent = m.roas === null ? '—' : m.roas.toFixed(2) + 'x';
+
+    $('cajaCosto').className = 'stat' + (m.costo !== null ? (m.costo > 30000 ? ' mala' : ' buena') : '');
+    $('cajaRoas').className = 'stat' + (m.roas !== null ? (m.roas >= 1 ? ' buena' : ' mala') : '');
+
+    var v = '';
+    if (m.total === 0) {
+      v = 'Registra los chats de los próximos días y aquí aparece tu tasa de cierre real.';
+    } else if (m.total < 20) {
+      v = 'Con ' + m.total + ' leads todavía es una muestra pequeña. Sigue registrando: con 30 o 40 ya se puede decidir.';
+    } else if (m.gasto === 0) {
+      v = 'Ya tienes muestra. Ahora pon el gasto en publicidad abajo para ver el coste por venta y el ROAS.';
+    } else if (m.roas !== null && m.roas < 1) {
+      v = 'Estás por debajo de 1x: la publicidad cuesta más de lo que ingresa. No escales todavía.';
+    } else {
+      v = 'Vas por encima de 1x. Si esto aguanta varios días, es momento de escalar el presupuesto un 20%.';
+    }
+    $('veredicto').textContent = v;
+  }
+
+  function pintarTablaAnuncios() {
+    var mapa = {};
+    estado.anuncios.forEach(function (a) { mapa[a] = { leads: 0, ventas: 0 }; });
+    estado.leads.forEach(function (l) {
+      if (!mapa[l.anuncio]) mapa[l.anuncio] = { leads: 0, ventas: 0 };
+      mapa[l.anuncio].leads++;
+      if (l.estado === 'cerrado') mapa[l.anuncio].ventas++;
+    });
+    var filas = Object.keys(mapa).map(function (a) {
+      var d = mapa[a];
+      return { anuncio: a, leads: d.leads, ventas: d.ventas, tasa: d.leads ? (d.ventas / d.leads) * 100 : 0 };
+    }).filter(function (f) { return f.leads > 0; }).sort(function (x, y) { return y.leads - x.leads; });
+
+    var cuerpo = $('tablaAnuncios').querySelector('tbody');
+    var pie = $('tablaAnuncios').querySelector('tfoot');
+    if (!pie) { pie = document.createElement('tfoot'); $('tablaAnuncios').appendChild(pie); }
+
+    if (!filas.length) {
+      cuerpo.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#6B7A80;padding:14px">Sin datos todavía</td></tr>';
+      pie.innerHTML = '';
+      return;
+    }
+    cuerpo.innerHTML = filas.map(function (f) {
+      return '<tr><td>' + escapar(f.anuncio) + '</td><td>' + f.leads + '</td><td>' + f.ventas +
+             '</td><td>' + f.tasa.toFixed(0) + '%</td></tr>';
+    }).join('');
+    var tL = filas.reduce(function (a, f) { return a + f.leads; }, 0);
+    var tV = filas.reduce(function (a, f) { return a + f.ventas; }, 0);
+    pie.innerHTML = '<tr><td>Total</td><td>' + tL + '</td><td>' + tV + '</td><td>' +
+                    (tL ? ((tV / tL) * 100).toFixed(0) : 0) + '%</td></tr>';
+  }
+
+  /* ---------------- Historial ---------------- */
+  function pintarLista() {
+    var cont = $('listaLeads');
+    $('contadorHist').textContent = estado.leads.length ? '(' + estado.leads.length + ')' : '';
+    if (!estado.leads.length) {
+      cont.innerHTML = '<p class="vacio">Aún no has registrado ningún lead.</p>';
+      $('btnVerTodos').classList.add('oculto');
+      return;
+    }
+    var ver = verTodos ? estado.leads : estado.leads.slice(0, 8);
+    cont.innerHTML = ver.map(function (l) {
+      return '<div class="lead" data-id="' + l.id + '">' +
+        '<div class="info">' +
+          '<div class="nom">' + escapar(l.producto) + '</div>' +
+          '<div class="meta"><span class="badge ' + l.estado + '">' + etiquetaEstado(l.estado) +
+            '</span> · ' + escapar(l.anuncio) + ' · ' + fechaCorta(l.fecha) + '</div>' +
+          (l.nota ? '<div class="nota">' + escapar(l.nota) + '</div>' : '') +
+        '</div>' +
+        (l.estado === 'cerrado' ? '<div class="valor">' + cop(l.valor) + '</div>' : '') +
+      '</div>';
+    }).join('');
+    $('btnVerTodos').classList.toggle('oculto', estado.leads.length <= 8);
+    $('btnVerTodos').textContent = verTodos ? 'Ver solo los últimos' : 'Ver todos (' + estado.leads.length + ')';
+  }
+
+  $('btnVerTodos').addEventListener('click', function () { verTodos = !verTodos; pintarLista(); });
+
+  $('listaLeads').addEventListener('click', function (e) {
+    var fila = e.target.closest ? e.target.closest('.lead') : null;
+    if (!fila) return;
+    var id = fila.getAttribute('data-id');
+    for (var i = 0; i < estado.leads.length; i++) {
+      if (estado.leads[i].id === id) { abrirModal(JSON.parse(JSON.stringify(estado.leads[i]))); return; }
+    }
+  });
+
+  /* ---------------- Modal ---------------- */
+  function abrirModal(copia) {
+    editando = copia;
+    pintarModal();
+    $('modal').classList.add('abierto');
+  }
+  function pintarModal() {
+    $('mTitulo').textContent = editando.producto + ' · ' + editando.anuncio;
+    pintarChips($('mChipsEstado'), ESTADOS.map(function (e) { return e.id; }), 'meditando', editando.estado);
+    $('mCampoValor').style.display = (editando.estado === 'cerrado') ? 'block' : 'none';
+    $('mValor').value = editando.valor || '';
+    $('mNota').value = editando.nota || '';
+  }
+  $('mCerrar').addEventListener('click', function () { $('modal').classList.remove('abierto'); editando = null; });
+  $('modal').addEventListener('click', function (e) {
+    if (e.target === $('modal')) { $('modal').classList.remove('abierto'); editando = null; }
+  });
+  $('mGuardar').addEventListener('click', function () {
+    if (!editando) return;
+    for (var i = 0; i < estado.leads.length; i++) {
+      if (estado.leads[i].id === editando.id) {
+        estado.leads[i].estado = editando.estado;
+        estado.leads[i].valor = editando.estado === 'cerrado' ? (Number($('mValor').value) || 0) : 0;
+        estado.leads[i].nota = $('mNota').value.trim();
+        break;
+      }
+    }
+    guardar(); pintarTodo();
+    $('modal').classList.remove('abierto'); editando = null;
+  });
+  $('mBorrar').addEventListener('click', function () {
+    if (!editando || !confirm('¿Eliminar este lead?')) return;
+    estado.leads = estado.leads.filter(function (l) { return l.id !== editando.id; });
+    guardar(); pintarTodo();
+    $('modal').classList.remove('abierto'); editando = null;
+  });
+
+  /* ---------------- Configuración ---------------- */
+  function pintarListas() {
+    function bloque(items, campo) {
+      if (!items.length) return '<p class="ayuda">Ninguno.</p>';
+      return items.map(function (v, i) {
+        return '<div style="display:flex;justify-content:space-between;align-items:center;' +
+               'padding:7px 0;border-bottom:1px solid #DCE5E7;font-size:13.5px">' +
+               '<span>' + escapar(v) + '</span>' +
+               '<button type="button" class="chip" data-quitar="' + campo + '" data-indice="' + i +
+               '" style="padding:4px 10px;font-size:12px">Quitar</button></div>';
+      }).join('');
+    }
+    $('listaAnuncios').innerHTML = bloque(estado.anuncios, 'anuncios');
+    $('listaProductos').innerHTML = bloque(estado.productos, 'productos');
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-quitar]') : null;
+    if (!b) return;
+    var campo = b.getAttribute('data-quitar');
+    var i = Number(b.getAttribute('data-indice'));
+    estado[campo].splice(i, 1);
+    guardar(); pintarListas(); pintarFormulario();
+  });
+  $('btnAddAnuncio').addEventListener('click', function () {
+    var v = $('inNuevoAnuncio').value.trim();
+    if (!v) return;
+    estado.anuncios.push(v); $('inNuevoAnuncio').value = '';
+    guardar(); pintarListas(); pintarFormulario();
+  });
+  $('btnAddProducto').addEventListener('click', function () {
+    var v = $('inNuevoProducto').value.trim();
+    if (!v) return;
+    estado.productos.push(v); $('inNuevoProducto').value = '';
+    guardar(); pintarListas(); pintarFormulario();
+  });
+  $('btnGuardarConfig').addEventListener('click', function () {
+    estado.gasto = Number($('inGasto').value) || 0;
+    estado.desde = $('inDesde').value || '';
+    guardar(); pintarEstadisticas();
+    aviso('Gasto guardado.');
+    $('msgGuardar').textContent = 'Gasto del periodo guardado: ' + cop(estado.gasto);
+    setTimeout(function () { $('msgGuardar').textContent = ''; }, 4000);
+  });
+
+  /* ---------------- Exportar / importar ---------------- */
+  function descargar(nombre, contenido, tipo) {
+    var blob = new Blob([contenido], { type: tipo });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = nombre; document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+  function hoyISO() { return new Date().toISOString().slice(0, 10); }
+
+  $('btnExportarCsv').addEventListener('click', function () {
+    if (!estado.leads.length) { alert('Todavía no hay leads que exportar.'); return; }
+    var esc = function (s) { return '"' + String(s === null || s === undefined ? '' : s).replace(/"/g, '""') + '"'; };
+    var lineas = ['Fecha,Anuncio,Producto,Estado,Valor,Nota'];
+    estado.leads.forEach(function (l) {
+      lineas.push([l.fecha, l.anuncio, l.producto, etiquetaEstado(l.estado), l.valor || 0, l.nota || '']
+        .map(esc).join(','));
+    });
+    descargar('vortex-leads-' + hoyISO() + '.csv', '\uFEFF' + lineas.join('\r\n'), 'text/csv;charset=utf-8');
+  });
+
+  $('btnExportarJson').addEventListener('click', function () {
+    descargar('vortex-leads-copia-' + hoyISO() + '.json', JSON.stringify(estado, null, 2), 'application/json');
+  });
+
+  $('btnImportar').addEventListener('click', function () { $('inArchivo').click(); });
+  $('inArchivo').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    var lector = new FileReader();
+    lector.onload = function () {
+      try {
+        var d = JSON.parse(lector.result);
+        if (!d.leads) throw new Error('sin leads');
+        if (!confirm('Se reemplazarán tus datos actuales por los de la copia. ¿Continuar?')) return;
+        estado = {
+          anuncios: d.anuncios && d.anuncios.length ? d.anuncios : DEFECTO.anuncios.slice(),
+          productos: d.productos && d.productos.length ? d.productos : DEFECTO.productos.slice(),
+          leads: d.leads,
+          gasto: Number(d.gasto) || 0,
+          desde: d.desde || ''
+        };
+        guardar(); pintarTodo(); pintarListas();
+        alert('Copia restaurada: ' + estado.leads.length + ' leads.');
+      } catch (err) {
+        alert('Ese archivo no es una copia válida de esta herramienta.');
+      }
+    };
+    lector.readAsText(f);
+    e.target.value = '';
+  });
+
+  $('btnBorrarTodo').addEventListener('click', function () {
+    if (!confirm('Esto borra TODOS los leads de este dispositivo. ¿Seguro?')) return;
+    if (!confirm('Última confirmación: no se puede deshacer. ¿Borrar todo?')) return;
+    estado = JSON.parse(JSON.stringify(DEFECTO));
+    guardar(); pintarTodo(); pintarListas();
+  });
+
+  /* ---------------- Arranque ---------------- */
+  function pintarTodo() {
+    pintarEstadisticas();
+    pintarTablaAnuncios();
+    pintarLista();
+  }
+
+  function iniciar() {
+    pintarFormulario();
+    pintarListas();
+    pintarTodo();
+    $('inGasto').value = estado.gasto || '';
+    $('inDesde').value = estado.desde || '';
+  }
+  iniciar();
+})();
+</script>
+</body>
+</html>

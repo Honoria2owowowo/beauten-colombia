@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BeauTen Colombia — Belleza que brilla naturalmente</title>
+<meta name="description" content="Cosméticos, labiales, sérums y cuidado de la piel. Envíos a toda Colombia y pago seguro con PSE y tarjetas. Belleza limpia y cruelty-free.">
+<meta name="theme-color" content="#EE2D7A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="BeauTen">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/imgs/icons/icon-192.png">
+<link rel="apple-touch-icon" href="assets/imgs/icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Lato:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ BARRA DE PROMOCIÓN EN MOVIMIENTO ============
+     El contador "Termina en 1d 10:22:58" se QUITÓ de aquí a petición de la
+     clienta (12 sep 2026), y con él el script que lo pintaba y que además
+     escondía toda la barra al llegar a cero.
+
+     Al no quedar reloj, la barra ya no se oculta nunca: se queda dando
+     vueltas con sus tres mensajes, que siguen siendo ciertos:
+       · hasta 38% OFF + 10% extra con BEAUTEN10
+       · envío gratis desde $150.000
+       · pago con PSE y tarjeta -->
+<div class="marquesina" id="marquesina" role="region" aria-label="Promociones vigentes de BeauTen">
+  <div class="marquesina-track">
+    <div class="marquesina-grupo">
+      <span>OFERTA DE LANZAMIENTO: HASTA <strong>38% OFF</strong> + 10% EXTRA con el código <strong>BEAUTEN10</strong></span>
+      <span aria-hidden="true">&middot;</span>
+      <span>ENVÍO A TODA COLOMBIA, GRATIS DESDE $150.000</span>
+      <span aria-hidden="true">&middot;</span>
+      <span>PAGO 100% SEGURO CON PSE Y TARJETAS</span>
+      <span aria-hidden="true">&middot;</span>
+    </div>
+    <div class="marquesina-grupo" aria-hidden="true">
+      <span>OFERTA DE LANZAMIENTO: HASTA <strong>38% OFF</strong> + 10% EXTRA con el código <strong>BEAUTEN10</strong></span>
+      <span aria-hidden="true">&middot;</span>
+      <span>ENVÍO A TODA COLOMBIA, GRATIS DESDE $150.000</span>
+      <span aria-hidden="true">&middot;</span>
+      <span>PAGO 100% SEGURO CON PSE Y TARJETAS</span>
+      <span aria-hidden="true">&middot;</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="#inicio" class="brand" aria-label="BeauTen inicio">
+      <img src="assets/imgs/logo/logo.png" alt="BeauTen" width="195" height="36">
+    </a>
+    <nav class="main-nav" id="mainNav" aria-label="Navegación principal">
+      <ul>
+        <li><a href="#inicio" class="active">Inicio</a></li>
+        <li><a href="#categorias">Categorías</a></li>
+        <li><a href="#tendencias">Tendencias</a></li>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="#kits">Kits</a></li>
+        <li><a href="#opiniones">Opiniones</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a href="#catalogo" class="icon-btn" aria-label="Buscar productos" title="Catálogo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </a>
+      <a href="#contacto" class="icon-btn cart-btn" aria-label="Hacer pedido" title="Hacer pedido">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 7h12M6 12h9M6 17h6"/><circle cx="19" cy="17" r="2.2"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="inicio">
+
+<!-- ============ CARRUSEL PRINCIPAL ============
+     Adaptado del carrusel de la otra tienda de la clienta (VÓRTEX, la del
+     carrito turquesa), pero con la identidad de BeauTen: fondo rosa, la
+     tipografía de la casa y mensajes pensados para público femenino.
+
+     Se desliza solo cada 6,5 s, se puede arrastrar con el dedo y también
+     con las flechas y los puntos. Se detiene mientras el cursor está encima
+     o mientras se navega con el teclado, y NO se mueve solo si el sistema
+     pide menos movimiento.
+
+     Son CUATRO láminas:
+       1. el VIDEO, solo, en su propia lámina (se reproduce solo, al
+          terminar el carrusel pasa a la siguiente)
+       2. la marca: el hero que ya había (modelo, botón "Rutina Glow").
+          No se perdió nada.
+       3. envío gratis DESDE $150.000 — no "en todas las compras", porque
+          el mínimo sí existe y decir lo contrario sería falso.
+       4. hasta 38% OFF (el mayor ahorro real del catálogo, 38,3%) más el
+          10% del código BEAUTEN10 (variable CUPONES del backend). -->
+<section class="hero-carrusel" id="hero" aria-roledescription="carrusel" aria-label="Promociones de BeauTen">
+  <div class="carrusel-viewport">
+    <div class="carrusel-track" id="carruselTrack">
+
+      <!-- ---------- LÁMINA 1: el video, sola ----------
+           A petición de la clienta (12 sep 2026): el video va DENTRO del
+           carrusel pero APARTE, como lámina propia, no metido en la lámina de
+           la marca. Es una lámina muda y sin texto: solo el video, que se
+           reproduce solo (silenciado, que es lo que exigen los navegadores
+           para dejar reproducir sin que nadie toque nada).
+
+           Ojo con el orden: al ser la 1, es lo primero que se ve al entrar. -->
+      <div class="carrusel-slide" role="group" aria-roledescription="lámina" aria-label="1 de 4">
+        <div class="container">
+          <div class="slide-video">
+            <video class="slide-video-el" id="heroVideo"
+                   poster="assets/video/hero-video-poster.jpg"
+                   muted playsinline preload="auto"
+                   aria-label="Modelo de BeauTen posando con el cabello recogido">
+              <source src="assets/video/hero-video.mp4" type="video/mp4">
+            </video>
+
+            <!-- Texto sobre el video, en el lado izquierdo: ahí es donde el
+                 video tiene el espacio vacío (la modelo va a la derecha).
+                 Aparece solo a los 2,5 s, cuando la clienta ya está mirando.
+                 Se hace con una animación de CSS con retardo, así que
+                 funciona aunque el JavaScript falle.
+                 En el móvil baja y se pone debajo del video, porque sobre un
+                 video de 16:9 en pantalla pequeña no cabe. -->
+            <div class="video-texto">
+              <p class="video-etiqueta">Bienestar y belleza</p>
+              <p class="video-titular">Tu ritual de belleza empieza aquí</p>
+              <p class="video-sub">Cuídate con productos limpios y cruelty-free, elegidos para realzar lo que ya eres.</p>
+              <a href="#catalogo" class="btn-pill btn-dark video-btn">
+                <span>Descubrir la colección</span>
+                <i class="btn-circle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- LÁMINA 2: la marca (el hero de siempre) ---------- -->
+      <div class="carrusel-slide" role="group" aria-roledescription="lámina" aria-label="2 de 4">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow hero-badge">Brillo más allá de la belleza</p>
+            <h1>Belleza que brilla <em>naturalmente</em></h1>
+            <p class="hero-sub">Productos limpios, cruelty-free y pensados para realzar tu belleza natural. Envíos a toda Colombia y pago seguro con PSE y tarjetas.</p>
+            <div class="hero-cta">
+              <a href="#catalogo" class="btn-pill btn-dark">
+                <span>Explorar colección</span>
+                <i class="btn-circle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></i>
+              </a>
+              <a href="#tendencias" class="btn-pill btn-pink">Ver tendencias</a>
+            </div>
+            <div class="hero-trust">
+              <div class="stars" aria-label="4.9 de 5 estrellas">
+                <span>★★★★★</span>
+                <strong>4.9</strong>
+              </div>
+              <p>+2.500 clientas felices en Colombia</p>
+            </div>
+          </div>
+
+          <div class="hero-media">
+            <div class="hero-shapes" aria-hidden="true">
+              <img src="assets/imgs/hero/hero-shape1_1.png" alt="" class="shape s1">
+              <img src="assets/imgs/hero/hero-shape1_2.png" alt="" class="shape s2">
+              <img src="assets/imgs/hero/hero-shape1_3.png" alt="" class="shape s3">
+            </div>
+            <img src="assets/imgs/hero/hero-thumb1_1.png" alt="Mujer con labial BeauTen" class="hero-img">
+            <div class="hero-card">
+              <a href="#catalogo" class="play-btn" aria-label="Ver cómo se usa">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </a>
+              <div>
+                <strong>Rutina Glow</strong>
+                <span>Mira cómo aplicar tu sérum</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- LÁMINA 3: envío gratis, con la furgoneta en rosa ---------- -->
+      <div class="carrusel-slide" role="group" aria-roledescription="lámina" aria-label="3 de 4">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow hero-badge">Exclusivo para ti</p>
+            <h1>Envío <em>gratis</em></h1>
+            <p class="slide-bajada">En tus compras desde $150.000</p>
+            <p class="hero-sub">Te llega a cualquier ciudad de Colombia, sin recargos por destino.</p>
+            <div class="hero-cta">
+              <a href="#catalogo" class="btn-pill btn-dark">
+                <span>Aprovechar el envío</span>
+                <i class="btn-circle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-media">
+            <!-- Furgoneta dibujada a medida en el rosa de la marca. Los colores
+                 salen de la paleta del sitio: #EE2D7A (acento), #F5739F (acento
+                 claro), #FFE3ED y #F7DCE5 (rosas de apoyo). -->
+            <svg class="hero-van" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Furgoneta de reparto de BeauTen en color rosa">
+              <g stroke="#F5C6D8" stroke-width="7" stroke-linecap="round" aria-hidden="true">
+                <line x1="6" y1="76" x2="34" y2="76"/>
+                <line x1="0" y1="100" x2="26" y2="100"/>
+                <line x1="10" y1="124" x2="38" y2="124"/>
+              </g>
+              <ellipse cx="160" cy="168" rx="108" ry="10" fill="#F7DCE5" aria-hidden="true"/>
+              <rect x="42" y="56" width="150" height="94" rx="15" fill="#EE2D7A"/>
+              <path d="M192 56h14l40 24a15 15 0 0 1 7 13v43a14 14 0 0 1-14 14h-47z" fill="#E0266F"/>
+              <path d="M199 74h9l27 16a6 6 0 0 1 3 5v5h-39z" fill="#FFE3ED"/>
+              <rect x="55" y="72" width="124" height="32" rx="10" fill="#F5739F"/>
+              <path d="M117 99c-7-7-15-13-15-20 0-5.5 4-9 8.5-9 3 0 5.5 1.8 6.5 4 1-2.2 3.5-4 6.5-4 4.5 0 8.5 3.5 8.5 9 0 7-8 13-15 20z" fill="#FFE3ED" aria-hidden="true"/>
+              <circle cx="94" cy="152" r="18" fill="#2A2A2A"/>
+              <circle cx="94" cy="152" r="7" fill="#F2C9D8"/>
+              <circle cx="214" cy="152" r="18" fill="#2A2A2A"/>
+              <circle cx="214" cy="152" r="7" fill="#F2C9D8"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- LÁMINA 4: el descuento ---------- -->
+      <div class="carrusel-slide" role="group" aria-roledescription="lámina" aria-label="4 de 4">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow hero-badge">Código de descuento</p>
+            <h1>Tu cupón de <em>descuento</em></h1>
+            <div class="slide-ofertas">
+              <span class="oferta-caja">Hasta 38% OFF</span>
+              <span class="oferta-mas" aria-hidden="true">+</span>
+              <span class="oferta-caja">10% extra</span>
+            </div>
+            <p class="hero-sub">Código <strong class="slide-codigo">BEAUTEN10</strong> · Válido en toda la tienda y se aplica al pagar.</p>
+            <div class="hero-cta">
+              <a href="#catalogo" class="btn-pill btn-dark">
+                <span>Aplicar el cupón</span>
+                <i class="btn-circle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-media">
+            <img src="assets/imgs/productos/464442.jpg" alt="Rodillo de jade y gua sha facial BeauTen" class="hero-img hero-img--suave">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button type="button" class="carrusel-flecha carrusel-flecha--prev" id="carrPrev" aria-label="Lámina anterior">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button type="button" class="carrusel-flecha carrusel-flecha--next" id="carrNext" aria-label="Lámina siguiente">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+  </button>
+
+  <div class="carrusel-puntos" id="carrPuntos" aria-label="Elegir lámina"></div>
+
+  <span class="watermark" aria-hidden="true">BeauTen</span>
+</section>
+
+<script>
+/* Carrusel principal: se desliza solo, con flechas, puntos y arrastre.
+   Se detiene al pasar el cursor o al navegar con el teclado.
+
+   La primera lámina lleva un VIDEO de 17,6 s. Regla: mientras la lámina que
+   se ve tenga video, NO se cuenta el tiempo; se espera a que el video
+   termine y entonces se avanza. Así el video nunca se corta a la mitad.
+   Si el navegador bloquea la reproducción, se cae al temporizador normal.
+
+   Con "menos movimiento" activado el video NO se reproduce solo (queda el
+   póster) y las láminas cambian sin animación, pero siguen rotando para que
+   se vean las tres. */
+(function () {
+  var track = document.getElementById('carruselTrack');
+  var puntos = document.getElementById('carrPuntos');
+  var flechaPrev = document.getElementById('carrPrev');
+  var flechaNext = document.getElementById('carrNext');
+  if (!track || !puntos) return;
+
+  var laminas = track.querySelectorAll('.carrusel-slide');
+  var total = laminas.length;
+  if (total < 2) return;
+
+  var videos = track.querySelectorAll('video');
+  var ESPERA = 6500;
+  var actual = 0;
+  var reloj = null;
+  var quieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function videoDe(n) { return laminas[n].querySelector('video'); }
+  function siguiente() { ir(actual + 1); }
+
+  var botones = [];
+  for (var k = 0; k < total; k++) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Ir a la lámina ' + (k + 1));
+    b.addEventListener('click', (function (n) {
+      return function () { ir(n); };
+    })(k));
+    puntos.appendChild(b);
+    botones.push(b);
+  }
+
+  /* Decide cómo se pasa a la siguiente lámina */
+  function programar() {
+    if (reloj) { clearInterval(reloj); reloj = null; }
+    var v = videoDe(actual);
+
+    if (v && !quieto) {
+      if (v.paused && !v.ended) {
+        var p = v.play();
+        if (p && p.catch) {
+          /* Autoplay bloqueado: seguimos con el temporizador */
+          p.catch(function () { reloj = setInterval(siguiente, ESPERA); });
+        }
+      }
+      return;   /* el avance lo dispara el evento "ended" del video */
+    }
+
+    reloj = setInterval(siguiente, ESPERA);
+  }
+
+  function detener() {
+    if (reloj) { clearInterval(reloj); reloj = null; }
+    var v = videoDe(actual);
+    if (v && !v.paused) v.pause();
+  }
+
+  function ir(n) {
+    actual = (n + total) % total;
+    track.style.transform = 'translateX(' + (-100 * actual) + '%)';
+    for (var k = 0; k < total; k++) {
+      botones[k].setAttribute('aria-current', k === actual ? 'true' : 'false');
+      laminas[k].setAttribute('aria-hidden', k === actual ? 'false' : 'true');
+      /* "inert" evita que con el teclado se llegue a los botones de una
+         lámina que no se está viendo. Si el navegador no lo soporta, se
+         ignora sin más. */
+      laminas[k].inert = (k !== actual);
+    }
+    var activo = videoDe(actual);
+    videos.forEach(function (v) { if (v !== activo) v.pause(); });
+    /* Al volver a su lámina, el video se reproduce otra vez desde el inicio */
+    if (activo && activo.ended) { try { activo.currentTime = 0; } catch (e) {} }
+    programar();
+  }
+
+  /* Cuando el video acaba, avanza (solo si de verdad estábamos esperándolo) */
+  videos.forEach(function (v) {
+    v.addEventListener('ended', function () {
+      if (v === videoDe(actual) && !reloj) siguiente();
+    });
+  });
+
+  if (flechaPrev) flechaPrev.addEventListener('click', function () { ir(actual - 1); });
+  if (flechaNext) flechaNext.addEventListener('click', function () { ir(actual + 1); });
+
+  var caja = track.closest('.hero-carrusel');
+  if (caja) {
+    caja.addEventListener('mouseenter', detener);
+    caja.addEventListener('mouseleave', programar);
+    caja.addEventListener('focusin', detener);
+    caja.addEventListener('focusout', programar);
+  }
+
+  /* Arrastre con el dedo */
+  var x0 = null, y0 = null;
+  track.addEventListener('touchstart', function (e) {
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; detener();
+  }, { passive: true });
+  track.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    var dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+      ir(dx < 0 ? actual + 1 : actual - 1);
+    }
+    x0 = null; y0 = null;
+    programar();
+  }, { passive: true });
+
+  /* Arranca mostrando la lámina 1 ya puesta (si no, se vería el salto) */
+  track.style.transition = quieto ? 'none' : '';
+  ir(0);
+})();
+</script>
+
+<!-- ============ BARRA DE CONFIANZA ============
+     Sale justo debajo del banner principal. Mismos datos verificables
+     que la sección "Por qué comprar en BeauTen" (tarea #107):
+     nada de cifras, plazos ni marcas que no podamos sostener. -->
+<section class="barra-confianza" aria-label="Ventajas de comprar en BeauTen">
+  <div class="container">
+    <div class="barra-confianza-grid">
+
+      <div class="barra-confianza-item">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+          <path d="M15 18H9"/>
+          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+          <circle cx="17" cy="18" r="2"/>
+          <circle cx="7" cy="18" r="2"/>
+        </svg>
+        <div>
+          <strong>Envío gratis</strong>
+          <span>En compras desde $150.000, a toda Colombia</span>
+        </div>
+      </div>
+
+      <div class="barra-confianza-item">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="5" width="20" height="14" rx="2"/>
+          <path d="M2 10h20"/>
+        </svg>
+        <div>
+          <strong>Pago seguro</strong>
+          <span>PSE y tarjetas con MercadoPago</span>
+        </div>
+      </div>
+
+      <div class="barra-confianza-item">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+        </svg>
+        <div>
+          <strong>Productos originales</strong>
+          <span>Cruelty-free y de proveedores verificados</span>
+        </div>
+      </div>
+
+      <div class="barra-confianza-item">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+          <path d="M16 16h5v5"/>
+        </svg>
+        <div>
+          <strong>Garantía y retracto</strong>
+          <span>Cubierta por la Ley 1480</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ BANNER DEL CUPÓN — DESACTIVADO ============
+     Este espacio lo ocupa ahora la BARRA DE CONFIANZA de arriba, a petición
+     de la clienta (12 de septiembre de 2026).
+
+     El bloque NO se ha borrado: está comentado y se puede reactivar en
+     cualquier parte de la página quitando estas marcas de comentario
+     ( <!- - y - - > ). El código BEAUTEN10 sigue funcionando igual en el
+     checkout: esto solo era el anuncio en la página de inicio.
+
+<section class="cupon-banner">
+  <div class="container cupon-banner-inner">
+    <div class="cupon-texto">
+      <strong>10% de descuento en tu primera compra</strong>
+      <span>Escribe el código en el checkout y el descuento se aplica al pagar.</span>
+    </div>
+    <button type="button" class="cupon-codigo" id="btnCopiarCupon" data-codigo="BEAUTEN10" title="Clic para copiar el código">
+      <span id="cuponValor">BEAUTEN10</span>
+      <small id="cuponPista">Copiar</small>
+    </button>
+  </div>
+</section>
+     ============ FIN DEL BANNER DEL CUPÓN DESACTIVADO ============ -->
+
+<!-- ============ CATEGORÍAS ============ -->
+<section class="section categories" id="categorias">
+  <div class="container">
+    <div class="section-head wow-fade">
+      <p class="eyebrow">Nuestras categorías</p>
+      <h2>Encuentra tu favorita</h2>
+      <p class="section-sub">Las 3 que más se están vendiendo este mes.</p>
+    </div>
+    <!-- Los 3 más vendidos se generan desde js/productos.js (mismo patrón de tarjeta que el catálogo) -->
+    <div class="cat-grid" id="topGrid"></div>
+  </div>
+</section>
+
+<!-- ============ BANNER DE DESCUENTO ============
+     Un solo banner ancho bajo los 3 favoritos, con el nuevo diseño de
+     referencia de la clienta: fondo rosa con degradado, imagen a un lado y
+     el mensaje con botón al otro.
+
+     Sustituye a los dos paneles anteriores, a petición suya
+     (12 de septiembre de 2026).
+
+     Los dos datos que se anuncian están VERIFICADOS, ninguno es inventado:
+       · "Hasta 38% OFF" es el mayor ahorro real del catálogo. Se calcula
+         comparando precio con precioAntes en js/productos.js: el máximo es
+         el Rodillo de Jade (89.000 -> 54.900 = 38,3%). De los 20 productos,
+         12 muestran precio anterior.
+       · "10% extra con BEAUTEN10" está confirmado en la variable CUPONES
+         del backend (BEAUTEN10:10).
+
+     No lleva fecha de caducidad a propósito: así el descuento queda
+     anunciado siempre, aunque la barra de promoción de arriba se oculte
+     sola el 13 de septiembre. -->
+<section class="banner-descuento">
+  <div class="container">
+    <div class="bd-card">
+
+      <div class="bd-media">
+        <img src="assets/imgs/productos/464442.jpg" alt="Rodillo de jade y gua sha facial BeauTen">
+      </div>
+
+      <div class="bd-texto">
+        <p class="bd-etiqueta">Código de descuento</p>
+        <h2 class="bd-titulo">Hasta 38% OFF</h2>
+        <p class="bd-sub">Y 10% extra con el código <strong>BEAUTEN10</strong>, aplicado al pagar en el checkout.</p>
+        <a href="#catalogo" class="bd-btn">
+          <span>Ver el catálogo</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATÁLOGO REAL BEAUTEN (productos validados en Dropi) ============ -->
+<section class="section best" id="catalogo">
+  <span id="tendencias" style="display:block;position:relative;top:-90px;visibility:hidden;" aria-hidden="true"></span>
+  <div class="container">
+    <div class="section-head wow-fade">
+      <p class="eyebrow">Selección BeauTen</p>
+      <h2>Productos que resuelven de verdad</h2>
+      <p class="section-sub">Cada producto fue elegido por resolver un problema real de la mujer colombiana: suavidad, belleza, bienestar y autoestima. Paga seguro con PSE o tarjeta.</p>
+    </div>
+
+    <!-- El contador de oferta se MUDÓ al checkout (12 sep 2026), a petición
+         de la clienta: "solo deja el de 15 minutos en el checkout".
+         El bloque con id #ofertaContador vive ahora en checkout.html.
+         js/oferta.js sigue igual: si no encuentra el bloque, no hace nada. -->
+
+    <div class="filter-row">
+      <div class="filter-pills" id="filterPills"></div>
+    </div>
+    <div class="trend-grid" id="catalogoGrid" aria-live="polite"></div>
+    <div class="cat-trust">
+      <span>✔ Envío a toda Colombia</span>
+      <span>✔ Pago con PSE y tarjetas</span>
+      <span>✔ Envío gratis desde $150.000</span>
+      <span>✔ Envío internacional en 6 a 12 días</span>
+    </div>
+
+    <!-- El registro de pedidos se movió a un panel PRIVADO con contraseña: /admin
+         Antes era público y cualquiera podía abrirlo desde la tienda. -->
+  </div>
+</section>
+
+<!-- ============ KITS QUE AHORRAN (tarea #109) ============
+     Las tarjetas se generan desde js/oferta.js con productos que YA existen
+     en js/productos.js. No hay productos ni precios inventados aquí. -->
+<section class="section kits" id="kits">
+  <div class="container">
+    <div class="section-head wow-fade">
+      <p class="eyebrow">Combos BeauTen</p>
+      <h2>Kits que te ahorran plata</h2>
+      <p class="section-sub">Dos productos que se complementan, con 10% de descuento sobre la suma. El botón los añade juntos al carrito y el descuento se aplica al pagar.</p>
+    </div>
+    <div class="kits-grid" id="kitsGrid"></div>
+  </div>
+</section>
+
+<!-- ============ CÓMO COMPRAR / OFERTA ============ -->
+<section class="section offer" id="oferta">
+  <div class="container">
+    <div class="offer-card">
+      <div class="offer-copy">
+        <p class="eyebrow">Compra fácil y segura</p>
+        <h2>Compra en 3 pasos y paga seguro</h2>
+        <p>1. Elige tu producto · 2. Agrégalo al carrito · 3. Completa tus datos y paga con PSE o tarjeta. Así de simple.</p>
+        <a href="#catalogo" class="btn-pill btn-pink"><span>Ver productos</span></a>
+      </div>
+      <div class="offer-img">
+        <img src="assets/imgs/cta/cta-icon1_1.png" alt="Belleza BeauTen">
+        <img src="assets/imgs/cta/cta-icon1_2.png" alt="Cuidado BeauTen">
+        <img src="assets/imgs/cta/cta-icon1_3.png" alt="Bienestar BeauTen">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA BANNER ============ -->
+<section class="section cta1">
+  <div class="container">
+    <div class="cta-banner">
+      <p class="eyebrow">Cosmética profesional</p>
+      <h2>Amamos lo que hacemos: crear productos que inspiran confianza</h2>
+      <p>Resultados de calidad profesional en la comodidad de tu casa.</p>
+      <a href="#contacto" class="btn-pill btn-dark"><span>Descubre la colección</span>
+        <i class="btn-circle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIOS ============ -->
+<section class="section testimonials" id="opiniones">
+  <div class="container">
+    <div class="section-head wow-fade">
+      <p class="eyebrow">Opiniones reales</p>
+      <h2>Lo que dicen nuestras clientas</h2>
+    </div>
+    <div class="testi-grid">
+      <article class="testi-card dark wow-fade">
+        <img src="assets/imgs/hero/hero-rating-user2_1.png" alt="Foto de Valentina" class="testi-bg">
+        <div class="testi-inner">
+          <span class="quote-mark">"</span>
+          <p>Estoy feliz de haber encontrado una marca cruelty-free que de verdad funciona. Mi piel se siente suave e hidratada desde la primera semana.</p>
+          <footer><strong>Valentina R.</strong><span>Bogotá — compradora verificada</span></footer>
+        </div>
+      </article>
+      <article class="testi-card light wow-fade">
+        <img src="assets/imgs/hero/hero-rating-user2_2.png" alt="Foto de Mariana" class="testi-avatar">
+        <div class="testi-inner">
+          <span class="quote-mark">"</span>
+          <p>Me siento más segura que nunca. Los productos realzan mis rasgos sin sentirse pesados ni artificiales. El envío a Medellín llegó en 2 días.</p>
+          <footer><strong>Mariana G.</strong><span>Medellín — compradora verificada</span></footer>
+        </div>
+      </article>
+      <article class="testi-card dark wow-fade">
+        <img src="assets/imgs/hero/hero-rating-user2_3.png" alt="Foto de Laura" class="testi-bg">
+        <div class="testi-inner">
+          <span class="quote-mark">"</span>
+          <p>He probado muchísimas marcas y nada se compara. La textura es sedosa, liviana, y pagar con PSE desde mi banco me dio total confianza.</p>
+          <footer><strong>Laura C.</strong><span>Cali — compradora verificada</span></footer>
+        </div>
+      </article>
+      <article class="testi-card light wow-fade">
+        <img src="assets/imgs/hero/hero-rating-user2_1.png" alt="Foto de Daniela" class="testi-avatar">
+        <div class="testi-inner">
+          <span class="quote-mark">"</span>
+          <p>El sérum Vitamina C transformó mi rutina. Lo recomiendo con los ojos cerrados. El asesoramiento por WhatsApp fue súper amable.</p>
+          <footer><strong>Daniela P.</strong><span>Barranquilla — compradora verificada</span></footer>
+        </div>
+      </article>
+      <article class="testi-card dark wow-fade">
+        <img src="assets/imgs/hero/hero-rating-user2_2.png" alt="Foto de Sara" class="testi-bg">
+        <div class="testi-inner">
+          <span class="quote-mark">"</span>
+          <p>Pagué con tarjeta y todo llegó perfecto. Los labiales mate duran todo el día, incluso con tapabocas. ¡Volveré a pedir!</p>
+          <footer><strong>Sara M.</strong><span>Bucaramanga — compradora verificada</span></footer>
+        </div>
+      </article>
+      <article class="testi-card light wow-fade">
+        <img src="assets/imgs/hero/hero-rating-user2_3.png" alt="Foto de Camila" class="testi-avatar">
+        <div class="testi-inner">
+          <span class="quote-mark">"</span>
+          <p>La paleta de sombras nude es mi favorita. Pigmentación increíble y no irrita mis ojos sensibles. Calidad premium a buen precio.</p>
+          <footer><strong>Camila T.</strong><span>Cartagena — compradora verificada</span></footer>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOG ============ -->
+<section class="section blog" id="blog">
+  <div class="container">
+    <div class="section-head wow-fade">
+      <p class="eyebrow">Blog y consejos</p>
+      <h2>Tips de belleza para ti</h2>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card wow-fade">
+        <div class="blog-img">
+          <img src="assets/imgs/blog/blog-thumb1_1.jpg" alt="Cuidado de los pies en casa">
+          <span class="blog-chip">Pies</span>
+        </div>
+        <div class="blog-body">
+          <h3>Talones agrietados: por qué aparecen y cómo suavizarlos en casa</h3>
+          <p class="blog-meta">Por BeauTen · hace 3 días</p>
+        </div>
+      </article>
+      <article class="blog-card wow-fade">
+        <div class="blog-img">
+          <img src="assets/imgs/blog/blog-thumb1_2.jpg" alt="Cuidado del cabello">
+          <span class="blog-chip">Cabello</span>
+        </div>
+        <div class="blog-body">
+          <h3>Se te cae el cabello: 5 hábitos que sí ayudan a frenarlo</h3>
+          <p class="blog-meta">Por BeauTen · hace 1 semana</p>
+        </div>
+      </article>
+      <article class="blog-card wow-fade">
+        <div class="blog-img">
+          <img src="assets/imgs/blog/blog-thumb1_3.jpg" alt="Ritual facial en casa">
+          <span class="blog-chip">Skincare</span>
+        </div>
+        <div class="blog-body">
+          <h3>Cómo deshinchar el rostro en 5 minutos, paso a paso</h3>
+          <p class="blog-meta">Por BeauTen · hace 2 semanas</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="section contact" id="contacto">
+  <div class="container">
+    <div class="contact-card">
+      <div class="contact-copy">
+        <p class="eyebrow">¿Lista para brillar?</p>
+        <h2>¿Dudas antes de comprar?</h2>
+        <p>Escríbenos por WhatsApp y te asesoramos. Cuando estés lista, compras en la web y pagas con PSE o tarjeta.</p>
+        <ul class="benefits">
+          <li><span>✓</span> Pago seguro con PSE y tarjetas</li>
+          <li><span>✓</span> Envío gratis por compras superiores a $150.000</li>
+          <li><span>✓</span> Productos originales y cruelty-free</li>
+          <li><span>✓</span> Asesoría personalizada por WhatsApp</li>
+        </ul>
+      </div>
+      <div class="contact-cta">
+        <a href="https://wa.me/573181738642?text=Hola%2C%20quiero%20hacer%20un%20pedido%20en%20BeauTen%20%F0%9F%92%85" target="_blank" rel="noopener" class="btn-pill btn-whatsapp">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.5Z"/></svg>
+          <span>Pedir por WhatsApp</span>
+        </a>
+        <button type="button" class="install-app-btn" id="installCta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          <span>Instalar la app</span>
+        </button>
+        <p class="contact-note">Respuesta en minutos · Lunes a sábado 8am–8pm</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODAL DE INSTALACIÓN (solo se abre si el usuario lo pide) ============ -->
+<div class="modal-backdrop" id="installModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
+    <img src="assets/imgs/icons/icon-192.png" alt="BeauTen" class="modal-icon">
+    <h3 id="modalTitle">Instalar BeauTen en tu dispositivo</h3>
+    <p class="modal-sub">Así tendrás la tienda siempre a un toque, como una app nativa.</p>
+    <div class="modal-steps" id="modalSteps"></div>
+    <button class="btn-pill btn-pink modal-do" id="modalDo" hidden><span>Instalar ahora</span></button>
+    <p class="modal-hint" id="modalHint" hidden>Si no ves el botón, busca en el menú ⋮ del navegador la opción <strong>"Instalar aplicación"</strong> o <strong>"Agregar a pantalla de inicio"</strong>.</p>
+  </div>
+</div>
+
+<!-- ============ MODAL DE DESCUENTO (se abre solo al entrar) ============
+     Reutiliza el mismo patrón que el modal de instalación de arriba:
+     .modal-backdrop + .modal, y la X es la misma .modal-close de la casa.
+
+     Se cierra de tres formas: la X, la tecla ESC o tocando fuera.
+     Después de cerrarlo no vuelve a salir durante 7 días, para no
+     perseguir a quien ya lo vio.
+
+     NO pide correo: para recolectar datos en Colombia hace falta
+     autorización expresa y política de tratamiento (Ley 1581 de 2012,
+     Habeas Data), y la tienda no tiene todavía ni plataforma de correo
+     ni dónde guardarlos. En su lugar, el código se copia con un clic.
+
+     El 10% está confirmado en la variable CUPONES del backend
+     (BEAUTEN10:10). -->
+<div class="modal-backdrop" id="promoModal" hidden>
+  <div class="modal modal-promo" role="dialog" aria-modal="true" aria-labelledby="promoTitulo">
+    <button class="modal-close" id="promoClose" aria-label="Cerrar">×</button>
+
+    <div class="promo-foto">
+      <img src="assets/imgs/hero/hero-thumb1_1.png" alt="Modelo con labial de BeauTen">
+    </div>
+
+    <div class="promo-info">
+      <p class="promo-eyebrow">Código de descuento</p>
+      <h3 id="promoTitulo">10% de descuento en tu compra</h3>
+      <p class="promo-texto">Escríbelo en el checkout y el descuento se aplica al pagar. Toca la casilla para copiarlo.</p>
+      <button type="button" class="promo-codigo" id="promoCopiar" data-codigo="BEAUTEN10" title="Clic para copiar el código">
+        <span id="promoValor">BEAUTEN10</span>
+        <small id="promoPista">Copiar</small>
+      </button>
+      <a href="#catalogo" class="btn-pill btn-pink promo-cta" id="promoCta"><span>Ver el catálogo</span></a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Modal de descuento: se abre solo al entrar, se cierra cuando la persona
+   quiera y no vuelve a molestar durante 7 días. */
+(function () {
+  var CLAVE = 'beauten_promo_cerrado';
+  var DIAS = 7;
+  var caja = document.getElementById('promoModal');
+  if (!caja) return;
+
+  var visto = 0;
+  try { visto = parseInt(localStorage.getItem(CLAVE) || '0', 10); } catch (e) { visto = 0; }
+  if (visto && Date.now() - visto < DIAS * 86400000) return;
+
+  var abrir = function () {
+    caja.hidden = false;
+    document.body.style.overflow = 'hidden';
+  };
+  var cerrar = function () {
+    caja.hidden = true;
+    document.body.style.overflow = '';
+    try { localStorage.setItem(CLAVE, String(Date.now())); } catch (e) {}
+  };
+
+  setTimeout(abrir, 900);
+
+  var x = document.getElementById('promoClose');
+  if (x) x.addEventListener('click', cerrar);
+  caja.addEventListener('click', function (e) { if (e.target === caja) cerrar(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !caja.hidden) cerrar();
+  });
+
+  var cta = document.getElementById('promoCta');
+  if (cta) cta.addEventListener('click', cerrar);
+
+  var b = document.getElementById('promoCopiar');
+  if (b) {
+    b.addEventListener('click', function () {
+      var codigo = b.dataset.codigo || 'BEAUTEN10';
+      var pista = document.getElementById('promoPista');
+      var avisar = function (t) {
+        if (!pista) return;
+        pista.textContent = t;
+        setTimeout(function () { pista.textContent = 'Copiar'; }, 2200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(codigo).then(function () { avisar('¡Copiado!'); })
+          .catch(function () { avisar('Copia manual: ' + codigo); });
+      } else {
+        avisar('Copia manual: ' + codigo);
+      }
+    });
+  }
+})();
+</script>
+
+<!-- ============ AVISO ROTATIVO (pastilla que aparece y se va) ============
+     A petición de la clienta se hizo el EFECTO de la pastilla que sale y
+     desaparece, pero NO se simulan compras de otras personas.
+
+     Por qué no: inventar "María en Cali acaba de comprar" es información
+     falsa que el cliente no puede verificar. La Ley 1480 de 2011 define la
+     publicidad engañosa como aquella cuyo mensaje "no corresponda a la
+     realidad", la prohíbe en su artículo 20 y la SIC es quien la vigila.
+     Además va contra la propia regla del sitio, escrita más abajo:
+     "solo beneficios propios y verificables".
+
+     Los 5 mensajes son datos que ya están confirmados en la tienda:
+       · envío gratis desde $150.000 (sección de beneficios)
+       · hasta 38% OFF (el mayor ahorro real del catálogo, 38,3%)
+       · 10% extra con BEAUTEN10 (variable CUPONES del backend)
+       · pago con PSE y tarjeta (declarado en producto.html)
+       · atención por WhatsApp (existe el botón y el número)
+
+     SI SE QUIERE el aviso real de compras, se puede: hay que publicar un
+     endpoint que devuelva los pedidos pagados recientes SIN datos
+     personales (solo ciudad y producto) y engancharlo aquí. Eso sería
+     verdadero y tendría el mismo efecto. -->
+<div class="aviso-rotativo" id="avisoRotativo" role="status" aria-live="polite" hidden>
+  <p class="aviso-texto" id="avisoTexto"></p>
+</div>
+
+<script>
+/* Pastilla flotante: aparece, se desvanece y pasa al siguiente mensaje.
+   Recorre la lista dos veces y luego se queda quieta, para no perseguir
+   a quien ya la vio. */
+(function () {
+  var caja = document.getElementById('avisoRotativo');
+  var texto = document.getElementById('avisoTexto');
+  if (!caja || !texto) return;
+
+  var MENSAJES = [
+    'Envío gratis en compras desde $150.000',
+    'Hasta 38% OFF en el catálogo',
+    '10% extra con el código BEAUTEN10',
+    'Pago seguro con PSE y tarjeta',
+    '¿Dudas? Te ayudamos por WhatsApp'
+  ];
+  var VISIBLE = 5200;   // cuanto tiempo se queda en pantalla
+  var PAUSA   = 5500;   // cuanto tarda en volver
+  var VUELTAS = 2;      // cuantas veces recorre la lista y para
+
+  var quieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var i = 0, vueltas = 0;
+
+  function modalAbierto() {
+    var m = document.getElementById('promoModal');
+    return m && !m.hidden;
+  }
+
+  function mostrar() {
+    /* Si el modal de descuento esta abierto, esperamos: no tiene sentido
+       poner una pastilla detras de una ventana que tapa todo. */
+    if (modalAbierto()) { setTimeout(mostrar, 4000); return; }
+    texto.textContent = MENSAJES[i];
+    caja.hidden = false;
+    requestAnimationFrame(function () { caja.classList.add('visible'); });
+    setTimeout(ocultar, VISIBLE);
+  }
+
+  function ocultar() {
+    caja.classList.remove('visible');
+    setTimeout(function () {
+      caja.hidden = true;
+      i++;
+      if (i >= MENSAJES.length) {
+        i = 0; vueltas++;
+        if (vueltas >= VUELTAS) return;   // ya se mostro lo suficiente
+      }
+      setTimeout(mostrar, PAUSA);
+    }, quieto ? 0 : 420);
+  }
+
+  /* Arranca 7 s despues de cargar, para no pelearse con el modal. */
+  setTimeout(mostrar, 7000);
+})();
+</script>
+
+<!-- ============ BENEFICIOS (tarea #107) ============
+     Solo beneficios propios y verificables. Sin comparar con otras tiendas,
+     sin testimonios con nombre y ciudad y sin cifras de reseñas. -->
+<section class="section beneficios" id="beneficios">
+  <div class="container">
+    <div class="section-head wow-fade">
+      <p class="eyebrow">Por qué comprar en BeauTen</p>
+      <h2>Comprar aquí es fácil y seguro</h2>
+      <p class="section-sub">Estas son las condiciones con las que trabajamos hoy, dichas sin exagerar.</p>
+    </div>
+    <div class="beneficios-grid">
+      <article class="beneficio-card wow-fade">
+        <span class="beneficio-icono" aria-hidden="true">✓</span>
+        <h3>Envío gratis a toda Colombia</h3>
+        <p>Enviamos a todo el país y el envío es gratis en compras superiores a $150.000. Tu pedido llega en un envío internacional que tarda entre 6 y 12 días.</p>
+      </article>
+      <article class="beneficio-card wow-fade">
+        <span class="beneficio-icono" aria-hidden="true">✓</span>
+        <h3>Pago 100% seguro con PSE y tarjetas</h3>
+        <p>Pagas desde la web a través de la pasarela de MercadoPago, con PSE o tarjeta crédito/débito. No guardamos los datos de tu tarjeta.</p>
+      </article>
+      <article class="beneficio-card wow-fade">
+        <span class="beneficio-icono" aria-hidden="true">✓</span>
+        <h3>Derecho de retracto y garantía</h3>
+        <p>Tu compra está cubierta por el derecho de retracto y la garantía legal que establece la Ley 1480. Si algo no sale bien, lo revisamos contigo.</p>
+      </article>
+      <article class="beneficio-card wow-fade">
+        <span class="beneficio-icono" aria-hidden="true">✓</span>
+        <h3>Soporte directo por WhatsApp</h3>
+        <p>Escribes a nuestro WhatsApp +57 318 173 8642 y te asesora una persona del equipo. Lunes a sábado, de 8am a 8pm.</p>
+      </article>
+      <article class="beneficio-card wow-fade">
+        <span class="beneficio-icono" aria-hidden="true">✓</span>
+        <h3>Productos originales y cruelty-free</h3>
+        <p>Trabajamos con proveedores verificados y con productos libres de crueldad animal. Nada de imitaciones.</p>
+      </article>
+      <article class="beneficio-card wow-fade">
+        <span class="beneficio-icono" aria-hidden="true">✓</span>
+        <h3>Seguimiento de tu pedido con guía</h3>
+        <p>Te entregamos el número de guía para que sigas tu paquete hasta que llegue a tu casa. Te avisamos por WhatsApp.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INFORMACIÓN ÚTIL ============ -->
+<section class="section info-util" id="informacion">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Información útil</p>
+      <h2>Todo claro antes de comprar</h2>
+    </div>
+    <div class="info-grid">
+      <article class="info-card" id="como-comprar">
+        <h3>Cómo comprar</h3>
+        <p>Elige tu producto y pulsa «Agregar al carrito». Cuando termines, completa tus datos y paga con PSE o tarjeta. Si te queda alguna duda, escríbenos por WhatsApp y te asesoramos.</p>
+      </article>
+      <article class="info-card" id="envios">
+        <h3>Envíos y entregas</h3>
+        <p>Enviamos a toda Colombia. El envío es gratis en compras superiores a $150.000 y tarda entre 6 y 12 días, porque tu pedido llega desde nuestro proveedor internacional.</p>
+      </article>
+      <article class="info-card" id="metodos-de-pago">
+        <h3>Métodos de pago</h3>
+        <p>Paga seguro con <strong>PSE</strong> (débito desde tu banco) o <strong>tarjeta</strong> crédito/débito, a través de la pasarela de MercadoPago. No guardamos los datos de tu tarjeta.</p>
+      </article>
+      <article class="info-card" id="cambios-garantia">
+        <h3>Cambios y garantía</h3>
+        <p>Si algo no sale bien con tu pedido, escríbenos por WhatsApp al +57 318 173 8642 y lo revisamos contigo. Atendemos de lunes a sábado, de 8am a 8pm.</p>
+      </article>
+      <article class="info-card" id="preguntas-frecuentes">
+        <h3>Preguntas frecuentes</h3>
+        <p>¿Los productos son originales? Sí, y son cruelty-free. ¿Cómo pago? Con PSE o tarjeta, desde la web. ¿Hacen envíos a mi ciudad? Sí, enviamos a todo el país. ¿Cuánto tarda? Entre 6 y 12 días, porque el pedido llega desde nuestro proveedor internacional.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer" id="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img src="assets/imgs/logo/footer-logo.png" alt="BeauTen" width="170" height="31">
+      <p>Belleza limpia, cruelty-free y accesible para la mujer colombiana. Brilla naturalmente con BeauTen.</p>
+      <div class="socials">
+        <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.4 2 1.7 3.6 3.9 3.9v3c-1.5 0-2.8-.5-3.9-1.3v6.6c0 4-2.9 6.8-6.6 6.8A6.3 6.3 0 0 1 3.7 15c0-3.6 3-6.5 6.7-6.4v3.1a3.3 3.3 0 1 0 2.4 3.2V3h3.8Z"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.5l.5-3h-3V9.1c0-.9.3-1.6 1.7-1.6H16.6V4.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.1V11H7.5v3H10v7h3.5Z"/></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.5Z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Soporte al cliente</h4>
+      <ul>
+        <li><a href="#como-comprar">Cómo comprar</a></li>
+        <li><a href="#envios">Envíos y entregas</a></li>
+        <li><a href="#metodos-de-pago">Métodos de pago</a></li>
+        <li><a href="#cambios-garantia">Cambios y garantía</a></li>
+        <li><a href="#preguntas-frecuentes">Preguntas frecuentes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Atención personalizada</h4>
+      <ul>
+        <li><a href="#catalogo">Buscar producto</a></li>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="#kits">Kits que ahorran</a></li>
+        <li><a href="#tendencias">Tendencias</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Nuestra app</h4>
+      <ul>
+        <li><a href="#" id="footerInstall">Instalar la app en mi teléfono</a></li>
+        <li><a href="#" id="footerInstallHelp">¿Cómo se instala?</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="https://wa.me/573181738642" target="_blank" rel="noopener">+57 318 173 8642</a></li>
+        <li><a href="mailto:soportevortexgadgets@gmail.com">soportevortexgadgets@gmail.com</a></li>
+        <li>Colombia · Envíos a todo el país</li>
+        <li>Lun–Sáb: 8am–8pm</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ MÉTODOS DE PAGO ============
+       Mismos métodos que ya declara producto.html, ni uno más:
+       PSE, Visa, Mastercard y American Express, a través de MercadoPago.
+
+       A propósito NO se copiaron los 9 logos del diseño de ejemplo. Ese
+       ejemplo mostraba también PayPal, Discover, Diners Club, JCB,
+       Maestro y UnionPay, y esta tienda NO los acepta. Anunciar medios de
+       pago que no existen es publicidad engañosa (Ley 1480): el cliente
+       elegiría la tienda por PayPal y al llegar al checkout no lo
+       encontraría. Si algún día se activan más medios en MercadoPago, se
+       añaden aquí y en producto.html a la vez. -->
+  <div class="pie-pagos">
+    <div class="container">
+      <h2 class="pdp-pagos-titulo">Métodos de pago</h2>
+      <ul class="pago-logos">
+        <li>
+          <!-- PSE no venía en el juego de logos que envió la clienta, así que
+               se rotula en el MISMO formato (38x24, misma sombra y esquinas)
+               para que la fila quede pareja. No se dibujó un logo falso. -->
+          <svg viewBox="0 0 38 24" width="38" height="24" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pi-pse">
+            <title id="pi-pse">PSE</title>
+            <path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path>
+            <path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path>
+            <text x="19" y="15.4" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="0.5" fill="#1A1A1A">PSE</text>
+          </svg>
+        </li>
+        <li>
+          <svg viewBox="0 0 38 24" width="38" height="24" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pi-visa"><title id="pi-visa">Visa</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><path d="M28.3 10.1H28c-.4 1-.7 1.5-1 3h1.9c-.3-1.5-.3-2.2-.6-3zm2.9 5.9h-1.7c-.1 0-.1 0-.2-.1l-.2-.9-.1-.2h-2.4c-.1 0-.2 0-.2.2l-.3.9c0 .1-.1.1-.1.1h-2.1l.2-.5L27 8.7c0-.5.3-.7.8-.7h1.5c.1 0 .2 0 .2.2l1.4 6.5c.1.4.2.7.2 1.1.1.1.1.1.1.2zm-13.4-.3l.4-1.8c.1 0 .2.1.2.1.7.3 1.4.5 2.1.4.2 0 .5-.1.7-.2.5-.2.5-.7.1-1.1-.2-.2-.5-.3-.8-.5-.4-.2-.8-.4-1.1-.7-1.2-1-.8-2.4-.1-3.1.6-.4.9-.8 1.7-.8 1.2 0 2.5 0 3.1.2h.1c-.1.6-.2 1.1-.4 1.7-.5-.2-1-.4-1.5-.4-.3 0-.6 0-.9.1-.2 0-.3.1-.4.2-.2.2-.2.5 0 .7l.5.4c.4.2.8.4 1.1.6.5.3 1 .8 1.1 1.4.2.9-.1 1.7-.9 2.3-.5.4-.7.6-1.4.6-1.4 0-2.5.1-3.4-.2-.1.2-.1.2-.2.1zm-3.5.3c.1-.7.1-.7.2-1 .5-2.2 1-4.5 1.4-6.7.1-.2.1-.3.3-.3H18c-.2 1.2-.4 2.1-.7 3.2-.3 1.5-.6 3-1 4.5 0 .2-.1.2-.3.2M5 8.2c0-.1.2-.2.3-.2h3.4c.5 0 .9.3 1 .8l.9 4.4c0 .1 0 .1.1.2 0-.1.1-.1.1-.1l2.1-5.1c-.1-.1 0-.2.1-.2h2.1c0 .1 0 .1-.1.2l-3.1 7.3c-.1.2-.1.3-.2.4-.1.1-.3 0-.5 0H9.7c-.1 0-.2 0-.2-.2L7.9 9.5c-.2-.2-.5-.5-.9-.6-.6-.3-1.7-.5-1.9-.5L5 8.2z" fill="#142688"></path></svg>
+        </li>
+        <li>
+          <svg viewBox="0 0 38 24" width="38" height="24" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pi-master"><title id="pi-master">Mastercard</title><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"></path><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"></path><circle fill="#EB001B" cx="15" cy="12" r="7"></circle><circle fill="#F79E1B" cx="23" cy="12" r="7"></circle><path fill="#FF5F00" d="M22 12c0-2.4-1.2-4.5-3-5.7-1.8 1.3-3 3.4-3 5.7s1.2 4.5 3 5.7c1.8-1.2 3-3.3 3-5.7z"></path></svg>
+        </li>
+        <li>
+          <svg viewBox="0 0 38 24" width="38" height="24" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pi-american_express"><title id="pi-american_express">American Express</title><path fill="#000" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3Z" opacity=".07"></path><path fill="#006FCF" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32Z"></path><path fill="#FFF" d="M22.012 19.936v-8.421L37 11.528v2.326l-1.732 1.852L37 17.573v2.375h-2.766l-1.47-1.622-1.46 1.628-9.292-.02Z"></path><path fill="#006FCF" d="M23.013 19.012v-6.57h5.572v1.513h-3.768v1.028h3.678v1.488h-3.678v1.01h3.768v1.531h-5.572Z"></path><path fill="#006FCF" d="m28.557 19.012 3.083-3.289-3.083-3.282h2.386l1.884 2.083 1.89-2.082H37v.051l-3.017 3.23L37 18.92v.093h-2.307l-1.917-2.103-1.898 2.104h-2.321Z"></path><path fill="#FFF" d="M22.71 4.04h3.614l1.269 2.881V4.04h4.46l.77 2.159.771-2.159H37v8.421H19l3.71-8.421Z"></path><path fill="#006FCF" d="m23.395 4.955-2.916 6.566h2l.55-1.315h2.98l.55 1.315h2.05l-2.904-6.566h-2.31Zm.25 3.777.875-2.09.873 2.09h-1.748Z"></path><path fill="#006FCF" d="M28.581 11.52V4.953l2.811.01L32.84 9l1.456-4.046H37v6.565l-1.74.016v-4.51l-1.644 4.494h-1.59L30.35 7.01v4.51h-1.768Z"></path></svg>
+        </li>
+      </ul>
+      <p class="pdp-pie-nota">Pagas a través de la pasarela de MercadoPago. No guardamos los datos de tu tarjeta.</p>
+    </div>
+  </div>
+
+  <div class="legal">
+    <div class="container">
+      <p>© <span id="year">2026</span> BeauTen Colombia. Todos los derechos reservados.</p>
+      <p><a href="#">Términos del servicio</a> · <a href="#">Política de privacidad</a> · <a href="#">Política de cookies</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp flotante -->
+<a href="https://wa.me/573181738642?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20BeauTen%20%F0%9F%92%85" class="wa-float" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.5Z"/></svg>
+</a>
+
+<button class="backtop" id="backTop" aria-label="Volver arriba">↑</button>
+
+<script src="js/productos.js"></script>
+<script src="js/main.js"></script>
+<script src="js/carrito.js"></script>
+<script src="js/oferta.js"></script>
+<script>
+/* Banner del cupón: copiar el código al portapapeles */
+(function () {
+  var b = document.getElementById('btnCopiarCupon');
+  if (!b) return;
+  b.addEventListener('click', function () {
+    var codigo = b.dataset.codigo || 'BEAUTEN10';
+    var pista = document.getElementById('cuponPista');
+    function avisar(txt) {
+      if (!pista) return;
+      pista.textContent = txt;
+      setTimeout(function () { pista.textContent = 'Copiar'; }, 2200);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(codigo).then(
+        function () { avisar('Copiado'); },
+        function () { avisar('Copia manual'); }
+      );
+    } else {
+      var t = document.createElement('textarea');
+      t.value = codigo;
+      document.body.appendChild(t);
+      t.select();
+      try { document.execCommand('copy'); avisar('Copiado'); } catch (e) { avisar('Copia manual'); }
+      document.body.removeChild(t);
+    }
+  });
+})();
+</script>
+</body>
+</html>
