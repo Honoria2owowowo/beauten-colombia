@@ -1744,3 +1744,207 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; line-height: 1.15;
 @media (prefers-reduced-motion: reduce) {
   .carrusel-track { transition: none; }
 }
+
+/* ============================================================
+   FICHA DE PRODUCTO — piezas traídas de la app de VÓRTEX
+   (25-sep-2026)
+
+   Se añaden aquí, al final del archivo, para no tocar ninguna de
+   las reglas que ya estaban. Paleta de Marlú: rosa sobre claro,
+   no el oscuro de VÓRTEX.
+   ============================================================ */
+
+/* ---------- Lupa sobre la foto grande ---------- */
+.pdp-zoom {
+  position: absolute;
+  left: 16px; bottom: 16px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(12, 12, 12, 0.78);
+  color: #fff;
+  border: 0; cursor: pointer;
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  padding: 9px 16px; border-radius: 90px;
+  backdrop-filter: blur(4px);
+  transition: background 0.25s, transform 0.25s;
+}
+.pdp-zoom:hover { background: var(--accent); transform: translateY(-2px); }
+.pdp-zoom svg { flex: none; }
+
+/* ---------- "N fotos · toca una para ampliarla" ---------- */
+.pdp-fotos {
+  margin-top: 12px; margin-bottom: 2px;
+  font-size: 12.5px; color: var(--gray-mid); text-align: center;
+}
+
+/* ---------- Línea "Vendido por …" ---------- */
+.pdp-vendedor {
+  font-size: 13.5px; color: var(--gray-mid); line-height: 1.6;
+  margin-top: -4px;
+}
+
+/* ---------- Línea de ahorro ---------- */
+.pdp-ahorro {
+  font-size: 14px; font-weight: 700; color: var(--accent-dark);
+  margin-top: -4px;
+}
+
+/* ---------- Franja del cupón (se copia al tocar) ---------- */
+.pdp-cupon {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-align: left;
+  background: var(--pink-soft);
+  border: 1.5px dashed var(--accent);
+  border-radius: 14px;
+  padding: 13px 16px;
+  font-family: var(--sans); font-size: 13.5px; color: var(--gray-dark);
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s;
+}
+.pdp-cupon:hover { background: var(--pink-bg); }
+.pdp-cupon b { color: var(--accent); letter-spacing: 0.4px; }
+.pdp-cupon-ok {
+  flex: none; font-size: 12px; font-weight: 800; color: #1E7A46;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* ---------- Caja de beneficios del pago ---------- */
+.pdp-caja {
+  background: var(--pink-soft);
+  border: 1.5px solid #F7C6D8;
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+.pdp-caja b {
+  display: block;
+  font-family: var(--sans); font-size: 13px; font-weight: 800;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 10px;
+}
+.pdp-caja ul { display: grid; gap: 7px; margin-bottom: 10px; }
+.pdp-caja li {
+  position: relative; padding-left: 20px;
+  font-size: 14px; color: var(--gray-dark); line-height: 1.5;
+}
+.pdp-caja li::before {
+  content: "✓"; position: absolute; left: 0; top: 0;
+  font-weight: 800; color: #2E9E5B;
+}
+.pdp-caja-pie {
+  display: block; font-size: 13.5px; font-weight: 700; color: var(--accent-dark);
+}
+
+/* Variante contra entrega: verde, que es el color de "sin riesgo" */
+.pdp-caja--cod {
+  background: #EFFAF3;
+  border-color: #BFE6CE;
+}
+.pdp-caja--cod b { color: #1E7A46; }
+.pdp-caja--cod .pdp-caja-pie { color: #1E7A46; }
+
+/* ---------- Reloj de corte del despacho ---------- */
+.pdp-corte {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 8px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 90px;
+  padding: 11px 20px;
+  font-size: 13.5px; color: var(--gray-dark); text-align: center;
+}
+.pdp-corte b { color: var(--accent-dark); }
+.pdp-corte-reloj {
+  font-family: var(--serif); font-size: 16px; letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Cantidad + botones ---------- */
+.pdp-compra { display: grid; gap: 14px; margin-top: 6px; }
+
+.pdp-cantidad {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 16px;
+}
+.pdp-cantidad-lbl { font-size: 14.5px; font-weight: 600; color: var(--gray-dark); }
+
+.pdp-qty { display: flex; align-items: center; gap: 4px; }
+.pdp-qty button {
+  width: 38px; height: 38px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--pink-soft);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  font-size: 19px; font-weight: 700; line-height: 1;
+  color: var(--accent-dark); cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.pdp-qty button:hover { background: var(--pink-bg); border-color: var(--accent); }
+.pdp-qty input {
+  width: 54px; height: 38px;
+  text-align: center;
+  font-family: var(--sans); font-size: 16px; font-weight: 700; color: var(--ink);
+  border: 0; background: transparent; outline: none;
+}
+
+/* ---------- Visor de foto ampliada ---------- */
+.pdp-visor {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(12, 12, 12, 0.93);
+  padding: 24px;
+}
+.pdp-visor img {
+  max-width: min(94vw, 1100px);
+  max-height: 84vh;
+  width: auto; height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  background: var(--white);
+}
+.pdp-visor-cerrar {
+  position: absolute; top: 18px; right: 20px;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14); color: #fff;
+  border: 0; cursor: pointer;
+  font-size: 30px; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.pdp-visor-cerrar:hover { background: var(--accent); }
+.pdp-visor-flecha {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 54px; height: 54px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14); color: #fff;
+  border: 0; cursor: pointer;
+  font-size: 38px; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.pdp-visor-flecha:hover { background: var(--accent); }
+.pdp-visor-prev { left: 20px; }
+.pdp-visor-next { right: 20px; }
+.pdp-visor-cuenta {
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  font-size: 13.5px; color: rgba(255, 255, 255, 0.85); letter-spacing: 1px;
+}
+
+/* ---------- Ajustes de pantalla pequeña ---------- */
+@media (max-width: 900px) {
+  /* La barra fija de abajo ya lleva su propio botón, así que los botones
+     de dentro se ocultan (igual que antes). El selector de cantidad SÍ se
+     queda: el botón de la barra fija respeta la cantidad elegida. */
+  .pdp-compra { gap: 0; }
+  .pdp-cantidad { margin-bottom: 4px; }
+  .pdp-corte { font-size: 12.5px; padding: 10px 16px; }
+  .pdp-cupon { font-size: 12.5px; padding: 12px 14px; }
+}
+@media (max-width: 560px) {
+  .pdp-zoom { left: 12px; bottom: 12px; font-size: 12px; padding: 8px 13px; }
+  .pdp-visor-flecha { width: 44px; height: 44px; font-size: 30px; }
+  .pdp-visor-prev { left: 8px; }
+  .pdp-visor-next { right: 8px; }
+  .pdp-visor-cerrar { top: 10px; right: 10px; width: 40px; height: 40px; font-size: 26px; }
+}

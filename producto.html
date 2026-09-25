@@ -53,10 +53,17 @@
 
       <!-- ---------- Galería ---------- -->
       <div class="pdp-media">
-        <div class="pdp-principal">
+        <div class="pdp-principal" id="pdpPrincipal">
           <img id="pdpImagen" src="" alt="" width="900" height="900">
           <span class="pdp-tag" id="pdpTag" hidden></span>
+          <!-- Lupa: abre la foto a pantalla completa. El mismo gesto que en la
+               ficha de VÓRTEX ("Toca para ver"), que la clienta ya conoce. -->
+          <button type="button" class="pdp-zoom" id="pdpZoom" aria-label="Ver la foto ampliada">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span>Toca para ver</span>
+          </button>
         </div>
+        <p class="pdp-fotos" id="pdpFotos" hidden></p>
         <div class="pdp-minis" id="pdpMinis" hidden></div>
       </div>
 
@@ -65,15 +72,30 @@
 
         <h1 class="pdp-titulo" id="pdpTitulo"></h1>
 
+        <p class="pdp-vendedor" id="pdpVendedor"></p>
+
         <div class="pdp-rating" id="pdpRating" hidden></div>
 
         <div class="pdp-precios">
-          <span class="pdp-antes" id="pdpAntes" hidden></span>
           <span class="pdp-ahora" id="pdpAhora"></span>
+          <span class="pdp-antes" id="pdpAntes" hidden></span>
           <span class="pdp-dcto" id="pdpDescuento" hidden></span>
         </div>
 
-        <p class="pdp-cuotas" id="pdpCuotas" hidden></p>
+        <p class="pdp-ahorro" id="pdpAhorro" hidden></p>
+
+        <!-- Franja del cupón: se copia al portapapeles de un toque. El código y
+             el porcentaje salen de una sola config (js/producto.js), así que no
+             pueden desincronizarse con los del backend. -->
+        <button type="button" class="pdp-cupon" id="pdpCupon" hidden
+                aria-label="Copiar el código de descuento">
+          <span class="pdp-cupon-txt">Cupón <b id="pdpCuponCodigo"></b> = <b id="pdpCuponPct"></b> extra — tócalo para copiarlo</span>
+          <span class="pdp-cupon-ok" id="pdpCuponOk" hidden>¡Copiado!</span>
+        </button>
+
+        <!-- Caja de beneficios del pago. Su contenido lo decide
+             FICHA.contraEntrega en js/producto.js. -->
+        <div class="pdp-caja" id="pdpCaja" hidden></div>
 
         <!-- El contador de la ficha de producto se QUITÓ a petición de la
              clienta (12 sep 2026): "este contador quítalo de todas partes;
@@ -88,6 +110,31 @@
         <ul class="pdp-confianza" id="pdpConfianza"></ul>
 
         <!-- Secciones desplegables -->
+        <!-- Reloj de corte de despacho. Empieza OCULTO: solo aparece cuando
+             FICHA.corteDespacho tiene una hora. Es un reloj REAL, atado a la
+             hora de corte de la tienda; no una fecha de cierre inventada. -->
+        <div class="pdp-corte" id="pdpCorte" hidden></div>
+
+        <div class="pdp-compra">
+          <div class="pdp-cantidad">
+            <span class="pdp-cantidad-lbl">Cantidad</span>
+            <div class="pdp-qty">
+              <button type="button" id="pdpQtyMenos" aria-label="Quitar una unidad">−</button>
+              <input id="pdpQty" value="1" inputmode="numeric" aria-label="Cantidad" autocomplete="off">
+              <button type="button" id="pdpQtyMas" aria-label="Añadir una unidad">+</button>
+            </div>
+          </div>
+
+          <div class="pdp-cta">
+            <button type="button" class="btn-pill btn-pink pdp-btn-carrito" id="pdpAgregar">
+              <span>Agregar al carrito</span>
+            </button>
+            <button type="button" class="btn-pill btn-dark pdp-btn-comprar" id="pdpComprar">
+              <span>Comprar ahora</span>
+            </button>
+          </div>
+        </div>
+
         <div class="pdp-acordeones">
 
           <section class="pdp-acordeon abierto">
@@ -124,14 +171,6 @@
 
         </div>
 
-        <div class="pdp-cta">
-          <button type="button" class="btn-pill btn-pink pdp-btn-carrito" id="pdpAgregar">
-            <span>Agregar al carrito</span>
-          </button>
-          <button type="button" class="btn-pill btn-dark pdp-btn-comprar" id="pdpComprar">
-            <span>Comprar ahora</span>
-          </button>
-        </div>
 
         <p class="pdp-nota">Pago 100% seguro con <strong>PSE</strong> y <strong>tarjetas</strong> a través de MercadoPago. No guardamos los datos de tu tarjeta.</p>
 
@@ -168,6 +207,15 @@
 <a class="pdp-wa" id="pdpWa" href="https://wa.me/573181738642" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.5Z"/></svg>
 </a>
+
+<!-- ============ VISOR DE FOTO AMPLIADA ============ -->
+<div class="pdp-visor" id="pdpVisor" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <button type="button" class="pdp-visor-cerrar" id="pdpVisorCerrar" aria-label="Cerrar">&times;</button>
+  <button type="button" class="pdp-visor-flecha pdp-visor-prev" id="pdpVisorPrev" aria-label="Foto anterior">&#8249;</button>
+  <img id="pdpVisorImg" src="" alt="">
+  <button type="button" class="pdp-visor-flecha pdp-visor-next" id="pdpVisorNext" aria-label="Foto siguiente">&#8250;</button>
+  <p class="pdp-visor-cuenta" id="pdpVisorCuenta"></p>
+</div>
 
 <script src="js/productos.js"></script>
 <script src="js/main.js"></script>
